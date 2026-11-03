@@ -1,0 +1,333 @@
+/*
+  Motion primitives
+  One stylesheet for the animated building blocks in components/motion.
+  Everything here is transform/opacity only, and everything stops under
+  prefers-reduced-motion (see the block at the bottom).
+*/
+
+/* ---------- Reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translate(var(--reveal-shift, 0, 18px)) scale(var(--reveal-scale, 1));
+  transition:
+    opacity 0.66s var(--ease-out) var(--reveal-delay, 0ms),
+    transform 0.74s var(--ease-out) var(--reveal-delay, 0ms),
+    filter 0.66s var(--ease-out) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.has-blur { filter: blur(7px); }
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- SplitText ---------- */
+
+.letters { display: inline; }
+.letters-word { display: inline-block; white-space: nowrap; }
+.letters-space { display: inline-block; width: 0.32em; }
+
+.letters-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.52em) rotate(5deg);
+  filter: blur(5px);
+  transition:
+    opacity 0.52s var(--ease-out) var(--char-delay, 0ms),
+    transform 0.72s var(--ease-out) var(--char-delay, 0ms),
+    filter 0.52s var(--ease-out) var(--char-delay, 0ms);
+}
+
+.letters.is-in .letters-char {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- Shiny + gradient text ---------- */
+
+.shiny {
+  background: linear-gradient(
+      100deg,
+      currentColor 0%,
+      currentColor 38%,
+      color-mix(in srgb, currentColor 32%, white) 50%,
+      currentColor 62%,
+      currentColor 100%
+    )
+    0 0 / 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* keep `color` intact: the gradient above reads currentColor, so painting the
+     text transparent with `color` would make the gradient transparent too */
+  -webkit-text-fill-color: transparent;
+  animation: shine var(--shine-speed, 4.2s) linear infinite;
+}
+
+@keyframes shine {
+  to { background-position: -220% 0; }
+}
+
+.grad-text {
+  background: var(--grad);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.grad-text.is-live { animation: grad-pan 7s var(--ease) infinite alternate; }
+
+@keyframes grad-pan {
+  to { background-position: 100% 0; }
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ---------- Spotlight ---------- */
+
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+.spotlight-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--lit, 0);
+  transition: opacity 0.34s var(--ease);
+  background: radial-gradient(
+    var(--spot-r, 320px) circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--accent) calc(var(--spot-a, 0.16) * 100%), transparent),
+    transparent 68%
+  );
+}
+
+.spotlight > :not(.spotlight-glow) { position: relative; z-index: 1; }
+
+/* ---------- Tilt ---------- */
+
+.tilt { perspective: 900px; }
+
+.tilt-inner {
+  position: relative;
+  height: 100%;
+  border-radius: inherit;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0) translateY(calc(var(--tz, 0px) * -1));
+  transform-style: preserve-3d;
+  transition: transform var(--settle, 0.5s) var(--ease-out);
+  will-change: transform;
+}
+
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(var(--lit, 0) * 0.9);
+  transition: opacity 0.3s var(--ease);
+  background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.5), transparent 62%);
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Aurora backdrop ---------- */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient.tone-light { background: var(--bg); }
+
+.ambient.tone-deep {
+  background:
+    radial-gradient(1200px 700px at 50% -20%, #1b2550, transparent 70%),
+    var(--bg-deep);
+}
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.ambient-blob.b1 {
+  width: 46vw;
+  height: 46vw;
+  top: -16vw;
+  left: -8vw;
+  background: radial-gradient(circle, var(--accent), transparent 68%);
+  animation: drift-a 24s var(--ease) infinite alternate;
+}
+
+.ambient-blob.b2 {
+  width: 40vw;
+  height: 40vw;
+  top: -10vw;
+  right: -10vw;
+  background: radial-gradient(circle, var(--iris), transparent 68%);
+  animation: drift-b 29s var(--ease) infinite alternate;
+}
+
+.ambient-blob.b3 {
+  width: 38vw;
+  height: 38vw;
+  bottom: -18vw;
+  left: 28vw;
+  background: radial-gradient(circle, var(--mint), transparent 70%);
+  animation: drift-c 34s var(--ease) infinite alternate;
+}
+
+.tone-light .ambient-blob { opacity: 0.2; }
+.tone-deep .ambient-blob { opacity: 0.48; }
+
+@keyframes drift-a {
+  to { transform: translate3d(9vw, 7vw, 0) scale(1.14); }
+}
+@keyframes drift-b {
+  to { transform: translate3d(-8vw, 10vw, 0) scale(1.2); }
+}
+@keyframes drift-c {
+  to { transform: translate3d(7vw, -9vw, 0) scale(1.1); }
+}
+
+.ambient-ray {
+  position: absolute;
+  top: -30%;
+  width: 34vw;
+  height: 160%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.42), transparent 72%);
+  filter: blur(26px);
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  transform-origin: top center;
+}
+
+.tone-light .ambient-ray { opacity: 0.5; mix-blend-mode: normal; }
+
+.ambient-ray.r1 { left: 6%; transform: rotate(16deg); animation: sway 18s var(--ease) infinite alternate; }
+.ambient-ray.r2 { right: 10%; transform: rotate(-13deg); animation: sway 23s var(--ease) infinite alternate-reverse; }
+
+@keyframes sway {
+  to { transform: rotate(2deg) translateX(3vw); opacity: 0.22; }
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: -1px;
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 26%, transparent) 1px, transparent 0);
+  background-size: 26px 26px;
+  opacity: 0.1;
+  mask-image: radial-gradient(70% 60% at 50% 34%, #000 25%, transparent 78%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 34%, #000 25%, transparent 78%);
+}
+
+.tone-deep .ambient-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.5) 1px, transparent 0);
+  opacity: 0.16;
+}
+
+.ambient-grain {
+  position: absolute;
+  inset: -200%;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 7s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-6%, 3%); }
+  40% { transform: translate(4%, -5%); }
+  60% { transform: translate(-3%, -2%); }
+  80% { transform: translate(5%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---------- Marquee ---------- */
+
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: roll var(--marquee-time, 34s) linear infinite;
+}
+
+.marquee.is-rev .marquee-track { animation-direction: reverse; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+.marquee-row { display: flex; align-items: center; }
+.marquee-clone { display: flex; }
+
+@keyframes roll {
+  to { transform: translateX(-50%); }
+}
+
+.marquee-cell {
+  padding: 0 22px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+
+/* ---------- shared keyframes used by the shell ---------- */
+
+@keyframes float-soft {
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 34%, transparent); }
+  70% { box-shadow: 0 0 0 11px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes sweep-x {
+  0% { transform: translateX(-130%); }
+  100% { transform: translateX(130%); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- the opt-out ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .letters-char {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .ambient-grain { display: none; }
+}

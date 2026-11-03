@@ -1,0 +1,106 @@
+/*
+  Theme — Sana / PartnerU inspired
+  Cool neutrals, white elevated surfaces, black CTAs, blue action accent.
+  Template page colors that should stay distinct live in templates.css.
+*/
+
+:root {
+  /* --- brand core (Sana tokens) --- */
+  --black: #000000;
+  --white: #ffffff;
+  --gray: #f5f5f5;
+  --gray-soft: #f8f8f8;
+  --gray-muted: #ededed;
+  --blue: #0558f9;
+  --blue-deep: #02266b;
+  --blue-soft: #d4f2ff;
+  --blue-glow: #8ed9f9;
+
+  /* legacy aliases — keep old class hooks from warming the UI */
+  --peach: #e8f1ff;
+  --peach-deep: #cfe3ff;
+
+  /* --- surfaces --- */
+  --bg: var(--gray);
+  --bg-deep: var(--black);
+  --bg-glow: var(--blue-soft);
+  --bg-glow-2: var(--gray-soft);
+  --header: var(--black);
+  --bar: var(--white);
+  --bar-ink: var(--black);
+  --bar-muted: rgba(0, 0, 0, 0.55);
+  --card: var(--white);
+  --soft: rgba(0, 0, 0, 0.03);
+  --tab: var(--gray-soft);
+  --preview: var(--gray);
+  --field: var(--white);
+  --field-line: rgba(0, 0, 0, 0.12);
+  --field-hover: rgba(0, 0, 0, 0.42);
+  --placeholder: rgba(0, 0, 0, 0.35);
+  --bad: #df3030;
+  --bad-soft: #ffc6c6;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-line: rgba(0, 0, 0, 0.06);
+
+  /* --- ink --- */
+  --ink: var(--black);
+  --ink-soft: #1a1a1a;
+  --muted: rgba(0, 0, 0, 0.55);
+  --label: var(--black);
+  --rail-bg: #1a1a1a;
+  --rail-ink: rgba(255, 255, 255, 0.72);
+  --rail-on: var(--blue-soft);
+  --go: var(--blue);
+  --go-strong: var(--blue-deep);
+  --go-ink: var(--white);
+  --forest: var(--black);
+  --forest-deep: #1a1a1a;
+  --line: rgba(0, 0, 0, 0.08);
+
+  /* --- brand / action --- */
+  --cta: #1a1a1a;
+  --cta-ink: #f5f5f5;
+  --accent: var(--blue);
+  --accent-strong: var(--blue-deep);
+  --accent-soft: var(--blue-soft);
+  --iris: var(--blue);
+  --mint: #8cff60;
+  --flare: var(--blue-glow);
+  --danger: #df3030;
+
+  --grad: linear-gradient(120deg, #0558f9 0%, #5754e8 52%, #8854e8 100%);
+  --grad-soft: linear-gradient(160deg, #d4f2ff 0%, #e8f1ff 48%, #f5f5f5 100%);
+
+  --wash-lime: #e8f1ff;
+  --wash-green: #d4f2ff;
+  --wash-pink: #f2f2f2;
+  --wash-lime-soft: #f5f8ff;
+  --wash-green-soft: #eef8ff;
+  --wash-pink-soft: #f8f8f8;
+
+  /* --- elevation (Sana-style soft lift) --- */
+  --shadow-1: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 8px 16px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 16px 24px rgba(0, 0, 0, 0.08);
+  --shadow-4: 0 24px 48px rgba(0, 0, 0, 0.12);
+  --shadow: var(--shadow-2);
+  --ring: 0 0 0 3px rgba(5, 88, 249, 0.25);
+
+  /* --- shape --- */
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-sm: 10px;
+
+  /* --- motion --- */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --fast: 0.16s;
+  --mid: 0.3s;
+  --slow: 0.62s;
+
+  /* --- type --- */
+  --font-sans: var(--font-google-sans), "Google Sans", sans-serif;
+  --font-serif: var(--font-google-sans), "Google Sans", sans-serif;
+  --font-display: var(--font-google-sans), "Google Sans", sans-serif;
+}
