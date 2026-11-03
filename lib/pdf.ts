@@ -1,10 +1,10 @@
 /**
- * Download paints the resume with Chrome's own print engine, the same way
- * resume sites that stay sharp under zoom do it. The letters in the file are
- * real text, so magnifying the PDF does not turn them into pixels.
+ * Download prefers the server Chrome print path when it is available.
+ * On hosts without Chrome (common on Vercel), it falls back to painting
+ * each A4 page in the browser with html2canvas + jsPDF so mobile still works.
  *
- * `printResume` opens that same print sheet in the browser, for anyone who
- * wants to pick a printer or save the file themselves.
+ * `printResume` opens the browser print sheet for anyone who wants to save
+ * the file themselves.
  */
 
 import { readToken } from "./session";
@@ -83,7 +83,54 @@ function printDocument() {
 </html>`;
 }
 
-export async function downloadResumePdf(name: string) {
+function saveBlob(blob: Blob, name: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName(name);
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  // iOS Safari often needs the blob tab kept briefly.
+  window.setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/** Client-side A4 export used when the server has no Chrome. */
+async function downloadClientPdf(name: string) {
+  const sheets = pages();
+  if (!sheets.length) throw new Error("Nothing to download");
+
+  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+    import("html2canvas"),
+    import("jspdf"),
+  ]);
+
+  const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4", compress: true });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  for (let index = 0; index < sheets.length; index += 1) {
+    const node = sheets[index];
+    const canvas = await html2canvas(node, {
+      scale: Math.min(2, window.devicePixelRatio || 1.5),
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      windowWidth: 794,
+      windowHeight: 1123,
+    });
+    const image = canvas.toDataURL("image/jpeg", 0.92);
+    if (index > 0) pdf.addPage();
+    pdf.addImage(image, "JPEG", 0, 0, pageW, pageH, undefined, "FAST");
+  }
+
+  const blob = pdf.output("blob");
+  saveBlob(blob, name);
+}
+
+async function downloadServerPdf(name: string) {
   const token = readToken();
   const response = await fetch("/backend/api/resumes/pdf", {
     method: "POST",
@@ -95,17 +142,23 @@ export async function downloadResumePdf(name: string) {
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    throw new Error(body.error || "Couldn't download the PDF.");
+    const error = new Error(body.error || "Couldn't download the PDF.") as Error & { status?: number; code?: string };
+    error.status = response.status;
+    error.code = body.code;
+    throw error;
   }
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName(name);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  saveBlob(await response.blob(), name);
+}
+
+export async function downloadResumePdf(name: string) {
+  try {
+    await downloadServerPdf(name);
+  } catch (reason) {
+    const status = reason && typeof reason === "object" && "status" in reason ? Number(reason.status) : 0;
+    // Auth / paywall must stay visible; everything else falls back to the browser.
+    if (status === 401 || status === 402) throw reason;
+    await downloadClientPdf(name);
+  }
 }
 
 /**

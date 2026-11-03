@@ -8,6 +8,8 @@ type SaveBody = {
   isPublic: boolean;
   jobDescription: string;
   data: ResumeData;
+  /** Pass to set or clear the public username. */
+  slug?: string | null;
 };
 
 /** Thrown by `request` so callers can branch on *why* a call failed. */
@@ -68,9 +70,22 @@ export function updateResume(id: string, body: SaveBody) {
   });
 }
 
+/** Set username / public flag without rewriting CV fields. */
+export function updateHosting(id: string, body: { ownerKey: string; slug?: string | null; isPublic?: boolean }) {
+  return request<ResumeRecord>(`/api/resumes/${encodeURIComponent(id)}/hosting`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
 export function loadGallery(category?: Category) {
   const query = category ? `?category=${encodeURIComponent(category)}` : "";
   return request<ResumeRecord[]>(`/api/gallery${query}`);
+}
+
+/** One listed resume for the public `/:username` page. */
+export function loadPublicResume(id: string) {
+  return request<ResumeRecord & { isMine?: boolean }>(`/api/resumes/${encodeURIComponent(id)}/public`);
 }
 
 export function improveText(input: { kind: "summary" | "bullets" | "tailor"; text: string; role: string; jobDescription: string }) {

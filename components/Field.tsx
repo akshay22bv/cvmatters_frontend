@@ -359,15 +359,26 @@ type Anchor = { top: number; left: number; width: number; drop: "down" | "up"; m
  * Works out where a popover should sit: under the trigger when there is room,
  * flipped above when there is not, clamped to the viewport on both axes.
  */
+function viewportBox() {
+  const view = window.visualViewport;
+  if (!view) {
+    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+  }
+  return { top: view.offsetTop, left: view.offsetLeft, width: view.width, height: view.height };
+}
+
 function anchorTo(node: HTMLElement | null, wanted = 300): Anchor | null {
   if (!node) return null;
   const box = node.getBoundingClientRect();
-  const below = window.innerHeight - box.bottom - 12;
-  const above = box.top - 12;
-  const drop = below < Math.min(wanted, 220) && above > below ? "up" : "down";
-  const max = Math.max(160, Math.min(wanted, drop === "down" ? below : above));
-  const width = Math.max(box.width, 240);
-  const left = Math.min(Math.max(8, box.left), Math.max(8, window.innerWidth - width - 8));
+  const view = viewportBox();
+  const below = view.top + view.height - box.bottom - 12;
+  const above = box.top - view.top - 12;
+  const drop = below < Math.min(wanted, 200) && above > below ? "up" : "down";
+  const room = drop === "down" ? below : above;
+  // Leave room for the search row so the list itself can scroll on phones.
+  const max = Math.max(140, Math.min(wanted, room));
+  const width = Math.min(Math.max(box.width, 240), view.width - 16);
+  const left = Math.min(Math.max(view.left + 8, box.left), view.left + view.width - width - 8);
   return {
     top: drop === "down" ? box.bottom + 8 : box.top - 8,
     left,
@@ -377,7 +388,7 @@ function anchorTo(node: HTMLElement | null, wanted = 300): Anchor | null {
   };
 }
 
-/** Keeps a popover glued to its trigger while the page moves under it. */
+/** Keeps a popover glued to its trigger while the page or keyboard moves. */
 function useAnchor(open: boolean, ref: React.RefObject<HTMLElement | null>, wanted?: number) {
   const [anchor, setAnchor] = useState<Anchor | null>(null);
 
@@ -391,11 +402,16 @@ function useAnchor(open: boolean, ref: React.RefObject<HTMLElement | null>, want
       return;
     }
     measure();
+    const view = window.visualViewport;
     window.addEventListener("scroll", measure, true);
     window.addEventListener("resize", measure);
+    view?.addEventListener("resize", measure);
+    view?.addEventListener("scroll", measure);
     return () => {
       window.removeEventListener("scroll", measure, true);
       window.removeEventListener("resize", measure);
+      view?.removeEventListener("resize", measure);
+      view?.removeEventListener("scroll", measure);
     };
   }, [open, measure]);
 
@@ -493,10 +509,17 @@ export function SearchSelect({
     close();
   };
 
-  // keep the highlighted row inside view as the arrows move it
+  // Keep the highlighted row in view without scrolling the page behind the popover.
   useEffect(() => {
-    if (!open) return;
-    list.current?.querySelector<HTMLElement>('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
+    if (!open || !list.current) return;
+    const row = list.current.querySelector<HTMLElement>('[data-active="true"]');
+    if (!row) return;
+    const top = row.offsetTop;
+    const bottom = top + row.offsetHeight;
+    const viewTop = list.current.scrollTop;
+    const viewBottom = viewTop + list.current.clientHeight;
+    if (top < viewTop) list.current.scrollTop = top;
+    else if (bottom > viewBottom) list.current.scrollTop = bottom - list.current.clientHeight;
   }, [active, open]);
 
   const onKeys = (event: React.KeyboardEvent) => {

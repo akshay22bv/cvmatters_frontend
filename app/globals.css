@@ -1348,6 +1348,28 @@ button.example {
   padding: 0 10px 0 8px;
 }
 
+@media (max-width: 860px) {
+  .toolbar {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .toolbar .ai-side {
+    margin-left: 0;
+    height: 32px;
+    padding: 0 10px;
+  }
+
+  .desc-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .desc-head .ai-side {
+    margin-left: auto;
+  }
+}
+
 .link-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

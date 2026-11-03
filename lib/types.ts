@@ -325,6 +325,8 @@ export type ResumeRecord = {
   templateId: TemplateId;
   category: Category;
   isPublic: boolean;
+  /** Public handle the owner chose, e.g. `akshay`. */
+  slug?: string | null;
   jobDescription: string;
   data: ResumeData;
   updatedAt: string;

@@ -10,6 +10,7 @@ import { ExtrasStep } from "./ExtrasStep";
 import { JobStep } from "./JobStep";
 import { PlanDialog } from "./PlanDialog";
 import { ProfilePage } from "./ProfilePage";
+import { PublicCvPage } from "./PublicCvPage";
 import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { Landing, type DashIntent } from "./Landing";
@@ -34,6 +35,7 @@ type Snapshot = {
   templateId: TemplateId;
   category: Category;
   isPublic: boolean;
+  slug: string | null;
   jobDescription: string;
   data: ResumeData;
   updatedAt?: string;
@@ -100,6 +102,7 @@ export default function Builder() {
     templateId: "mint",
     category: "Design",
     isPublic: false,
+    slug: null,
     jobDescription: "",
     data: blank,
   });
@@ -126,6 +129,7 @@ export default function Builder() {
       templateId: readTemplateId(record.templateId),
       category: record.category,
       isPublic: record.isPublic,
+      slug: record.slug || null,
       jobDescription: record.jobDescription,
       updatedAt: record.updatedAt,
       data: {
@@ -341,7 +345,7 @@ export default function Builder() {
       await downloadResumePdf(live.current.data.personal.fullName);
     } catch (error) {
       console.error("PDF export failed", error);
-      setPdfError("Couldn't download the PDF.");
+      setPdfError(error instanceof Error ? error.message : "Couldn't download the PDF.");
     } finally {
       setDownloading(false);
     }
@@ -404,7 +408,7 @@ export default function Builder() {
     }
   };
 
-  if (mode === "loading") {
+  if (mode === "loading" && view.kind !== "public") {
     return (
       <div className="boot">
         <Aurora tone="deep" grid={false} />
@@ -414,6 +418,31 @@ export default function Builder() {
           <span />
         </div>
         <p className="boot-note">Opening CV Matters…</p>
+      </div>
+    );
+  }
+
+  if (view.kind === "public") {
+    return (
+      <div className="app-frame is-public">
+        <PublicCvPage
+          id={view.id}
+          signedIn={!!account.user}
+          onSignIn={() => {
+            setGateReason("Sign in to rate this resume.");
+            setGate("auth");
+          }}
+        />
+        <AuthDialog
+          open={gate === "auth"}
+          reason={gateReason}
+          account={account}
+          onClose={() => setGate(null)}
+          onDone={() => {
+            setGate(null);
+            void account.refresh();
+          }}
+        />
       </div>
     );
   }
@@ -504,7 +533,7 @@ export default function Builder() {
 
   return (
     <div className="app-frame">
-      {view.kind !== "cv" && view.kind !== "examples" && <AppNav view={view} />}
+      {view.kind !== "cv" && view.kind !== "examples" && view.kind !== "profile" && <AppNav view={view} />}
 
       {view.kind === "profile" && (
         <ProfilePage
@@ -513,7 +542,19 @@ export default function Builder() {
           isPublic={snapshot.isPublic}
           rating={rating}
           account={account}
+          resumeId={snapshot.id}
+          slug={snapshot.slug}
+          ownerKey={owner.current}
           onShare={() => setProfileOpen(true)}
+          onPlans={() => {
+            afterGate.current = null;
+            setGateReason("");
+            setGate("plan");
+          }}
+          onSaved={({ slug, isPublic }) => {
+            patch({ slug, isPublic });
+            live.current = { ...live.current, slug, isPublic };
+          }}
         />
       )}
 

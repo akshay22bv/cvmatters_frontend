@@ -88,8 +88,8 @@ export function ProfileDialog({
             {row(
               "listed",
               isPublic,
-              `List my CV in ${category}`,
-              "Other people can read it and rate it. Take it off the list any time.",
+              `Host my CV publicly`,
+              `Shows in ${category} and unlocks a share link like yoursite.com/your-name.`,
               onPublic,
             )}
             {row(

@@ -917,7 +917,10 @@ export function ResumeView({
     const measure = () => {
       const width = node.clientWidth;
       if (!width) return;
-      setScale(Math.min(1, (width - 36) / 794));
+      const pad = width < 520 ? 20 : 36;
+      // Keep mobile preview readable without overflowing the sheet.
+      const next = Math.min(1, (width - pad) / 794);
+      setScale(width < 520 ? Math.max(0.42, next) : next);
     };
     measure();
     const observer = new ResizeObserver(measure);
