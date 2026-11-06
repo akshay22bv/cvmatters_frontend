@@ -14,7 +14,7 @@ import { PublicCvPage } from "./PublicCvPage";
 import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { Landing, type DashIntent } from "./Landing";
-import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewTemplate } from "./CvChrome";
+import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
@@ -594,7 +594,7 @@ export default function Builder() {
             downloading={downloading}
             onPreview={() => setPreviewOpen(true)}
             onDownload={() => requestPdf("download")}
-            onTemplate={() => {
+            onOpenDesign={() => {
               setLookIntent("look");
               setTemplatesOpen(true);
             }}
@@ -720,8 +720,9 @@ export default function Builder() {
                   if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
                 }}
               />
-              <SliceViewTemplate
-                onClick={() => {
+              <SliceViewCv
+                onPreview={() => setPreviewOpen(true)}
+                onDesign={() => {
                   setLookIntent("look");
                   setTemplatesOpen(true);
                 }}

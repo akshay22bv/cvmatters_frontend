@@ -78,13 +78,14 @@ export function CvMobileChrome({
   downloading = false,
   onPreview,
   onDownload,
-  onTemplate,
+  /** Opens design / template picker (palette icon). Pass from CV builder and examples. */
+  onOpenDesign,
 }: {
   panel: PanelId | null;
   downloading?: boolean;
   onPreview: () => void;
   onDownload: () => void;
-  onTemplate: () => void;
+  onOpenDesign: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -150,11 +151,11 @@ export function CvMobileChrome({
                 className="slice-sheet-action"
                 onClick={() => {
                   setOpen(false);
-                  onTemplate();
+                  onOpenDesign();
                 }}
               >
                 <IconPalette />
-                Template
+                Edit template
               </button>
             </div>
             <p className="slice-sheet-label">Account</p>
@@ -192,20 +193,17 @@ export function SliceContinue({
   );
 }
 
-/** Same shell as Continue: white pill + circle icon — opens template picker from the step footer. */
-export function SliceViewTemplate({ onClick }: { onClick: () => void }) {
+/** Mobile step footer: preview + design — icon only, no label. */
+export function SliceViewCv({ onPreview, onDesign }: { onPreview: () => void; onDesign: () => void }) {
   return (
-    <button type="button" className="slice-template-view" onClick={onClick}>
-      <span className="slice-template-view-icon" aria-hidden="true">
+    <div className="slice-template-view" role="group" aria-label="Preview and edit template">
+      <button type="button" className="slice-template-view-ico" onClick={onPreview} aria-label="Preview CV">
         <IconEye />
-      </span>
-      <span className="slice-template-view-label">
-        <span className="slice-template-view-label-long">View template</span>
-        <span className="slice-template-view-label-short" aria-hidden="true">
-          Template
-        </span>
-      </span>
-    </button>
+      </button>
+      <button type="button" className="slice-template-view-ico" onClick={onDesign} aria-label="Edit template">
+        <IconPalette />
+      </button>
+    </div>
   );
 }
 

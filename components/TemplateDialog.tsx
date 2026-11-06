@@ -1,29 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { AccentSwatches } from "./LookBar";
-import { SpacingPicker, TextSizePicker } from "./DesignPickers";
+import { TypographyStripPicker } from "./DesignPickers";
 import { ResumeView } from "./ResumeSheet";
 import { TemplateFan } from "./TemplateFan";
-import { CATALOG } from "@/lib/catalog";
 import {
   type FontId,
   type ResumeData,
   type TemplateId,
 } from "@/lib/types";
 
-type Look = {
-  templateId: TemplateId;
-  fontId?: FontId;
-  accent?: string;
-  typeSize?: number;
-  spacing?: number;
-  leading?: number;
-};
-
 /**
  * Change design: live preview on the left, template and look controls on the right.
- * Cancel restores what you had when the sheet opened.
+ * Close via scrim or × — edits stay applied.
  */
 export function TemplateDialog({
   open,
@@ -45,41 +35,10 @@ export function TemplateDialog({
   onAccent: (hex: string | undefined) => void;
   onStyle: (look: Pick<ResumeData, "typeSize" | "spacing" | "leading">) => void;
 }) {
-  const [onOpen, setOnOpen] = useState<Look | null>(null);
-  const [seeAll, setSeeAll] = useState(false);
-  const templateCount = CATALOG.length;
-  const wasOpen = useRef(false);
-
-  /** Snapshot for Cancel — only when the sheet opens, not after each template pick. */
-  useEffect(() => {
-    if (open && !wasOpen.current) {
-      setOnOpen({
-        templateId,
-        fontId: data.fontId,
-        accent: data.accent,
-        typeSize: data.typeSize,
-        spacing: data.spacing,
-        leading: data.leading,
-      });
-      setSeeAll(false);
-    }
-    wasOpen.current = open;
-  }, [open, templateId, data.fontId, data.accent, data.typeSize, data.spacing, data.leading]);
-
-  const revert = useCallback(() => {
-    if (onOpen) {
-      onTemplate(onOpen.templateId);
-      if (onOpen.fontId) onFont(onOpen.fontId);
-      onAccent(onOpen.accent);
-      onStyle({ typeSize: onOpen.typeSize, spacing: onOpen.spacing, leading: onOpen.leading });
-    }
-    onClose();
-  }, [onOpen, onTemplate, onFont, onAccent, onStyle, onClose]);
-
   useEffect(() => {
     if (!open) return;
     const key = (event: KeyboardEvent) => {
-      if (event.key === "Escape") revert();
+      if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", key);
     const previous = document.body.style.overflow;
@@ -88,18 +47,18 @@ export function TemplateDialog({
       window.removeEventListener("keydown", key);
       document.body.style.overflow = previous;
     };
-  }, [open, revert]);
+  }, [open, onClose]);
 
   if (!open) return null;
 
   return (
     <div className="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title">
-      <button type="button" className="picker-scrim" aria-label="Close" onClick={revert} />
+      <button type="button" className="picker-scrim" aria-label="Close" onClick={onClose} />
 
       <div className="picker-panel is-design">
         <header className="picker-head">
           <h2 id="picker-title">Change design</h2>
-          <button type="button" className="picker-x" aria-label="Close" onClick={revert}>
+          <button type="button" className="picker-x" aria-label="Close" onClick={onClose}>
             ×
           </button>
         </header>
@@ -114,18 +73,15 @@ export function TemplateDialog({
           <div className="picker-block">
             <div className="picker-row-head">
               <span className="picker-label">Template</span>
-              <button type="button" className="picker-see-all" onClick={() => setSeeAll((value) => !value)}>
-                {seeAll ? "Show less" : `See all ${templateCount}`}
-              </button>
             </div>
-            <div className={seeAll ? "picker-grid" : "picker-strip-wrap picker-template-scroll"}>
+            <div className="picker-strip-wrap picker-template-scroll">
               <TemplateFan
-                layout={seeAll ? "picker" : "strip"}
-                filter={seeAll ? "all" : "picks"}
-                maxItems={seeAll ? undefined : 4}
+                layout="strip"
+                filter="all"
                 templateId={templateId}
                 data={data}
                 onChange={onTemplate}
+                sampleThumbs
               />
             </div>
           </div>
@@ -136,32 +92,15 @@ export function TemplateDialog({
           </div>
 
           <div className="picker-block">
-            <span className="picker-label">Text size</span>
-            <TextSizePicker
+            <span className="picker-label">Type & spacing</span>
+            <TypographyStripPicker
               typeSize={data.typeSize}
-              onChange={(typeSize) => onStyle({ typeSize, spacing: data.spacing, leading: data.leading })}
-            />
-          </div>
-
-          <div className="picker-block">
-            <span className="picker-label">Spacing</span>
-            <SpacingPicker
               spacing={data.spacing}
-              onChange={(spacing) => onStyle({ typeSize: data.typeSize, spacing, leading: data.leading })}
+              onTypeSize={(typeSize) => onStyle({ typeSize, spacing: data.spacing, leading: data.leading })}
+              onSpacing={(spacing) => onStyle({ typeSize: data.typeSize, spacing, leading: data.leading })}
             />
           </div>
         </section>
-
-        <footer className="picker-foot">
-          <div className="picker-acts">
-            <button type="button" className="picker-cancel" onClick={revert}>
-              Cancel
-            </button>
-            <button type="button" className="picker-done" onClick={onClose}>
-              Done
-            </button>
-          </div>
-        </footer>
       </div>
     </div>
   );

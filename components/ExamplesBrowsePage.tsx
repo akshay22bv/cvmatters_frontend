@@ -88,7 +88,7 @@ export function ExamplesBrowsePage({
               if (viewing) setPreviewOpen(true);
             }}
             onDownload={() => onDownload?.()}
-            onTemplate={() => onTemplate?.()}
+            onOpenDesign={() => onTemplate?.()}
           />
           <div className="work-scroll">
             <div className="work-inner">

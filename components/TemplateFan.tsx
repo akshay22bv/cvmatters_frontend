@@ -5,6 +5,7 @@ import { ResumeSheet } from "./ResumeSheet";
 import { Tilt } from "./motion";
 import { IconCheck } from "./icons";
 import { OFFERED_IDS, catalogFor, type TemplateFilter } from "@/lib/catalog";
+import { sampleForTemplate } from "@/lib/content";
 import { TEMPLATES, type ResumeData, type TemplateId } from "@/lib/types";
 
 const PAGE_W = 794;
@@ -31,6 +32,8 @@ export function TemplateFan({
   layout = "rail",
   filter = "picks",
   maxItems,
+  /** Use dashboard-style sample copy per template in thumbnails (live preview stays your CV). */
+  sampleThumbs = false,
 }: {
   templateId: TemplateId;
   data: ResumeData;
@@ -38,6 +41,7 @@ export function TemplateFan({
   layout?: "rail" | "grid" | "picker" | "strip";
   filter?: TemplateFilter;
   maxItems?: number;
+  sampleThumbs?: boolean;
 }) {
   const currentRef = useRef<HTMLButtonElement>(null);
   const [narrow, setNarrow] = useState(false);
@@ -91,7 +95,8 @@ export function TemplateFan({
   if (maxItems != null) shown = shown.slice(0, maxItems);
 
   // Thumbnails keep each layout's own colour and type — look edits apply only
-  // to the large preview on the right of the picker.
+  // to the large preview on the right of the picker. Optional sampleThumbs uses
+  // the same dummy content as the dashboard for each template thumbnail.
   const thumbData: ResumeData = {
     ...data,
     accent: undefined,
@@ -119,7 +124,12 @@ export function TemplateFan({
             >
               <span className="fan-frame" style={{ width: frameW, height: frameH }}>
                 <span className="fan-thumb" style={{ transform: `translate(0px, ${shiftY}px) scale(${scale})` }} aria-hidden="true">
-                  <ResumeSheet templateId={template.id} data={thumbData} preview fill />
+                  <ResumeSheet
+                    templateId={template.id}
+                    data={sampleThumbs ? sampleForTemplate(template.id) : thumbData}
+                    preview
+                    fill
+                  />
                 </span>
               </span>
               {current && (layout === "strip" || layout === "picker") ? (
