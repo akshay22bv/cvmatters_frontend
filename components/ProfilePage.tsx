@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Monogram } from "./Monogram";
 import { Stars } from "./Stars";
-import { ApiError, loadBilling, loadRatings, updateHosting } from "@/lib/api";
+import { ApiError, createResume, listResumes, loadBilling, loadRatings, updateHosting } from "@/lib/api";
 import { publicResumePath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
-import type { Category, RatingSummary, ResumeData } from "@/lib/types";
+import { templateName, type Category, type RatingSummary, type ResumeData, type ResumeRecord } from "@/lib/types";
 
 function suggestSlug(name: string) {
   return name
@@ -34,6 +34,7 @@ export function ProfilePage({
   onShare,
   onPlans,
   onSaved,
+  onUse,
 }: {
   data: ResumeData;
   category: Category;
@@ -46,6 +47,7 @@ export function ProfilePage({
   onShare: () => void;
   onPlans: () => void;
   onSaved: (next: { slug: string | null; isPublic: boolean }) => void;
+  onUse: (record: ResumeRecord) => void;
 }) {
   const name = data.personal.fullName.trim() || account.user?.name || "Your name";
   const likes = rating?.count || 0;
@@ -59,11 +61,28 @@ export function ProfilePage({
   const [copied, setCopied] = useState(false);
   const [notes, setNotes] = useState<{ stars: number; note: string; name: string; at: string }[]>([]);
   const [orders, setOrders] = useState<{ id: string; plan: string; amount: number; status: string; createdAt: string }[]>([]);
+  const [resumes, setResumes] = useState<ResumeRecord[]>([]);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    setDraft(slug || suggestSlug(name) || "");
+    setDraft(slug || "");
     setHosting(isPublic);
-  }, [slug, isPublic, name]);
+  }, [slug, isPublic, resumeId]);
+
+  useEffect(() => {
+    if (!ownerKey) return;
+    let cancelled = false;
+    listResumes(ownerKey)
+      .then((rows) => {
+        if (!cancelled) setResumes(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setResumes([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ownerKey, resumeId]);
 
   useEffect(() => {
     if (!resumeId) return;
@@ -134,6 +153,19 @@ export function ProfilePage({
     }
   };
 
+  const makeAnother = async () => {
+    if (!ownerKey) return;
+    setCreating(true);
+    setError("");
+    try {
+      const created = await createResume(ownerKey);
+      onUse(created);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Couldn't create another CV.");
+      setCreating(false);
+    }
+  };
+
   const copyLink = async () => {
     if (!publicUrl) return;
     try {
@@ -164,6 +196,7 @@ export function ProfilePage({
           <p className="prof-kicker">Profile</p>
           <h1>{name}</h1>
           <p className="prof-title">{data.personal.title || "Add a job title on your CV"}</p>
+          {data.personal.email ? <p className="prof-meta">{data.personal.email}</p> : null}
           <p className="prof-meta">
             {[data.personal.location, category, hosting || isPublic ? "Public" : "Private"].filter(Boolean).join(" · ")}
           </p>
@@ -172,6 +205,9 @@ export function ProfilePage({
           <Link href="/cv/details" className="prof-btn is-primary">
             Edit CV
           </Link>
+          <button type="button" className="prof-btn" disabled={creating} onClick={() => void makeAnother()}>
+            {creating ? "Creating…" : "Create CV"}
+          </button>
           {account.user ? (
             <button type="button" className="prof-btn" onClick={onShare}>
               Contact sharing
@@ -188,8 +224,8 @@ export function ProfilePage({
         </li>
         <li>
           <span>Resumes</span>
-          <strong>{resumeId ? "1" : "0"}</strong>
-          <small>{resumeId ? "Current draft" : "Start from Home"}</small>
+          <strong>{resumes.length}</strong>
+          <small>{resumes.length === 1 ? "Saved CV" : "Saved CVs"}</small>
         </li>
         <li>
           <span>Rating</span>
@@ -203,20 +239,52 @@ export function ProfilePage({
         </li>
       </ul>
 
+      <section className="prof-panel">
+        <div className="prof-panel-copy">
+          <h2>Your CVs</h2>
+          <p>Every CV you have saved or created.</p>
+        </div>
+        {resumes.length ? (
+          <ul className="prof-cvs">
+            {resumes.map((item) => {
+              const title = item.data.personal.fullName.trim() || "Untitled";
+              const role = item.data.personal.title.trim() || "No job title";
+              const current = item.id === resumeId;
+              return (
+                <li key={item.id} className={current ? "prof-cv is-current" : "prof-cv"}>
+                  <div>
+                    <strong>{title}</strong>
+                    <span>
+                      {role} · {templateName(item.templateId)}
+                      {item.slug ? ` · /${item.slug}` : ""}
+                    </span>
+                  </div>
+                  <button type="button" className="prof-btn" onClick={() => onUse(item)}>
+                    Open
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="prof-note">No CVs yet. Create one to start.</p>
+        )}
+      </section>
+
       <section className="prof-panel is-focus">
         <div className="prof-panel-copy">
-          <h2>Your public link</h2>
-          <p>Choose a short username. People open <code>yoursite.com/your-name</code> — not a long id.</p>
+          <h2>Unique username</h2>
+          <p>One name for this CV. Nobody else can use it.</p>
         </div>
 
-        <label className="prof-slug">
-          <span className="prof-slug-prefix">{origin}/</span>
+        <label className="prof-user">
+          <span>Username</span>
           <input
             value={draft}
             spellCheck={false}
             autoCapitalize="off"
             autoCorrect="off"
-            placeholder="your-name"
+            placeholder={suggestSlug(name) || "your-name"}
             disabled={busy || !resumeId}
             onChange={(event) => setDraft(event.target.value.toLowerCase())}
           />

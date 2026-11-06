@@ -276,7 +276,11 @@ export function paperStyle(data: { accent?: string; typeSize?: number; spacing?:
  * Accent colours a resume can take. Templates that paint with var(--accent)
  * follow whichever is chosen; the rest keep their own palette by design.
  */
+/** The four colours the site offers. Templates keep their own ink until one of these is chosen. */
+export const SITE_COLOURS = ["#0a0a0a", "#6b7280", "#8fb34a", "#1f2430"] as const;
+
 export const ACCENTS = [
+  "#0a0a0a", "#8fb34a",
   "#6b7280", "#c9c4bb", "#3b63e8", "#93aef6", "#6fc5e8", "#74c3a6", "#eab308", "#e08b8b",
   "#3f4652", "#b3a79b", "#2f4f9e", "#3657ff", "#4a9bbf", "#3f8f6f", "#d97706", "#c75c5c",
   "#1f2430", "#6b5444", "#16306b", "#2a44c8", "#2f6d85", "#2c6b4f", "#a65b06", "#8f2f2f",

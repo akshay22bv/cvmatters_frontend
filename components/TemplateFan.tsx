@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ResumeSheet } from "./ResumeSheet";
 import { Tilt } from "./motion";
-import { OFFERED_IDS } from "@/lib/catalog";
+import { IconCheck } from "./icons";
+import { OFFERED_IDS, catalogFor, type TemplateFilter } from "@/lib/catalog";
 import { TEMPLATES, type ResumeData, type TemplateId } from "@/lib/types";
 
 const PAGE_W = 794;
@@ -14,7 +15,8 @@ const SIZE = {
   rail: 112,
   grid: 98,
   picker: 168,
-  pickerMobile: 148,
+  pickerMobile: 78,
+  strip: 88,
 } as const;
 
 /**
@@ -27,11 +29,15 @@ export function TemplateFan({
   data,
   onChange,
   layout = "rail",
+  filter = "picks",
+  maxItems,
 }: {
   templateId: TemplateId;
   data: ResumeData;
   onChange: (id: TemplateId) => void;
-  layout?: "rail" | "grid" | "picker";
+  layout?: "rail" | "grid" | "picker" | "strip";
+  filter?: TemplateFilter;
+  maxItems?: number;
 }) {
   const currentRef = useRef<HTMLButtonElement>(null);
   const [narrow, setNarrow] = useState(false);
@@ -45,7 +51,8 @@ export function TemplateFan({
     return () => media.removeEventListener("change", sync);
   }, [layout]);
 
-  const frameW = layout === "picker" && narrow ? SIZE.pickerMobile : SIZE[layout];
+  const frameW =
+    layout === "picker" && narrow ? SIZE.pickerMobile : layout === "strip" ? SIZE.strip : SIZE[layout as keyof typeof SIZE];
   const scale = frameW / PAGE_W;
   const frameH = Math.ceil(PAGE_H * scale);
   const shiftY = (frameH - PAGE_H * scale) / 2;
@@ -66,11 +73,22 @@ export function TemplateFan({
     fan.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }, [templateId, layout]);
 
-  const offered = OFFERED_IDS.flatMap((id) => {
-    const found = TEMPLATES.find((item) => item.id === id);
-    return found ? [found] : [];
+  const catalog =
+    layout === "picker" || layout === "grid" || layout === "strip"
+      ? catalogFor(filter)
+      : catalogFor("picks");
+  const offered = catalog.flatMap((entry) => {
+    const found = TEMPLATES.find((item) => item.id === entry.id);
+    return found ? [{ ...found, blurb: entry.blurb }] : [];
   });
-  const shown = offered;
+  let shown: Array<(typeof TEMPLATES)[number] & { blurb?: string }> =
+    layout === "rail"
+      ? OFFERED_IDS.flatMap((id) => {
+          const found = TEMPLATES.find((item) => item.id === id);
+          return found ? [found] : [];
+        })
+      : offered;
+  if (maxItems != null) shown = shown.slice(0, maxItems);
 
   // Thumbnails keep each layout's own colour and type — look edits apply only
   // to the large preview on the right of the picker.
@@ -104,7 +122,15 @@ export function TemplateFan({
                   <ResumeSheet templateId={template.id} data={thumbData} preview fill />
                 </span>
               </span>
+              {current && (layout === "strip" || layout === "picker") ? (
+                <span className="fan-check" aria-hidden="true">
+                  <IconCheck />
+                </span>
+              ) : null}
               <span className="fan-name">{template.name}</span>
+              {layout === "picker" && template.blurb ? (
+                <span className="fan-blurb">{template.blurb}</span>
+              ) : null}
             </button>
           </Tilt>
         );

@@ -1228,8 +1228,7 @@
   position: relative;
   height: min(640px, 72vh);
   border-radius: 28px;
-  background:
-    linear-gradient(160deg, color-mix(in srgb, var(--blue-soft) 70%, white), #eef2f7 55%, #e6e6e6);
+  background: linear-gradient(160deg, var(--white) 0%, var(--gray) 100%);
   overflow: hidden;
   box-shadow: var(--shadow-3);
   border: 1px solid rgba(0, 0, 0, 0.04);
@@ -1514,7 +1513,51 @@
 }
 
 .board-ask-inner {
-  padding: 36px 0 56px;
+  padding: 0 0 56px;
+}
+
+.board-ask-hero {
+  padding: 28px clamp(16px, 4vw, 0) 22px;
+  margin-bottom: 8px;
+  background: var(--white);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.board-ask-hero .board-kicker {
+  color: var(--muted);
+}
+
+.board-ask-hero h1 {
+  margin: 8px 0 0;
+  max-width: 14ch;
+  color: var(--ink);
+}
+
+.board-ask-hero .board-lead {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.board-ask-hero .board-back {
+  color: var(--ink);
+}
+
+.board-ask-hero .board-back:hover {
+  color: var(--black);
+}
+
+.board-ask-body {
+  padding-top: 4px;
+}
+
+.board-ask-body .board-ask-cards {
+  margin-top: 20px;
+}
+
+.board-ask-body .board-drop,
+.board-ask-body .board-link-form {
+  margin-top: 20px;
 }
 
 .board-ask h1 {
@@ -1524,6 +1567,10 @@
   line-height: 0.95;
   letter-spacing: -0.045em;
   font-weight: 680;
+}
+
+.board-ask-hero h1 {
+  font-size: clamp(32px, 4.5vw, 48px);
 }
 
 .board-back {
@@ -1562,8 +1609,9 @@
 
 .board-ask-card:hover:not(:disabled) {
   transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--black) 22%, transparent);
+  border-color: var(--black);
   background: var(--white);
+  box-shadow: var(--shadow-2);
 }
 
 .board-ask-card:disabled { opacity: 0.7; cursor: default; }
@@ -1647,12 +1695,14 @@
   height: 48px;
   border: 0;
   border-radius: 12px;
-  background: #141414;
-  color: white;
+  background: var(--black);
+  color: var(--white);
   font: inherit;
   font-weight: 680;
   cursor: pointer;
 }
+
+.board-link-form button:hover { background: var(--ink-soft); }
 
 .board-note { margin-top: 16px; color: #5c6370; }
 
@@ -1678,7 +1728,7 @@
   width: 9px;
   height: 34px;
   border-radius: 999px;
-  background: var(--grad, linear-gradient(180deg, #3b63e8, #6fc5e8));
+  background: linear-gradient(180deg, var(--gray) 0%, var(--black) 100%);
   animation: board-busy-bounce 1.1s var(--ease, ease) infinite;
 }
 

@@ -52,8 +52,21 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json();
 }
 
-export function loadMine(ownerKey: string) {
-  return request<ResumeRecord>(`/api/resumes/mine?ownerKey=${encodeURIComponent(ownerKey)}`);
+export function loadMine(ownerKey: string, id?: string) {
+  const query = new URLSearchParams({ ownerKey });
+  if (id) query.set("id", id);
+  return request<ResumeRecord>(`/api/resumes/mine?${query}`);
+}
+
+export function listResumes(ownerKey: string) {
+  return request<ResumeRecord[]>(`/api/resumes?ownerKey=${encodeURIComponent(ownerKey)}`);
+}
+
+export function createResume(ownerKey: string) {
+  return request<ResumeRecord>("/api/resumes", {
+    method: "POST",
+    body: JSON.stringify({ ownerKey }),
+  });
 }
 
 export function ensureResume(ownerKey: string, templateId: TemplateId, category: Category, data: ResumeData) {

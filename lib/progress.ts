@@ -29,8 +29,10 @@ export function checkpoints(data: ResumeData): Checkpoint[] {
       id: "bio",
       label: "Short bio",
       hint: "Two or three lines up top",
-      done: summary.trim().length > 60,
-      tally: summary.trim() ? `${summary.trim().split(/\s+/).length} words` : "Empty",
+      done: summary.trim().length > 0,
+      tally: summary.trim()
+        ? `${summary.trim().split(/\s+/).length} ${summary.trim().split(/\s+/).length === 1 ? "word" : "words"}`
+        : "Empty",
     },
     {
       id: "experience",

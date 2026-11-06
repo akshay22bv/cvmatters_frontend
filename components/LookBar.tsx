@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { IconCheck } from "./icons";
 import {
-  ACCENTS,
+  SITE_COLOURS,
   FONTS,
   FONT_SIZE,
   LINE_HEIGHT,
@@ -24,6 +24,48 @@ type MetricSpec = {
 };
 
 type MenuId = "font" | "color" | "space" | "lead" | null;
+
+/** Inline swatch row — same choices as the look bar colour menu. */
+export function AccentSwatches({
+  accent,
+  onAccent,
+  className = "picker-colors",
+}: {
+  accent?: string;
+  onAccent: (hex: string | undefined) => void;
+  className?: string;
+}) {
+  return (
+    <div className={className} role="radiogroup" aria-label="Accent colour">
+      <button
+        type="button"
+        role="radio"
+        aria-checked={!accent}
+        aria-label="Template colour"
+        title="Template colour"
+        className={accent ? "swatch is-none" : "swatch is-none is-on"}
+        onClick={() => onAccent(undefined)}
+      >
+        {!accent ? <IconCheck /> : null}
+      </button>
+      {SITE_COLOURS.map((hex) => (
+        <button
+          key={hex}
+          type="button"
+          role="radio"
+          aria-checked={accent === hex}
+          aria-label={hex}
+          title={hex}
+          className={accent === hex ? "swatch is-on" : "swatch"}
+          style={{ background: hex }}
+          onClick={() => onAccent(hex)}
+        >
+          {accent === hex ? <IconCheck /> : null}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function parseMetric(raw: string) {
   const match = raw.trim().replace(",", ".").match(/-?\d*\.?\d+/);
@@ -136,11 +178,13 @@ export function LookBar({
   onFont,
   onAccent,
   onStyle,
+  hideAccent = false,
 }: {
   data: ResumeData;
   onFont: (id: FontId) => void;
   onAccent: (hex: string | undefined) => void;
   onStyle: (look: Pick<ResumeData, "typeSize" | "spacing" | "leading">) => void;
+  hideAccent?: boolean;
 }) {
   const [menu, setMenu] = useState<MenuId>(null);
   const root = useRef<HTMLDivElement>(null);
@@ -220,61 +264,39 @@ export function LookBar({
         onChange={(typeSize) => patchStyle({ typeSize })}
       />
 
-      <div className="look-sep" aria-hidden="true" />
+      {!hideAccent ? (
+        <>
+          <div className="look-sep" aria-hidden="true" />
 
-      <div className="look-slot">
-        <button
-          type="button"
-          className={menu === "color" ? "look-tool is-on" : "look-tool"}
-          aria-label="Colour"
-          aria-expanded={menu === "color"}
-          aria-haspopup="dialog"
-          title="Colour"
-          onClick={() => toggle("color")}
-        >
-          <span className="look-color-mark" aria-hidden="true">
-            A
-            <i style={{ background: accent || "linear-gradient(90deg,#f43f5e,#eab308,#22c55e,#3b82f6,#a855f7)" }} />
-          </span>
-        </button>
-        <Menu open={menu === "color"} label="Colour">
-          <p className="look-menu-title">Colour</p>
-          <div className="look-swatches" role="radiogroup" aria-label="Accent colour">
+          <div className="look-slot">
             <button
               type="button"
-              role="radio"
-              aria-checked={!accent}
-              aria-label="Template colour"
-              title="Template colour"
-              className={accent ? "swatch is-none" : "swatch is-none is-on"}
-              onClick={() => {
-                onAccent(undefined);
-                setMenu(null);
-              }}
+              className={menu === "color" ? "look-tool is-on" : "look-tool"}
+              aria-label="Colour"
+              aria-expanded={menu === "color"}
+              aria-haspopup="dialog"
+              title="Colour"
+              onClick={() => toggle("color")}
             >
-              {!accent ? <IconCheck /> : null}
+              <span className="look-color-mark" aria-hidden="true">
+                A
+                <i style={{ background: accent || "var(--ink)" }} />
+              </span>
             </button>
-            {ACCENTS.map((hex) => (
-              <button
-                key={hex}
-                type="button"
-                role="radio"
-                aria-checked={accent === hex}
-                aria-label={hex}
-                title={hex}
-                className={accent === hex ? "swatch is-on" : "swatch"}
-                style={{ background: hex }}
-                onClick={() => {
+            <Menu open={menu === "color"} label="Colour">
+              <p className="look-menu-title">Colour</p>
+              <AccentSwatches
+                accent={accent}
+                onAccent={(hex) => {
                   onAccent(hex);
                   setMenu(null);
                 }}
-              >
-                {accent === hex ? <IconCheck /> : null}
-              </button>
-            ))}
+                className="look-swatches"
+              />
+            </Menu>
           </div>
-        </Menu>
-      </div>
+        </>
+      ) : null}
 
       <div className="look-slot">
         <button

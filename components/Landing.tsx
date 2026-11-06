@@ -308,25 +308,37 @@ export function Landing({
         {ask && (
           <div className="board-ask" role="dialog" aria-labelledby="board-ask-title">
             <div className="board-rail board-ask-inner">
-              <button
-                type="button"
-                className="board-back"
-                onClick={() => {
-                  if (step === "choose") setAsk(null);
-                  else setStep("choose");
-                }}
-              >
-                Back
-              </button>
-              {step === "choose" && (
-                <>
-                  <p className="board-kicker">{ASK_TITLE[ask]}</p>
-                  <h1 id="board-ask-title">How should this start?</h1>
-                  <p className="board-lead is-narrow">
-                    {owned
+              <header className="board-ask-hero">
+                <button
+                  type="button"
+                  className="board-back"
+                  onClick={() => {
+                    if (step === "choose") setAsk(null);
+                    else setStep("choose");
+                  }}
+                >
+                  Back
+                </button>
+                <p className="board-kicker">{ASK_TITLE[ask]}</p>
+                <h1 id="board-ask-title">
+                  {step === "choose" && "How should this start?"}
+                  {step === "upload" && "Upload your CV"}
+                  {step === "linkedin" && "Import from LinkedIn"}
+                </h1>
+                <p className="board-lead is-narrow">
+                  {step === "choose" &&
+                    (owned
                       ? "This replaces the CV you have now. A blank page, a file you already have, or a LinkedIn profile."
-                      : "A blank page, a file you already have, or a LinkedIn profile."}
-                  </p>
+                      : "A blank page, a file you already have, or a LinkedIn profile.")}
+                  {step === "upload" &&
+                    `Drop the file. The sections come out of it, then this opens ${
+                      ask === "job" ? "the job post" : ask === "field" ? "resumes in your field" : "the editor"
+                    }.`}
+                  {step === "linkedin" && "A profile link opens a draft with your name on it."}
+                </p>
+              </header>
+              <div className="board-ask-body">
+              {step === "choose" && (
                   <div className="board-ask-cards">
                     <button type="button" className="board-ask-card" disabled={busy} onClick={() => onCreate(ask, layout)}>
                       <span className="board-ico">
@@ -356,16 +368,8 @@ export function Landing({
                       </span>
                     </button>
                   </div>
-                </>
               )}
               {step === "upload" && (
-                <>
-                  <p className="board-kicker">{ASK_TITLE[ask]}</p>
-                  <h1 id="board-ask-title">Upload your CV</h1>
-                  <p className="board-lead is-narrow">
-                    Drop the file. The sections come out of it, then this opens{" "}
-                    {ask === "job" ? "the job post" : ask === "field" ? "resumes in your field" : "the editor"}.
-                  </p>
                   <label
                     className={dragging ? "board-drop is-drag" : "board-drop"}
                     onDragOver={(event) => {
@@ -394,13 +398,9 @@ export function Landing({
                       }}
                     />
                   </label>
-                </>
               )}
               {step === "linkedin" && (
                 <>
-                  <p className="board-kicker">{ASK_TITLE[ask]}</p>
-                  <h1 id="board-ask-title">Import from LinkedIn</h1>
-                  <p className="board-lead is-narrow">A profile link opens a draft with your name on it.</p>
                   <form
                     className="board-link-form"
                     onSubmit={(event) => {
@@ -435,6 +435,7 @@ export function Landing({
               )}
               {busy && busyLabel ? <p className="board-note">{busyLabel}</p> : null}
               {error ? <p className="banner">{error}</p> : null}
+              </div>
             </div>
           </div>
         )}

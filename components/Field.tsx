@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type InputHTMLAttributes,
   type ReactNode,
 } from "react";
@@ -20,18 +21,18 @@ import { htmlToMarkdown, markdownToHtml } from "@/lib/richtext";
 export type Option = { id: string; name: string; hint?: string };
 
 export const MONTHS: Option[] = [
-  { id: "01", name: "January" },
-  { id: "02", name: "February" },
-  { id: "03", name: "March" },
-  { id: "04", name: "April" },
+  { id: "01", name: "Jan" },
+  { id: "02", name: "Feb" },
+  { id: "03", name: "Mar" },
+  { id: "04", name: "Apr" },
   { id: "05", name: "May" },
-  { id: "06", name: "June" },
-  { id: "07", name: "July" },
-  { id: "08", name: "August" },
-  { id: "09", name: "September" },
-  { id: "10", name: "October" },
-  { id: "11", name: "November" },
-  { id: "12", name: "December" },
+  { id: "06", name: "Jun" },
+  { id: "07", name: "Jul" },
+  { id: "08", name: "Aug" },
+  { id: "09", name: "Sep" },
+  { id: "10", name: "Oct" },
+  { id: "11", name: "Nov" },
+  { id: "12", name: "Dec" },
 ];
 
 const now = new Date().getFullYear();
@@ -39,6 +40,11 @@ export const YEARS: Option[] = Array.from({ length: now - 1969 }, (_, index) => 
   const year = String(now + 1 - index);
   return { id: year, name: year };
 });
+
+/** Ascending years for the wheel (older above, newer below). */
+const WHEEL_YEARS: Option[] = [...YEARS].reverse();
+
+const WHEEL_ITEM = 40;
 
 export function parseMonthYear(value: string) {
   const match = String(value || "").trim().match(/^(\d{1,2})\/(\d{4})$/);
@@ -49,7 +55,14 @@ export function parseMonthYear(value: string) {
 
 export function joinMonthYear(month: string, year: string) {
   if (!year) return "";
-  return `${month || "01"}/${year}`;
+  return month ? `${month}/${year}` : year;
+}
+
+export function formatMonthYear(value: string) {
+  const { month, year } = parseMonthYear(value);
+  if (!year) return "";
+  const label = MONTHS.find((item) => item.id === month)?.name;
+  return label ? `${label}/${year}` : year;
 }
 
 /* ------------------------------------------------------------- shell ---- */
@@ -927,6 +940,232 @@ export function SearchTags({
   );
 }
 
+function WheelColumn({
+  options,
+  value,
+  onChange,
+  blankLabel,
+}: {
+  options: Option[];
+  value: string;
+  onChange: (id: string) => void;
+  blankLabel?: string;
+}) {
+  const rows = useMemo(
+    () => (blankLabel ? [{ id: "", name: blankLabel }, ...options] : options),
+    [blankLabel, options],
+  );
+  const scroller = useRef<HTMLDivElement>(null);
+  const timer = useRef(0);
+  const dragging = useRef(false);
+  const skipSync = useRef(false);
+
+  const indexOf = useCallback(
+    (id: string) => Math.max(0, rows.findIndex((row) => row.id === id)),
+    [rows],
+  );
+
+  const snapTo = useCallback(
+    (id: string, smooth: boolean) => {
+      const node = scroller.current;
+      if (!node) return;
+      node.scrollTo({ top: indexOf(id) * WHEEL_ITEM, behavior: smooth ? "smooth" : "auto" });
+    },
+    [indexOf],
+  );
+
+  useLayoutEffect(() => {
+    if (skipSync.current || dragging.current) return;
+    snapTo(value, false);
+  }, [snapTo, value, rows.length]);
+
+  const settle = () => {
+    const node = scroller.current;
+    if (!node) return;
+    const index = Math.max(0, Math.min(rows.length - 1, Math.round(node.scrollTop / WHEEL_ITEM)));
+    const next = rows[index]?.id ?? "";
+    skipSync.current = true;
+    snapTo(next, true);
+    if (next !== value) onChange(next);
+    window.setTimeout(() => {
+      skipSync.current = false;
+    }, 220);
+  };
+
+  return (
+    <div className="my-wheel">
+      <div
+        ref={scroller}
+        className="my-wheel-scroll"
+        role="listbox"
+        aria-label={blankLabel ? "Month" : "Year"}
+        onTouchStart={() => {
+          dragging.current = true;
+        }}
+        onTouchEnd={() => {
+          dragging.current = false;
+          window.clearTimeout(timer.current);
+          timer.current = window.setTimeout(settle, 60);
+        }}
+        onMouseDown={() => {
+          dragging.current = true;
+        }}
+        onMouseUp={() => {
+          dragging.current = false;
+          window.clearTimeout(timer.current);
+          timer.current = window.setTimeout(settle, 60);
+        }}
+        onScroll={() => {
+          if (!dragging.current) {
+            window.clearTimeout(timer.current);
+            timer.current = window.setTimeout(settle, 80);
+          }
+        }}
+      >
+        <div className="my-wheel-pad" aria-hidden="true" />
+        {rows.map((row) => (
+          <div
+            key={row.id || "blank"}
+            role="option"
+            aria-selected={row.id === value}
+            className={`my-wheel-item${row.id === value ? " is-on" : ""}`}
+            onClick={() => {
+              skipSync.current = true;
+              onChange(row.id);
+              snapTo(row.id, true);
+              window.setTimeout(() => {
+                skipSync.current = false;
+              }, 220);
+            }}
+          >
+            {row.name}
+          </div>
+        ))}
+        <div className="my-wheel-pad" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
+
+function MonthYearField({
+  label,
+  value,
+  onChange,
+  disabled = false,
+  placeholder = "Month/Year",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  placeholder?: string;
+}) {
+  const id = useId();
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const parsed = parseMonthYear(value);
+  const [draftMonth, setDraftMonth] = useState(parsed.month);
+  const [draftYear, setDraftYear] = useState(parsed.year || String(now));
+  const shown = formatMonthYear(value);
+
+  const show = () => {
+    if (disabled) return;
+    const next = parseMonthYear(value);
+    setDraftMonth(next.month);
+    setDraftYear(next.year || String(now));
+    setOpen(true);
+  };
+
+  const close = (focusTrigger = true) => {
+    setOpen(false);
+    if (focusTrigger) trigger.current?.focus();
+  };
+
+  const commit = (month: string, year: string) => {
+    onChange(joinMonthYear(month, year));
+    close();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="fld">
+      <div className="fld-top">
+        <span className="fld-label" id={`${id}-label`}>
+          {label}
+        </span>
+      </div>
+      <button
+        ref={trigger}
+        id={id}
+        type="button"
+        className={`fld-box fld-trigger${open ? " is-open" : ""}`}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-labelledby={`${id}-label`}
+        disabled={disabled}
+        onClick={() => (open ? close() : show())}
+      >
+        <em className={shown ? "" : "is-empty"}>{shown || placeholder}</em>
+        <Chevron />
+      </button>
+
+      {open && typeof document !== "undefined"
+        ? createPortal(
+            <div className="my-sheet" role="dialog" aria-modal="true" aria-label={label}>
+              <button type="button" className="my-sheet-scrim" aria-label="Close" onClick={() => close()} />
+              <div className="my-sheet-panel">
+                <div className="my-sheet-bar">
+                  <button type="button" className="my-sheet-action" onClick={() => commit("", "")}>
+                    Clear
+                  </button>
+                  <button type="button" className="my-sheet-action is-strong" onClick={() => commit(draftMonth, draftYear)}>
+                    Done
+                  </button>
+                </div>
+                <div className="my-wheels">
+                  <div className="my-wheels-mark" aria-hidden="true" />
+                  <WheelColumn options={MONTHS} value={draftMonth} blankLabel="Select" onChange={setDraftMonth} />
+                  <WheelColumn options={WHEEL_YEARS} value={draftYear} onChange={setDraftYear} />
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
+    </div>
+  );
+}
+
+function subscribeMobile(onChange: () => void) {
+  const mq = window.matchMedia("(max-width: 860px)");
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+function useIsMobile() {
+  return useSyncExternalStore(
+    subscribeMobile,
+    () => window.matchMedia("(max-width: 860px)").matches,
+    () => false,
+  );
+}
+
 export function DateFields({
   start,
   end,
@@ -942,8 +1181,28 @@ export function DateFields({
   onEnd: (value: string) => void;
   onCurrent: (value: boolean) => void;
 }) {
+  const mobile = useIsMobile();
   const from = parseMonthYear(start);
   const to = parseMonthYear(end);
+
+  if (mobile) {
+    return (
+      <div className="date-pair span-all">
+        <MonthYearField label="Start date" value={start} onChange={onStart} />
+        <div className="date-end">
+          <MonthYearField
+            label="End date"
+            value={current ? "" : end}
+            placeholder={current ? "Present" : "Month/Year"}
+            disabled={current}
+            onChange={onEnd}
+          />
+          <CheckRow label="Current" checked={current} onChange={onCurrent} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="fld">

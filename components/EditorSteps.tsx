@@ -149,7 +149,6 @@ function BulletList({
             rows={1}
             value={line.text}
             aria-label={`What you did, line ${index + 1}`}
-            placeholder={index === 0 ? "e.g. Cut onboarding time in half with a new setup flow" : "Another result you owned"}
             onChange={(event) => {
               const value = event.target.value;
               if (!/[\n\r]/.test(value)) {
@@ -224,7 +223,6 @@ function BulletList({
         <button type="button" className="bullet-add" onClick={addAtEnd}>
           + Add another
         </button>
-        <span className="bullet-hint">Enter for next · paste a list anytime</span>
         <button type="button" className="ghost bullet-done" onClick={onDone}>
           Done
         </button>
@@ -415,9 +413,6 @@ export function DetailsStep({
           placeholder="dribbble.com/you"
           onChange={(value) => set("portfolio", value)}
         />
-        <p className="step-aside span-all">
-          Only print what you are happy to share.
-        </p>
       </div>
     </StepCard>
   );
@@ -496,7 +491,14 @@ export function ExperienceStep({
   useEffect(() => {
     if (!focusId) return;
     setEditing(focusId);
-    document.querySelector(`[data-entry="${focusId}"]`)?.scrollIntoView({ block: "nearest" });
+    const node = document.querySelector(`[data-entry="${focusId}"]`) as HTMLElement | null;
+    const pane = node?.closest(".work-scroll") as HTMLElement | null;
+    if (!node || !pane) return;
+    const pad = 24;
+    const paneBox = pane.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    if (box.top < paneBox.top + pad) pane.scrollTop -= paneBox.top + pad - box.top;
+    else if (box.bottom > paneBox.bottom - pad) pane.scrollTop += box.bottom - (paneBox.bottom - pad);
   }, [focusId, focusTick]);
 
   const update = (id: string, patch: Partial<ResumeData["experience"][number]>) => {
@@ -546,7 +548,6 @@ export function ExperienceStep({
                 <div className="desc-head">
                   <div className="desc-copy">
                     <span className="block-label">What you did</span>
-                    <p className="desc-hint">One result per line. Paste a few at once if you already have them.</p>
                   </div>
                   <button
                     type="button"
@@ -624,7 +625,14 @@ export function EducationStep({
   useEffect(() => {
     if (!focusId) return;
     setEditing(focusId);
-    document.querySelector(`[data-entry="${focusId}"]`)?.scrollIntoView({ block: "nearest" });
+    const node = document.querySelector(`[data-entry="${focusId}"]`) as HTMLElement | null;
+    const pane = node?.closest(".work-scroll") as HTMLElement | null;
+    if (!node || !pane) return;
+    const pad = 24;
+    const paneBox = pane.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    if (box.top < paneBox.top + pad) pane.scrollTop -= paneBox.top + pad - box.top;
+    else if (box.bottom > paneBox.bottom - pad) pane.scrollTop += box.bottom - (paneBox.bottom - pad);
   }, [focusId, focusTick]);
   const update = (id: string, patch: Partial<ResumeData["education"][number]>) => {
     onData({ ...data, education: data.education.map((item) => (item.id === id ? { ...item, ...patch } : item)) });

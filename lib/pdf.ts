@@ -31,21 +31,87 @@ function stylesheetText() {
   return parts.join("\n").replace(/<\/style/gi, "<\\/style");
 }
 
+const GENERIC_FAMILIES = new Set(["sans-serif", "serif", "monospace", "cursive", "fantasy", "system-ui", "emoji", "math", "fangsong", "ui-sans-serif", "ui-serif", "ui-monospace"]);
+
+/** Family names actually painted on the resume, so the file carries those fonts and not a fallback. */
+function usedFontFamilies() {
+  const names = new Set<string>();
+  const root = document.querySelector(".print-root");
+  if (!root) return names;
+  for (const node of [root, ...root.querySelectorAll("*")]) {
+    const family = getComputedStyle(node).fontFamily;
+    for (const part of family.split(",")) {
+      const name = part.trim().replace(/^['"]|['"]$/g, "");
+      if (!name || GENERIC_FAMILIES.has(name.toLowerCase()) || name.endsWith("Fallback")) continue;
+      names.add(name);
+    }
+  }
+  return names;
+}
+
+function faceFamily(block: string) {
+  const match = block.match(/font-family:\s*([^;]+);/i);
+  if (!match) return "";
+  return match[1].trim().replace(/^['"]|['"]$/g, "");
+}
+
+/** Drop webfonts the page never uses, and keep the ones it does inside the file. */
+async function embedUsedFonts(css: string) {
+  const families = usedFontFamilies();
+  const kept = css.replace(/@font-face\s*\{[^}]*\}/g, (block) => {
+    const family = faceFamily(block);
+    if (!family) return block;
+    if (families.has(family) || family.endsWith("Fallback") || !/url\(/.test(block)) return block;
+    return "";
+  });
+  const urls = new Set<string>();
+  for (const match of kept.matchAll(/url\((['"]?)([^'")]+)\1\)/g)) {
+    const url = match[2].trim();
+    if (!url.startsWith("data:") && /\.(?:woff2?|ttf|otf)(?:\?|$)/i.test(url)) urls.add(url);
+  }
+  const replacements = new Map<string, string>();
+  await Promise.all(
+    [...urls].map(async (url) => {
+      try {
+        const response = await fetch(new URL(url, location.origin).href);
+        if (!response.ok) return;
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        let binary = "";
+        for (let index = 0; index < bytes.length; index += 0x8000) {
+          binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+        }
+        const ext = url.split("?")[0].split(".").pop()?.toLowerCase();
+        const type = ext === "woff2" ? "font/woff2" : ext === "woff" ? "font/woff" : ext === "otf" ? "font/otf" : "font/ttf";
+        replacements.set(url, `data:${type};base64,${btoa(binary)}`);
+      } catch {
+        // a face that cannot be read stays as an address; the others still match the page
+      }
+    }),
+  );
+  return kept
+    .replace(/url\((['"]?)([^'")]+)\1\)/g, (match, quote: string, raw: string) => {
+      const data = replacements.get(raw.trim());
+      return data ? `url(${quote}${data}${quote})` : match;
+    })
+    .replace(/font-display:\s*swap/gi, "font-display:block");
+}
+
 function attr(value: string) {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 }
 
-/** The pages, plus the CSS and font classes that dress them, as one document. */
-function printDocument() {
+/** The pages, plus the CSS and the same font files the preview uses, as one document. */
+async function printDocument() {
   const root = document.querySelector(".print-root");
   if (!root || !pages().length) throw new Error("Nothing to download");
   const markup = root.outerHTML.replace(/<script[\s\S]*?<\/script>/gi, "");
+  const css = await embedUsedFonts(stylesheetText());
   return `<!doctype html>
 <html class="${attr(document.documentElement.className)}">
 <head>
 <meta charset="utf-8">
 <base href="${location.origin}/">
-<style>${stylesheetText()}</style>
+<style>${css}</style>
 <style>
   @page { size: A4; margin: 0; }
   html, body {
@@ -138,7 +204,7 @@ async function downloadServerPdf(name: string) {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ html: printDocument() }),
+    body: JSON.stringify({ html: await printDocument() }),
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));

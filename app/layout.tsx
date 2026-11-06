@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   DM_Sans,
   Inter,
@@ -44,6 +44,16 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "CV Matters",
   description: "Paste a job description, edit your CV for it, and read resumes from people in your field.",
+};
+
+/** Keyboard overlays the page instead of resizing it — stops mobile field shake. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  interactiveWidget: "overlays-content",
 };
 
 const fontVars = [

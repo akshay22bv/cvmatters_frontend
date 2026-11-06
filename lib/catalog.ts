@@ -79,9 +79,10 @@ export const TEMPLATE_FILTERS = [
   { id: "photo", label: "With photo" },
 ] as const;
 
-export type TemplateFilter = (typeof TEMPLATE_FILTERS)[number]["id"];
+export type TemplateFilter = (typeof TEMPLATE_FILTERS)[number]["id"] | "all";
 
 export function catalogFor(filter: TemplateFilter) {
+  if (filter === "all") return CATALOG;
   if (filter === "picks") return offeredCatalog();
   if (filter === "photo") return offeredCatalog().filter((item) => item.photo);
   return offeredCatalog().filter((item) => item.kind === filter);

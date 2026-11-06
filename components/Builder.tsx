@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthDialog } from "./AuthDialog";
 import { AppNav } from "./AppNav";
-import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep, STEP_PAGES } from "./EditorSteps";
+import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
 import { ExamplesStep } from "./ExamplesStep";
 import { ExtrasStep } from "./ExtrasStep";
 import { JobStep } from "./JobStep";
@@ -15,7 +15,11 @@ import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { Landing, type DashIntent } from "./Landing";
 import { Aurora } from "./motion";
-import { AppDock, DOCK_ORDER, WorkHead } from "./SideNav";
+import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue } from "./CvChrome";
+import { DOCK_ORDER } from "./SideNav";
+
+/** Phone Continue skips the job post and the field browser. The desktop rail still lists both. */
+const PHONE_STEPS = DOCK_ORDER.filter((id) => id !== "job" && id !== "reference");
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
 import { IconDownload, IconEye, IconPalette } from "./icons";
@@ -28,7 +32,7 @@ import { stepErrors } from "@/lib/validate";
 import { useAccount } from "@/lib/useAccount";
 import { downloadResumePdf, printResume } from "@/lib/pdf";
 import { newId } from "@/lib/id";
-import { FLOW, isFontId, readTemplateId, templateName, type Category, type PanelId, type RatingSummary, type ResumeData, type ResumeRecord, type StepId, type TemplateId } from "@/lib/types";
+import { isFontId, readTemplateId, templateName, type Category, type PanelId, type RatingSummary, type ResumeData, type ResumeRecord, type TemplateId } from "@/lib/types";
 
 type Snapshot = {
   id: string | null;
@@ -42,6 +46,7 @@ type Snapshot = {
 };
 
 const OWNER_KEY = "cv-matters-owner";
+const ACTIVE_KEY = "cv-matters-active";
 
 function ownerKey() {
   const existing = localStorage.getItem(OWNER_KEY);
@@ -49,10 +54,6 @@ function ownerKey() {
   const created = newId();
   localStorage.setItem(OWNER_KEY, created);
   return created;
-}
-
-function isStep(panel: PanelId | null): panel is StepId {
-  return !!panel && (FLOW as readonly string[]).includes(panel);
 }
 
 function fileToBase64(file: File) {
@@ -92,6 +93,7 @@ export default function Builder() {
   const [picked, setPicked] = useState<{ section: PanelId; focusId?: string; tick: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [lookIntent, setLookIntent] = useState<"layout" | "look">("layout");
   const [profileOpen, setProfileOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [showErrors, setShowErrors] = useState(false);
@@ -124,6 +126,7 @@ export default function Builder() {
 
   const applyRecord = (record: ResumeRecord) => {
     booted.current = false;
+    sessionStorage.setItem(ACTIVE_KEY, record.id);
     setSnapshot({
       id: record.id,
       templateId: readTemplateId(record.templateId),
@@ -175,9 +178,12 @@ export default function Builder() {
   useEffect(() => {
     let cancelled = false;
     owner.current = ownerKey();
-    loadMine(owner.current)
+    const active = sessionStorage.getItem(ACTIVE_KEY) || "";
+    const open = (id?: string) => loadMine(owner.current, id);
+    open(active || undefined)
+      .catch(() => (active ? open() : Promise.reject(new Error("None"))))
       .then((record) => {
-        if (cancelled) return;
+        if (cancelled || !record) return;
         applyRecord(record);
         setMode("ready");
       })
@@ -219,7 +225,16 @@ export default function Builder() {
     scrollRef.current?.scrollTo({ top: 0 });
   }, [panel, page]);
 
-  const dockIndex = panel ? DOCK_ORDER.indexOf(panel) : -1;
+  const steps = useSyncExternalStore(
+    (notify) => {
+      const media = window.matchMedia("(max-width: 860px)");
+      media.addEventListener("change", notify);
+      return () => media.removeEventListener("change", notify);
+    },
+    () => (window.matchMedia("(max-width: 860px)").matches ? PHONE_STEPS : DOCK_ORDER),
+    () => DOCK_ORDER,
+  );
+  const dockIndex = panel ? steps.indexOf(panel) : -1;
 
   const onSwipeStart = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -243,8 +258,8 @@ export default function Builder() {
     if (!start || start.locked !== "x" || dockIndex < 0) return;
     const dx = event.clientX - start.x;
     if (Math.abs(dx) < 56) return;
-    if (dx < 0 && dockIndex < DOCK_ORDER.length - 1) goPanel(DOCK_ORDER[dockIndex + 1]);
-    else if (dx > 0 && dockIndex > 0) goPanel(DOCK_ORDER[dockIndex - 1]);
+    if (dx < 0 && dockIndex < steps.length - 1) goPanel(steps[dockIndex + 1]);
+    else if (dx > 0 && dockIndex > 0) goPanel(steps[dockIndex - 1]);
   };
 
   useEffect(() => {
@@ -378,9 +393,6 @@ export default function Builder() {
     else void download();
   };
 
-  const flowIndex = isStep(panel) ? FLOW.indexOf(panel) : -1;
-  const pageCount = isStep(panel) ? STEP_PAGES[panel] || 1 : 1;
-  const lastPage = page >= pageCount - 1;
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
   const referenceOpen = panel === "reference";
@@ -555,24 +567,32 @@ export default function Builder() {
             patch({ slug, isPublic });
             live.current = { ...live.current, slug, isPublic };
           }}
+          onUse={(record) => {
+            applyRecord(record);
+            router.push("/cv/details");
+          }}
         />
       )}
 
       {(view.kind === "cv" || view.kind === "examples") && (
-      <div className="layout">
+      <div className="cv-editor-shell">
+        <CvSectionRail
+          panel={panel}
+          data={snapshot.data}
+          jobDescription={snapshot.jobDescription}
+          onPanel={goPanel}
+        />
+        <div className="layout">
         <main className="work">
-          <WorkHead
-            saveState={saveState}
-            account={account}
-            photoUrl={snapshot.data.personal.photoUrl}
+          <CvMobileChrome
+            panel={panel}
+            downloading={downloading}
             onPreview={() => setPreviewOpen(true)}
-            onSignIn={() => undefined}
-            onPlans={() => {
-              afterGate.current = null;
-              setGateReason("");
-              setGate("plan");
+            onDownload={() => requestPdf("download")}
+            onTemplate={() => {
+              setLookIntent("look");
+              setTemplatesOpen(true);
             }}
-            onProfile={() => router.push("/profile")}
           />
           <div
             className="work-scroll"
@@ -704,67 +724,58 @@ export default function Builder() {
             </div>
           </div>
 
-          <div className="work-bar">
-            <div className="work-bar-side is-start" />
-            <AppDock panel={panel} onPanel={goPanel} />
-            <div className="work-bar-side is-end">
-              {isStep(panel) && (
-                <>
-                  <button
-                    type="button"
-                    className="step-view"
-                    aria-label="View CV"
-                    onClick={() => setPreviewOpen(true)}
-                  >
-                    <IconEye />
-                  </button>
-                  <button
-                    type="button"
-                    className="step-next"
-                    onClick={async () => {
-                      const found = stepErrors(panel, page, live.current.data);
-                      if (Object.keys(found).length) {
-                        setShowErrors(true);
-                        scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-                        return;
-                      }
-                      if (!lastPage) {
-                        setPage(page + 1);
-                        return;
-                      }
-                      await flush();
-                      if (dockIndex >= 0 && dockIndex < DOCK_ORDER.length - 1) {
-                        goPanel(DOCK_ORDER[dockIndex + 1]);
-                        return;
-                      }
-                      requestPdf("download");
-                    }}
-                  >
-                    {dockIndex === DOCK_ORDER.length - 1 && lastPage
-                      ? account.entitlement.canDownload
-                        ? "Download"
-                        : "Unlock"
-                      : "Next"}
-                  </button>
-                </>
-              )}
+          {dockIndex >= 0 && (
+            <div className="work-bar">
+              <SliceBack
+                disabled={dockIndex <= 0}
+                onClick={() => {
+                  if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
+                }}
+              />
+              <SliceContinue
+                label={dockIndex >= steps.length - 1 ? "Download" : "Continue"}
+                onClick={async () => {
+                  const found = panel ? stepErrors(panel, page, live.current.data) : {};
+                  if (Object.keys(found).length) {
+                    setShowErrors(true);
+                    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                    return;
+                  }
+                  await flush();
+                  if (dockIndex < steps.length - 1) {
+                    goPanel(steps[dockIndex + 1]);
+                    return;
+                  }
+                  requestPdf("download");
+                }}
+              />
             </div>
-          </div>
+          )}
         </main>
 
         <aside className="look">
           <div className="look-sheet">
             {!stageRecord && (
               <div className="look-head">
-                <div className="look-pills">
-                  <button type="button" className="look-swap" onClick={() => setTemplatesOpen(true)}>
-                    Change template
-                  </button>
-                  <button type="button" className="look-ats" aria-label="Edit look" title="Edit look" onClick={() => setTemplatesOpen(true)}>
+                <div className="look-actions" role="toolbar" aria-label="Resume look">
+                  <button
+                    type="button"
+                    className="look-action is-main"
+                    onClick={() => {
+                      setLookIntent("look");
+                      setTemplatesOpen(true);
+                    }}
+                  >
                     <IconPalette />
+                    <span>Template</span>
                   </button>
-                  <button type="button" className="look-ats" aria-label="Full view" title="Full view" onClick={() => setPreviewOpen(true)}>
+                  <button type="button" className="look-action" onClick={() => setPreviewOpen(true)}>
                     <IconEye />
+                    <span>Preview</span>
+                  </button>
+                  <button type="button" className="look-action" disabled={downloading} onClick={() => requestPdf("download")}>
+                    <IconDownload />
+                    <span>{downloading ? "Building…" : "Download"}</span>
                   </button>
                 </div>
               </div>
@@ -809,6 +820,7 @@ export default function Builder() {
           </div>
         </aside>
       </div>
+      </div>
       )}
 
       {previewOpen && (
@@ -821,23 +833,6 @@ export default function Builder() {
             <button type="button" className="preview-sheet-close" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
               ×
             </button>
-          </div>
-          <div className="preview-sheet-who">
-            <p>
-              {sharedPreview ? sharedPreview.data.personal.fullName || "Shared resume" : snapshot.data.personal.fullName || "Your CV"}
-              <span>{templateName(sharedPreview ? sharedPreview.templateId : snapshot.templateId)}</span>
-            </p>
-            {!sharedPreview ? (
-              <button
-                type="button"
-                className="preview-sheet-look"
-                aria-label="Edit look"
-                title="Edit look"
-                onClick={() => setTemplatesOpen(true)}
-              >
-                <IconPalette />
-              </button>
-            ) : null}
           </div>
           {sharedPreview && !sharedOwn ? (
             <div className="preview-rate">
@@ -905,6 +900,7 @@ export default function Builder() {
 
       <TemplateDialog
         open={templatesOpen}
+        intent={lookIntent}
         templateId={snapshot.templateId}
         data={snapshot.data}
         onClose={() => setTemplatesOpen(false)}
