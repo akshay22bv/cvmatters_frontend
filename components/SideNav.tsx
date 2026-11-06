@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import {
   IconBio,
   IconDownload,
-  IconLayers,
   IconPage,
   IconSchool,
   IconSkills,
@@ -30,7 +29,6 @@ export const SECTIONS: {
   { id: "extras", title: "Extra sections", body: "Projects, awards, languages, and more.", label: "Extra", Icon: IconPage },
   { id: "job", title: "Job post", body: "Paste the role you are aiming at.", label: "Job", Icon: IconTarget },
   { id: "compare", title: "Download", body: "Take a PDF when the page is ready.", label: "PDF", Icon: IconDownload },
-  { id: "reference", title: "Your field", body: "See how strong CVs in your line look.", label: "Field", Icon: IconLayers },
 ];
 
 /** Section order — used when swiping the form sideways between panels. */

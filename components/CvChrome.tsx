@@ -12,11 +12,14 @@ export function CvSectionRail({
   data,
   jobDescription = "",
   onPanel,
+  examplesActive = false,
 }: {
   panel: PanelId | null;
   data: ResumeData;
   jobDescription?: string;
   onPanel: (id: PanelId) => void;
+  /** True on /examples — CV step icons stay neutral; examples link is highlighted. */
+  examplesActive?: boolean;
 }) {
   const filled = new Set(SECTIONS.filter((item) => sectionFilled(item.id, data, jobDescription)).map((item) => item.id));
   const pathname = usePathname();
@@ -31,7 +34,7 @@ export function CvSectionRail({
       </div>
       <nav className="slice-rail-nav">
         {SECTIONS.map((item) => {
-          const on = panel === item.id;
+          const on = !examplesActive && panel === item.id;
           const done = filled.has(item.id);
           return (
             <button
@@ -49,6 +52,14 @@ export function CvSectionRail({
         })}
       </nav>
       <div className="slice-rail-foot">
+        <Link
+          href="/examples"
+          className={`slice-rail-examples${examplesActive ? " is-on" : ""}`}
+          aria-label="CV examples in your field"
+          title="CV examples"
+        >
+          <IconLayers />
+        </Link>
         <Link
           href="/profile"
           className={`slice-rail-profile${onProfile ? " is-on" : ""}`}
@@ -176,6 +187,23 @@ export function SliceContinue({
       <span>{label}</span>
       <span className="slice-continue-arrow" aria-hidden="true">
         <IconChevronRight />
+      </span>
+    </button>
+  );
+}
+
+/** Same shell as Continue: white pill + circle icon — opens template picker from the step footer. */
+export function SliceViewTemplate({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" className="slice-template-view" onClick={onClick}>
+      <span className="slice-template-view-icon" aria-hidden="true">
+        <IconEye />
+      </span>
+      <span className="slice-template-view-label">
+        <span className="slice-template-view-label-long">View template</span>
+        <span className="slice-template-view-label-short" aria-hidden="true">
+          Template
+        </span>
       </span>
     </button>
   );

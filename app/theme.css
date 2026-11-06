@@ -1,25 +1,26 @@
 /*
-  Theme — four colors only
-  White surfaces, charcoal ink, light grey lines, lime accent.
+  Theme — restrained palette
+  Pure white surfaces, charcoal ink, light grey lines, royal blue + teal accents.
 */
 
 :root {
   --black: #0a0a0a;
   --white: #ffffff;
-  --gray: #f4f4f4;
-  --gray-soft: #fafafa;
-  --gray-muted: #e8e8e8;
-  --lime: #c5e08b;
-  --lime-deep: #8fb34a;
-  --lime-soft: #eef6dc;
+  --gray: #f4f4f5;
+  --gray-soft: #ffffff;
+  --gray-muted: #e4e4e7;
+  /* Legacy names kept so existing references keep working */
+  --lime: #2563eb;
+  --lime-deep: #1d4ed8;
+  --lime-soft: #eff6ff;
 
   --peach: var(--lime-soft);
   --peach-deep: var(--lime);
 
-  --bg: var(--gray-soft);
-  --bg-deep: var(--black);
-  --bg-glow: var(--lime-soft);
-  --bg-glow-2: var(--gray);
+  --bg: var(--white);
+  --bg-deep: #0f172a;
+  --bg-glow: #f4f4f5;
+  --bg-glow-2: #fafafa;
   --header: var(--black);
   --bar: var(--white);
   --bar-ink: var(--black);
@@ -27,7 +28,7 @@
   --card: var(--white);
   --soft: rgba(10, 10, 10, 0.04);
   --tab: var(--gray);
-  --preview: var(--gray-soft);
+  --preview: var(--white);
   --field: var(--white);
   --field-line: rgba(10, 10, 10, 0.12);
   --field-hover: rgba(10, 10, 10, 0.42);
@@ -54,29 +55,29 @@
   --cta: var(--black);
   --cta-ink: var(--white);
   --accent: var(--lime-deep);
-  --accent-strong: var(--black);
+  --accent-strong: #0f172a;
   --accent-soft: var(--lime-soft);
-  --iris: var(--lime-deep);
-  --mint: var(--lime);
+  --iris: #0d9488;
+  --mint: #14b8a6;
   --flare: var(--lime);
   --danger: var(--bad);
 
-  --grad: linear-gradient(120deg, var(--lime) 0%, var(--lime-deep) 100%);
-  --grad-soft: linear-gradient(160deg, var(--lime-soft) 0%, var(--white) 70%);
+  --grad: linear-gradient(120deg, var(--lime) 0%, #0d9488 100%);
+  --grad-soft: linear-gradient(160deg, #fafafa 0%, var(--white) 78%);
 
-  --wash-lime: var(--lime-soft);
-  --wash-green: var(--lime-soft);
+  --wash-lime: #f8fafc;
+  --wash-green: #f0fdfa;
   --wash-pink: var(--gray);
-  --wash-lime-soft: var(--lime-soft);
-  --wash-green-soft: var(--lime-soft);
-  --wash-pink-soft: var(--gray-soft);
+  --wash-lime-soft: #f1f5f9;
+  --wash-green-soft: #ecfeff;
+  --wash-pink-soft: var(--gray);
 
   --shadow-1: 0 2px 6px rgba(10, 10, 10, 0.06);
   --shadow-2: 0 8px 20px rgba(10, 10, 10, 0.08);
   --shadow-3: 0 16px 32px rgba(10, 10, 10, 0.1);
   --shadow-4: 0 24px 48px rgba(10, 10, 10, 0.12);
   --shadow: var(--shadow-2);
-  --ring: 0 0 0 3px color-mix(in srgb, var(--lime) 55%, transparent);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--lime) 35%, transparent);
 
   --radius: 16px;
   --radius-lg: 24px;

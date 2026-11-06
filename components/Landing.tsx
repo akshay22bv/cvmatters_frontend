@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { IconCreate, IconDrop, IconLinkedin, IconUpload } from "./icons";
+import { IconChevronRight, IconCreate, IconDrop, IconLinkedin, IconUpload } from "./icons";
 import { Reveal, Tilt } from "./motion";
 import { ResumeSheet } from "./ResumeSheet";
-import { loadGallery } from "@/lib/api";
 import { offeredCatalog } from "@/lib/catalog";
 import { sampleForTemplate } from "@/lib/content";
-import { templateName, type ResumeData, type ResumeRecord, type TemplateId } from "@/lib/types";
+import { templateName, type ResumeData, type TemplateId } from "@/lib/types";
 
 export type DashIntent = "build" | "job" | "field";
 
@@ -21,8 +20,8 @@ const ABOUT = [
     body: "Single-column templates with standard headings. Easy for hiring software to read.",
   },
   {
-    title: "Job and field help",
-    body: "Paste a posting to steer your wording, or browse resumes people in your line shared.",
+    title: "Job-tuned copy",
+    body: "Paste a posting to steer your summary and bullets toward what that role asks for.",
   },
 ] as const;
 
@@ -51,7 +50,7 @@ function parseLinkedin(input: string) {
 }
 
 /**
- * Home: product story, three ways in, templates, shared examples, and a footer.
+ * Home: product story, three ways in, templates, and a footer.
  * The CV itself lives in the builder once you start.
  */
 export function Landing({
@@ -81,7 +80,6 @@ export function Landing({
   const [dragging, setDragging] = useState(false);
   const [link, setLink] = useState("");
   const [linkError, setLinkError] = useState("");
-  const [examples, setExamples] = useState<ResumeRecord[]>([]);
   const templates = useMemo(() => offeredCatalog(), []);
   const heroTemplate = templateId || "mint";
   const heroData = data || sampleForTemplate(heroTemplate);
@@ -93,24 +91,6 @@ export function Landing({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [ask]);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadGallery()
-      .then((rows) => {
-        if (cancelled) return;
-        const filled = rows.filter(
-          (row) => !row.isMine && row.data.personal.fullName.trim() && row.data.summary.trim(),
-        );
-        setExamples(filled.slice(0, 10));
-      })
-      .catch(() => {
-        if (!cancelled) setExamples([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const owned = !!data;
 
@@ -149,20 +129,15 @@ export function Landing({
               <p className="board-kicker">Resume builder</p>
               <h1 className="board-brand">CV Matters</h1>
               <p className="board-lead">
-                Build a clean CV, tune it to a job post, and see how people in your field write theirs.
+                Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts.
               </p>
               <div className="board-cta">
-                <button type="button" className="board-cta-main" disabled={busy} onClick={() => pickIntent("build")}>
-                  {owned ? "Open your CV" : "Create my resume"}
+                <button type="button" className="board-pill board-pill-primary" disabled={busy} onClick={() => pickIntent("build")}>
+                  <span className="board-pill-label">{owned ? "Open your CV" : "Create my resume"}</span>
+                  <span className="board-pill-icon" aria-hidden="true">
+                    <IconChevronRight />
+                  </span>
                 </button>
-                <div className="board-cta-links">
-                  <button type="button" disabled={busy} onClick={() => pickIntent("job")}>
-                    Match a job
-                  </button>
-                  <button type="button" disabled={busy} onClick={() => pickIntent("field")}>
-                    Browse your field
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -175,6 +150,44 @@ export function Landing({
             </div>
           </div>
         </header>
+
+        <article className="board-section board-section-actions" aria-label="More ways to start">
+          <div className="board-rail">
+            <Reveal className="board-intro" blur={false}>
+              <p className="board-kicker">Go further</p>
+              <h2 className="board-heading">Tailor to a role or see your industry</h2>
+              <p className="board-lead is-narrow">
+                Same editor—pick the path that fits what you need next.
+              </p>
+            </Reveal>
+            <div className="board-action-cards">
+              <Reveal className="board-action-card" delay={40} blur={false}>
+                <h3 className="board-action-title">Match a job</h3>
+                <p className="board-action-body">
+                  Paste a posting and we steer your summary and experience toward that role.
+                </p>
+                <button type="button" className="board-pill board-pill-outline" disabled={busy} onClick={() => pickIntent("job")}>
+                  <span className="board-pill-label">Continue</span>
+                  <span className="board-pill-icon" aria-hidden="true">
+                    <IconChevronRight />
+                  </span>
+                </button>
+              </Reveal>
+              <Reveal className="board-action-card" delay={100} blur={false}>
+                <h3 className="board-action-title">Browse your field</h3>
+                <p className="board-action-body">
+                  Open shared CVs from people in your line to see tone, structure, and strengths.
+                </p>
+                <button type="button" className="board-pill board-pill-outline" disabled={busy} onClick={() => pickIntent("field")}>
+                  <span className="board-pill-label">Continue</span>
+                  <span className="board-pill-icon" aria-hidden="true">
+                    <IconChevronRight />
+                  </span>
+                </button>
+              </Reveal>
+            </div>
+          </div>
+        </article>
 
         <article className="board-section is-soft">
           <div className="board-rail">
@@ -236,53 +249,6 @@ export function Landing({
           </div>
         </article>
 
-        <article className="board-section" id="examples">
-          <div className="board-rail">
-            <Reveal className="board-intro is-row" blur={false}>
-              <div>
-                <p className="board-kicker">Your field</p>
-                <h2 className="board-heading">Resumes in your field</h2>
-                <p className="board-lead is-narrow">
-                  Shared CVs from people willing to show how they wrote theirs.
-                </p>
-              </div>
-              <a className="board-link-btn" href="/examples">
-                Browse all examples
-              </a>
-            </Reveal>
-          </div>
-
-          {examples.length > 0 ? (
-            <div className="board-gallery" role="list" aria-label="Shared resumes">
-              {examples.map((item, index) => (
-                <Tilt key={item.id} className="board-tile-tilt" max={4} lift={8}>
-                  <a className="board-tile" role="listitem" href="/examples" style={{ animationDelay: `${index * 40}ms` }}>
-                    <span className="board-tile-stage" aria-hidden="true">
-                      <span className="board-tile-paper">
-                        <ResumeSheet templateId={item.templateId} data={item.data} preview fill />
-                      </span>
-                    </span>
-                    <span className="board-tile-meta">
-                      <strong>{item.data.personal.fullName || "Untitled"}</strong>
-                      <em>
-                        {item.data.personal.title || item.category}
-                        {" · "}
-                        {templateName(item.templateId)}
-                      </em>
-                    </span>
-                  </a>
-                </Tilt>
-              ))}
-            </div>
-          ) : (
-            <div className="board-rail">
-              <Reveal delay={80}>
-                <p className="board-empty">Open the gallery to read shared resumes as they land.</p>
-              </Reveal>
-            </div>
-          )}
-        </article>
-
         <footer className="board-foot">
           <div className="board-rail board-foot-grid">
             <div className="board-foot-copy">
@@ -290,17 +256,30 @@ export function Landing({
               <p>Write a resume, match a job, and learn from people in your field.</p>
             </div>
             <nav className="board-foot-nav" aria-label="Footer">
-              <button type="button" disabled={busy} onClick={() => pickIntent("build")}>
-                Build your CV
+              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("build")}>
+                <span className="board-pill-label">Build your CV</span>
+                <span className="board-pill-icon" aria-hidden="true">
+                  <IconChevronRight />
+                </span>
               </button>
-              <button type="button" disabled={busy} onClick={() => pickIntent("job")}>
-                Match a job
+              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("job")}>
+                <span className="board-pill-label">Match a job</span>
+                <span className="board-pill-icon" aria-hidden="true">
+                  <IconChevronRight />
+                </span>
               </button>
-              <button type="button" disabled={busy} onClick={() => pickIntent("field")}>
-                Your field
+              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("field")}>
+                <span className="board-pill-label">Your field</span>
+                <span className="board-pill-icon" aria-hidden="true">
+                  <IconChevronRight />
+                </span>
               </button>
-              <a href="#templates">Templates</a>
-              <a href="#examples">Examples</a>
+              <a className="board-foot-link" href="#templates">
+                Templates
+              </a>
+              <a className="board-foot-link" href="/examples">
+                Examples
+              </a>
             </nav>
           </div>
         </footer>
@@ -426,8 +405,11 @@ export function Landing({
                         onChange={(event) => setLink(event.target.value)}
                       />
                     </label>
-                    <button type="submit" disabled={busy}>
-                      Continue
+                    <button type="submit" className="board-pill board-pill-outline" disabled={busy}>
+                      <span className="board-pill-label">Continue</span>
+                      <span className="board-pill-icon" aria-hidden="true">
+                        <IconChevronRight />
+                      </span>
                     </button>
                   </form>
                   {linkError ? <p className="banner">{linkError}</p> : null}

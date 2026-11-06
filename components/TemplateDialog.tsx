@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AccentSwatches } from "./LookBar";
 import { SpacingPicker, TextSizePicker } from "./DesignPickers";
 import { ResumeView } from "./ResumeSheet";
@@ -48,9 +48,11 @@ export function TemplateDialog({
   const [onOpen, setOnOpen] = useState<Look | null>(null);
   const [seeAll, setSeeAll] = useState(false);
   const templateCount = CATALOG.length;
+  const wasOpen = useRef(false);
 
+  /** Snapshot for Cancel — only when the sheet opens, not after each template pick. */
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpen.current) {
       setOnOpen({
         templateId,
         fontId: data.fontId,
@@ -61,6 +63,7 @@ export function TemplateDialog({
       });
       setSeeAll(false);
     }
+    wasOpen.current = open;
   }, [open, templateId, data.fontId, data.accent, data.typeSize, data.spacing, data.leading]);
 
   const revert = useCallback(() => {
@@ -115,7 +118,7 @@ export function TemplateDialog({
                 {seeAll ? "Show less" : `See all ${templateCount}`}
               </button>
             </div>
-            <div className={seeAll ? "picker-grid" : "picker-strip-wrap"}>
+            <div className={seeAll ? "picker-grid" : "picker-strip-wrap picker-template-scroll"}>
               <TemplateFan
                 layout={seeAll ? "picker" : "strip"}
                 filter={seeAll ? "all" : "picks"}

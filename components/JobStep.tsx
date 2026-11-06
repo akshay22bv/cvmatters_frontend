@@ -42,7 +42,7 @@ export function JobStep({
     <>
       <StepCard
         title="Which job are you going for?"
-        sub="Paste the posting or its link. Your summary and bullets get rewritten to answer it. Then open Your field to see how other people wrote theirs."
+        sub="Paste the posting or its link. Your summary and bullets get rewritten to answer it. Open CV examples in the sidebar to see how others in your field wrote theirs."
         grid={false}
         plain
       >

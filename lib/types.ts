@@ -122,7 +122,7 @@ export function templateHasPhoto(templateId: TemplateId) {
 }
 export type Category = (typeof CATEGORIES)[number];
 export type StepId = (typeof STEPS)[number]["id"];
-export type PanelId = (typeof FLOW)[number] | "reference" | "ats";
+export type PanelId = (typeof FLOW)[number] | "ats";
 
 export type Experience = {
   id: string;
@@ -276,8 +276,23 @@ export function paperStyle(data: { accent?: string; typeSize?: number; spacing?:
  * Accent colours a resume can take. Templates that paint with var(--accent)
  * follow whichever is chosen; the rest keep their own palette by design.
  */
-/** The four colours the site offers. Templates keep their own ink until one of these is chosen. */
-export const SITE_COLOURS = ["#0a0a0a", "#6b7280", "#8fb34a", "#1f2430"] as const;
+/** Preset accent swatches in the design picker; all are in ACCENTS. */
+export const SITE_COLOURS = [
+  "#0a0a0a",
+  "#1f2430",
+  "#3f4652",
+  "#6b7280",
+  "#3b63e8",
+  "#3657ff",
+  "#2f6d85",
+  "#2c6b4f",
+  "#8fb34a",
+  "#eab308",
+  "#d97706",
+  "#c75c5c",
+  "#8f2f2f",
+  "#6b5444",
+] as const;
 
 export const ACCENTS = [
   "#0a0a0a", "#8fb34a",

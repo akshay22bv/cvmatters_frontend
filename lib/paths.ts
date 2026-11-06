@@ -28,7 +28,6 @@ const PANEL_TO_SLUG: Record<PanelId, string> = {
   extras: "extras",
   job: "job",
   compare: "compare",
-  reference: "examples",
   ats: "ats",
 };
 
@@ -71,7 +70,6 @@ export const SECTION_LABEL: Record<string, string> = {
   job: "Job post",
   ats: "ATS check",
   compare: "Download",
-  reference: "Your field",
 };
 
 export function viewToPath(view: AppView) {
@@ -107,7 +105,6 @@ export function publicResumePath(idOrSlug: string) {
 }
 
 export function panelPath(panel: PanelId) {
-  if (panel === "reference") return "/examples";
   return viewToPath({ kind: "cv", section: panel });
 }
 

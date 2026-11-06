@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AuthDialog } from "./AuthDialog";
 import { AppNav } from "./AppNav";
 import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
-import { ExamplesStep } from "./ExamplesStep";
+import { ExamplesBrowsePage } from "./ExamplesBrowsePage";
 import { ExtrasStep } from "./ExtrasStep";
 import { JobStep } from "./JobStep";
 import { PlanDialog } from "./PlanDialog";
@@ -14,17 +14,12 @@ import { PublicCvPage } from "./PublicCvPage";
 import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { Landing, type DashIntent } from "./Landing";
-import { Aurora } from "./motion";
-import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue } from "./CvChrome";
+import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewTemplate } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
-
-/** Phone Continue skips the job post and the field browser. The desktop rail still lists both. */
-const PHONE_STEPS = DOCK_ORDER.filter((id) => id !== "job" && id !== "reference");
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
 import { IconDownload, IconEye, IconPalette } from "./icons";
-import { Stars } from "./Stars";
-import { adjustResume, ApiError, ensureResume, importResume, improveText, loadMine, loadRatings, rateResume, readJobLink, updateResume } from "@/lib/api";
+import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
 import { checkpoints, completeness } from "@/lib/progress";
@@ -32,7 +27,10 @@ import { stepErrors } from "@/lib/validate";
 import { useAccount } from "@/lib/useAccount";
 import { downloadResumePdf, printResume } from "@/lib/pdf";
 import { newId } from "@/lib/id";
-import { isFontId, readTemplateId, templateName, type Category, type PanelId, type RatingSummary, type ResumeData, type ResumeRecord, type TemplateId } from "@/lib/types";
+import { isFontId, readTemplateId, type Category, type PanelId, type RatingSummary, type ResumeData, type ResumeRecord, type TemplateId } from "@/lib/types";
+
+/** Phone Continue skips the job post. The desktop rail still lists it. */
+const PHONE_STEPS = DOCK_ORDER.filter((id) => id !== "job");
 
 type Snapshot = {
   id: string | null;
@@ -86,10 +84,6 @@ export default function Builder() {
   const [downloading, setDownloading] = useState(false);
   const [pdfError, setPdfError] = useState("");
   const [aiNote, setAiNote] = useState("");
-  const [viewing, setViewing] = useState<ResumeRecord | null>(null);
-  const [rated, setRated] = useState<{ id: string; summary: RatingSummary } | null>(null);
-  const [rateBusy, setRateBusy] = useState(false);
-  const [rateHint, setRateHint] = useState("");
   const [picked, setPicked] = useState<{ section: PanelId; focusId?: string; tick: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
@@ -270,8 +264,12 @@ export default function Builder() {
     if (mode === "loading") return;
     if (view.kind === "start") return;
     if (view.kind === "cv" && view.section !== panel) setPanel(view.section);
-    if (view.kind === "examples" && panel !== "reference") setPanel("reference");
   }, [mode, pathname]);
+
+  useEffect(() => {
+    if (mode !== "start" || view.kind !== "examples") return;
+    router.replace("/");
+  }, [mode, view.kind, router]);
 
   useEffect(() => {
     if (!snapshot.id) return;
@@ -327,7 +325,18 @@ export default function Builder() {
     }
   };
 
-  const destination = (intent: DashIntent): PanelId => (intent === "job" ? "job" : intent === "field" ? "reference" : "details");
+  const destination = (intent: DashIntent): PanelId => (intent === "job" ? "job" : "details");
+
+  const afterCreateNavigate = (intent: DashIntent) => {
+    if (intent === "field") {
+      setPanel("details");
+      router.push("/examples");
+      return;
+    }
+    const next = destination(intent);
+    setPanel(next);
+    router.push(panelPath(next));
+  };
 
   /** Write this page over the saved CV, then open the section the dashboard asked for. */
   const replaceRecord = async (
@@ -348,9 +357,7 @@ export default function Builder() {
     });
     applyRecord(saved);
     setMode("ready");
-    const next = destination(intent);
-    setPanel(next);
-    router.push(panelPath(next));
+    afterCreateNavigate(intent);
   };
 
   const download = async () => {
@@ -395,35 +402,10 @@ export default function Builder() {
 
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
-  const referenceOpen = panel === "reference";
-  const stageRecord = referenceOpen && viewing ? viewing : null;
-  const sharedPreview = previewOpen && stageRecord ? stageRecord : null;
-  const sharedOwn = Boolean(stageRecord && (stageRecord.isMine || stageRecord.id === snapshot.id));
-
-  const rateShared = async (resume: ResumeRecord, stars: number) => {
-    if (!account.user) {
-      setRateHint("Download a PDF to sign in, then you can rate.");
-      return;
-    }
-    setRateBusy(true);
-    setRateHint("");
-    try {
-      const summary = await rateResume(resume.id, stars, "");
-      const next = { ...resume, rating: summary };
-      setViewing(next);
-      setRated({ id: resume.id, summary });
-    } catch (error) {
-      if (error instanceof ApiError && error.needsSignIn) setRateHint("Download a PDF to sign in, then you can rate.");
-      else setRateHint(error instanceof Error ? error.message : "Couldn't save that rating.");
-    } finally {
-      setRateBusy(false);
-    }
-  };
 
   if (mode === "loading" && view.kind !== "public") {
     return (
       <div className="boot">
-        <Aurora tone="deep" grid={false} />
         <div className="boot-mark" aria-hidden="true">
           <span />
           <span />
@@ -513,6 +495,11 @@ export default function Builder() {
         busyLabel={busyLabel}
         error={error}
         onOpen={(intent) => {
+          if (intent === "field") {
+            setPanel("details");
+            router.push("/examples");
+            return;
+          }
           const next = destination(intent);
           setPanel(next);
           router.push(panelPath(next));
@@ -574,7 +561,25 @@ export default function Builder() {
         />
       )}
 
-      {(view.kind === "cv" || view.kind === "examples") && (
+      {view.kind === "examples" && mode === "ready" && (
+        <ExamplesBrowsePage
+          panel={panel}
+          data={snapshot.data}
+          jobDescription={snapshot.jobDescription}
+          mineId={snapshot.id}
+          category={snapshot.category}
+          account={account}
+          onPanel={goPanel}
+          downloading={downloading}
+          onDownload={() => requestPdf("download")}
+          onTemplate={() => {
+            setLookIntent("look");
+            setTemplatesOpen(true);
+          }}
+        />
+      )}
+
+      {view.kind === "cv" && (
       <div className="cv-editor-shell">
         <CvSectionRail
           panel={panel}
@@ -701,24 +706,7 @@ export default function Builder() {
                   onJob={(jobDescription) => patch({ jobDescription })}
                   onAdjust={onAdjust}
                   adjusting={adjusting}
-                  onSeeField={() => goPanel("reference")}
-                />
-              )}
-              {panel === "reference" && (
-                <ExamplesStep
-                  mineId={snapshot.id}
-                  account={account}
-                  suggest={snapshot.category}
-                  rated={rated}
-                  onView={(resume) => {
-                    setViewing(resume);
-                    setRateHint("");
-                  }}
-                  onOpen={(resume) => {
-                    setViewing(resume);
-                    setRateHint("");
-                    if (window.matchMedia("(max-width: 860px)").matches) setPreviewOpen(true);
-                  }}
+                  onSeeField={() => router.push("/examples")}
                 />
               )}
             </div>
@@ -730,6 +718,12 @@ export default function Builder() {
                 disabled={dockIndex <= 0}
                 onClick={() => {
                   if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
+                }}
+              />
+              <SliceViewTemplate
+                onClick={() => {
+                  setLookIntent("look");
+                  setTemplatesOpen(true);
                 }}
               />
               <SliceContinue
@@ -755,63 +749,35 @@ export default function Builder() {
 
         <aside className="look">
           <div className="look-sheet">
-            {!stageRecord && (
-              <div className="look-head">
-                <div className="look-actions" role="toolbar" aria-label="Resume look">
-                  <button
-                    type="button"
-                    className="look-action is-main"
-                    onClick={() => {
-                      setLookIntent("look");
-                      setTemplatesOpen(true);
-                    }}
-                  >
-                    <IconPalette />
-                    <span>Template</span>
-                  </button>
-                  <button type="button" className="look-action" onClick={() => setPreviewOpen(true)}>
-                    <IconEye />
-                    <span>Preview</span>
-                  </button>
-                  <button type="button" className="look-action" disabled={downloading} onClick={() => requestPdf("download")}>
-                    <IconDownload />
-                    <span>{downloading ? "Building…" : "Download"}</span>
-                  </button>
-                </div>
+            <div className="look-head">
+              <div className="look-actions" role="toolbar" aria-label="Resume look">
+                <button
+                  type="button"
+                  className="look-action is-main"
+                  onClick={() => {
+                    setLookIntent("look");
+                    setTemplatesOpen(true);
+                  }}
+                >
+                  <IconPalette />
+                  <span>Template</span>
+                </button>
+                <button type="button" className="look-action" onClick={() => setPreviewOpen(true)}>
+                  <IconEye />
+                  <span>Preview</span>
+                </button>
+                <button type="button" className="look-action" disabled={downloading} onClick={() => requestPdf("download")}>
+                  <IconDownload />
+                  <span>{downloading ? "Building…" : "Download"}</span>
+                </button>
               </div>
-            )}
-            {stageRecord && (
-              <div className="look-rate">
-                <div className="look-rate-who">
-                  <strong>{stageRecord.data.personal.fullName || "Shared resume"}</strong>
-                  <span>
-                    {templateName(stageRecord.templateId)}
-                    {stageRecord.rating?.count
-                      ? ` · ${stageRecord.rating.average.toFixed(1)} (${stageRecord.rating.count})`
-                      : ""}
-                  </span>
-                </div>
-                {!sharedOwn ? (
-                  <Stars
-                    value={stageRecord.rating?.mine || 0}
-                    size={15}
-                    label={`Rate ${stageRecord.data.personal.fullName || "this resume"}`}
-                    onRate={(stars) => {
-                      if (!rateBusy) void rateShared(stageRecord, stars);
-                    }}
-                  />
-                ) : (
-                  <Stars value={stageRecord.rating?.average || 0} count={stageRecord.rating?.count || 0} size={13} />
-                )}
-                {rateHint ? <p className="look-rate-hint">{rateHint}</p> : null}
-              </div>
-            )}
-            <div className="look-paper" key={stageRecord ? stageRecord.id : snapshot.templateId}>
+            </div>
+            <div className="look-paper" key={snapshot.templateId}>
               <ResumeView
-                templateId={stageRecord ? stageRecord.templateId : snapshot.templateId}
-                data={stageRecord ? stageRecord.data : snapshot.data}
-                hideContact={!!stageRecord}
-                onPick={stageRecord ? undefined : (section, focusId) => {
+                templateId={snapshot.templateId}
+                data={snapshot.data}
+                hideContact={false}
+                onPick={(section, focusId) => {
                   goPanel(section);
                   setPicked({ section, focusId, tick: Date.now() });
                 }}
@@ -823,61 +789,33 @@ export default function Builder() {
       </div>
       )}
 
-      {previewOpen && (
-        <div
-          className="preview-sheet"
-          role="dialog"
-          aria-label={sharedPreview ? `${sharedPreview.data.personal.fullName || "Shared"} resume` : "Resume preview"}
-        >
+      {previewOpen && view.kind === "cv" && (
+        <div className="preview-sheet" role="dialog" aria-label="Resume preview">
           <div className="preview-sheet-top">
             <button type="button" className="preview-sheet-close" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
               ×
             </button>
           </div>
-          {sharedPreview && !sharedOwn ? (
-            <div className="preview-rate">
-              <Stars
-                value={sharedPreview.rating?.mine || 0}
-                size={16}
-                label={`Rate ${sharedPreview.data.personal.fullName || "this resume"}`}
-                onRate={(stars) => {
-                  if (!rateBusy) void rateShared(sharedPreview, stars);
-                }}
-              />
-              {sharedPreview.rating?.count ? (
-                <span>
-                  {sharedPreview.rating.average.toFixed(1)} ({sharedPreview.rating.count})
-                </span>
-              ) : null}
-              {rateHint ? <p className="look-rate-hint">{rateHint}</p> : null}
-            </div>
-          ) : null}
           <div className="preview-sheet-body">
             <ResumeView
-              templateId={sharedPreview ? sharedPreview.templateId : snapshot.templateId}
-              data={sharedPreview ? sharedPreview.data : snapshot.data}
-              hideContact={!!sharedPreview}
-              onPick={
-                sharedPreview
-                  ? undefined
-                  : (section, focusId) => {
-                      setPreviewOpen(false);
-                      goPanel(section);
-                      setPicked({ section, focusId, tick: Date.now() });
-                    }
-              }
+              templateId={snapshot.templateId}
+              data={snapshot.data}
+              hideContact={false}
+              onPick={(section, focusId) => {
+                setPreviewOpen(false);
+                goPanel(section);
+                setPicked({ section, focusId, tick: Date.now() });
+              }}
             />
           </div>
-          {!sharedPreview && (
-            <div className="preview-sheet-foot">
-              <button type="button" onClick={() => setPreviewOpen(false)}>
-                Back to editing
-              </button>
-              <button type="button" className="is-get" disabled={downloading} onClick={() => requestPdf("download")}>
-                {downloading ? "Building…" : "Download"}
-              </button>
-            </div>
-          )}
+          <div className="preview-sheet-foot">
+            <button type="button" onClick={() => setPreviewOpen(false)}>
+              Back to editing
+            </button>
+            <button type="button" className="is-get" disabled={downloading} onClick={() => requestPdf("download")}>
+              {downloading ? "Building…" : "Download"}
+            </button>
+          </div>
         </div>
       )}
 

@@ -2143,24 +2143,31 @@ input:focus, textarea:focus {
 
 .picker-row-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
 .picker-row-head .picker-label {
   margin: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .picker-see-all {
-  padding: 0;
+  flex: none;
+  align-self: center;
+  padding: 4px 2px;
   border: 0;
   background: transparent;
   color: var(--picker-accent);
   font: inherit;
   font-size: 13px;
   font-weight: 620;
+  line-height: 1.25;
+  text-align: right;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -2171,6 +2178,12 @@ input:focus, textarea:focus {
 
 .picker-strip-wrap {
   min-width: 0;
+  overflow: hidden;
+}
+
+.picker-template-scroll {
+  margin: 0 -4px;
+  padding: 0 4px 4px;
 }
 
 .design-pick-row {
@@ -2238,24 +2251,69 @@ input:focus, textarea:focus {
 .picker-colors-row {
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: var(--gray);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
 }
 
 .fan.is-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0 8px;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink) 22%, transparent) transparent;
+}
+
+/* Exactly four “top picks”: fill the row so thumbnails are not left-clumped */
+.fan.is-strip:has(> .fan-tilt:nth-child(4):last-child) {
+  justify-content: stretch;
   gap: 8px;
-  align-items: start;
+  overflow-x: visible;
+  overflow-y: visible;
+  scrollbar-width: none;
+}
+
+.fan.is-strip:has(> .fan-tilt:nth-child(4):last-child)::-webkit-scrollbar {
+  display: none;
+}
+
+.fan.is-strip:has(> .fan-tilt:nth-child(4):last-child) .fan-tilt {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.fan.is-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.fan.is-strip::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 999px;
 }
 
 .fan.is-strip .fan-tilt {
   display: block;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
   min-width: 0;
 }
 
 .fan.is-strip .fan-card {
   position: relative;
-  width: 100% !important;
-  height: auto !important;
+  /* Keep TemplateFan inline width (thumb + padding) — no 100% grid squash */
   padding: 4px;
   border: 2px solid transparent;
   border-radius: 8px;
@@ -3131,10 +3189,6 @@ input:focus, textarea:focus {
   .picker-panel.is-design .picker-side {
     grid-row: 3;
     grid-column: 1;
-  }
-
-  .fan.is-strip {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .picker-view {
