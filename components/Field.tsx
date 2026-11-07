@@ -380,6 +380,11 @@ function viewportBox() {
   return { top: view.offsetTop, left: view.offsetLeft, width: view.width, height: view.height };
 }
 
+function viewportBottom() {
+  const view = window.visualViewport;
+  return view ? view.offsetTop + view.height : window.innerHeight;
+}
+
 function anchorTo(node: HTMLElement | null, wanted = 300): Anchor | null {
   if (!node) return null;
   const box = node.getBoundingClientRect();
@@ -616,7 +621,7 @@ export function SearchSelect({
           className={`pop drop-${anchor.drop}`}
           style={{
             top: anchor.drop === "down" ? anchor.top : undefined,
-            bottom: anchor.drop === "up" ? window.innerHeight - anchor.top : undefined,
+            bottom: anchor.drop === "up" ? viewportBottom() - anchor.top : undefined,
             left: anchor.left,
             width: anchor.width,
             maxHeight: anchor.max,
@@ -765,10 +770,11 @@ export function SearchTags({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const mobile = useIsMobile();
   const wrap = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const root = useOutside(open, () => setOpen(false));
-  const anchor = useAnchor(open, wrap, 260);
+  const anchor = useAnchor(open && !mobile, wrap, 260);
 
   const [remote, setRemote] = useState<string[]>([]);
 
@@ -890,12 +896,49 @@ export function SearchTags({
 
       {hint ? <p className="fld-note">{hint}</p> : null}
 
-      {open && anchor && rowCount > 0 && typeof document !== "undefined" && createPortal(
+      {mobile && open && rowCount > 0 ? (
+        <div className="tag-suggest" role="presentation">
+          <ul className="pop-list" role="listbox" aria-label={label}>
+            {options.map((item, index) => (
+              <li key={item}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  data-active={index === active}
+                  className="pop-row"
+                  onMouseEnter={() => setActive(index)}
+                  onClick={() => add(item)}
+                >
+                  <span className="pop-name">{item}</span>
+                </button>
+              </li>
+            ))}
+            {custom ? (
+              <li>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  data-active={active === options.length}
+                  className="pop-row is-new"
+                  onMouseEnter={() => setActive(options.length)}
+                  onClick={() => add(query)}
+                >
+                  <span className="pop-name">Add “{query.trim()}”</span>
+                </button>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
+
+      {!mobile && open && anchor && rowCount > 0 && typeof document !== "undefined" && createPortal(
         <div
           className={`pop drop-${anchor.drop}`}
           style={{
             top: anchor.drop === "down" ? anchor.top : undefined,
-            bottom: anchor.drop === "up" ? window.innerHeight - anchor.top : undefined,
+            bottom: anchor.drop === "up" ? viewportBottom() - anchor.top : undefined,
             left: anchor.left,
             width: anchor.width,
             maxHeight: anchor.max,

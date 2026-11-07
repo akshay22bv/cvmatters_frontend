@@ -36,14 +36,20 @@ export function MobileFormStable() {
 
     let focused: HTMLElement | null = null;
 
+    const visibleBottom = () => {
+      const view = window.visualViewport;
+      return view ? view.offsetTop + view.height : window.innerHeight;
+    };
+
     const keepInView = (target: HTMLElement) => {
       const pane = scrollParent(target);
       if (!pane) return;
       const dock = pane.parentElement?.querySelector(".work-bar")?.getBoundingClientRect().height || 64;
       const paneBox = pane.getBoundingClientRect();
-      const box = target.getBoundingClientRect();
+      const field = target.closest(".fld-tags") as HTMLElement | null;
+      const box = (field ?? target).getBoundingClientRect();
       const topLimit = paneBox.top + 8;
-      const bottomLimit = paneBox.bottom - dock - 12;
+      const bottomLimit = Math.min(paneBox.bottom - dock - 12, visibleBottom() - 12);
       if (box.top >= topLimit && box.bottom <= bottomLimit) return;
       if (box.bottom > bottomLimit) pane.scrollTop += box.bottom - bottomLimit;
       else if (box.top < topLimit) pane.scrollTop -= topLimit - box.top;

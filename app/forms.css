@@ -492,6 +492,20 @@ input:focus, textarea:focus {
   font-size: 14.5px;
 }
 
+/* Inline skill suggestions on phones — stays in the scroll pane with the input. */
+.tag-suggest {
+  margin-top: 6px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: white;
+  box-shadow: var(--shadow-2);
+}
+
+.tag-suggest .pop-list {
+  max-height: min(200px, 34dvh);
+}
+
 .tag {
   display: inline-flex;
   align-items: center;
