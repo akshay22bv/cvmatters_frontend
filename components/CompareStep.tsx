@@ -95,12 +95,7 @@ export function CompareStep({
 
   return (
     <>
-      <StepCard
-        title="How does yours compare?"
-        sub="Put your resume beside one someone in your field shared, and see what they cover that you don't."
-        grid={false}
-        plain
-      >
+      <StepCard title="How does yours compare?" grid={false} plain>
         <div className="cmp-pick">
           <SearchSelect
             label="Field"
@@ -196,10 +191,6 @@ export function CompareStep({
           </StepCard>
 
           <StepCard title="What they have that you don't" grid={false}>
-            {missingSections.length === 0 && missingSkills.length === 0 ? (
-              <p className="fld-note">Nothing stands out — yours covers everything theirs does.</p>
-            ) : null}
-
             {missingSections.length > 0 && (
               <div className="chip-group">
                 <p className="chip-label">Sections you don&apos;t have</p>
@@ -226,17 +217,10 @@ export function CompareStep({
               </div>
             )}
 
-            <p className="fld-note">Only borrow what is true of you — a resume that claims someone else&apos;s work reads as one at interview.</p>
           </StepCard>
         </>
       ) : (
-        loaded && (
-          <StepCard title="Nothing to compare yet" grid={false}>
-            <p className="fld-note">
-              Nobody in {category} has shared a resume yet. Share yours from Reference CVs so others can learn from it too.
-            </p>
-          </StepCard>
-        )
+        loaded && <StepCard title="Nothing to compare yet" grid={false} />
       )}
     </>
   );

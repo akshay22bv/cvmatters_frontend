@@ -675,7 +675,7 @@ export default function Builder() {
                             </span>
                             <span className="finish-check-copy">
                               <strong>{mark.label}</strong>
-                              <em>{mark.done ? mark.tally : mark.hint}</em>
+                              <em>{mark.tally}</em>
                             </span>
                           </button>
                         </li>
@@ -688,9 +688,6 @@ export default function Builder() {
                     </button>
 
                     {pdfError ? <p className="look-bad">{pdfError}</p> : null}
-                    {!account.entitlement.canDownload ? (
-                      <p className="fld-note">Downloads come with a subscription.</p>
-                    ) : null}
                   </div>
                 </div>
               )}
@@ -860,6 +857,10 @@ export default function Builder() {
         account={account}
         reason={gateReason}
         onClose={() => setGate(null)}
+        onSignIn={() => {
+          setGateReason("Sign in to subscribe and download.");
+          setGate("auth");
+        }}
         onPaid={() => {
           const wanted = afterGate.current;
           afterGate.current = null;

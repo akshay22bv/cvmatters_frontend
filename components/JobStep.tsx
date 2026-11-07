@@ -7,8 +7,6 @@ import { resumePlainText } from "@/lib/content";
 import { keywords } from "@/lib/keywords";
 import type { ResumeData } from "@/lib/types";
 
-const LOOKS_LIKE_LINK = /^https?:\/\/\S+$/i;
-
 /**
  * The feature the whole builder is for: put a posting in, get a resume that
  * answers it. One field takes either the text or its link — pasting a URL is
@@ -30,7 +28,6 @@ export function JobStep({
   onSeeField?: () => void;
 }) {
   const value = jobDescription.trim();
-  const isLink = LOOKS_LIKE_LINK.test(value);
 
   const found = keywords(jobDescription);
   const resume = resumePlainText(data);
@@ -40,18 +37,12 @@ export function JobStep({
 
   return (
     <>
-      <StepCard
-        title="Which job are you going for?"
-        sub="Paste the posting or its link. Your summary and bullets get rewritten to answer it. Open CV examples in the sidebar to see how others in your field wrote theirs."
-        grid={false}
-        plain
-      >
+      <StepCard title="Which job are you going for?" grid={false} plain>
         <AreaField
           label="Job posting"
           value={jobDescription}
-          placeholder="Paste the job post here, or a link to it."
+          placeholder="Paste the job post or a link"
           minHeight={150}
-          hint={isLink ? "That looks like a link — we'll read the page when you rewrite." : undefined}
           onChange={onJob}
         />
 
@@ -66,7 +57,6 @@ export function JobStep({
             </button>
           ) : null}
         </div>
-        <p className="fld-note">Your experience stays yours. This only changes how it is worded.</p>
       </StepCard>
 
       {found.length > 0 && (

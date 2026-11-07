@@ -32,10 +32,9 @@ export function AtsStep({ report, onFix }: { report: AtsReport; onFix: (fix: Ats
       <header className="ats-top">
         <div>
           <h1>ATS check</h1>
-          <p>
-            {passed} of {total} checks pass. These are the things applicant tracking systems fail people on: a page they can read, the usual sections, and the words a job post asks for. 75 or above is a solid score.
+          <p className={`ats-verdict is-${tone(report.score)}`}>
+            {passed} of {total} pass · {report.label}
           </p>
-          <p className={`ats-verdict is-${tone(report.score)}`}>{report.label}</p>
         </div>
         <div className={`ats-ring is-${tone(report.score)}`} style={{ ["--p" as string]: report.score }} role="img" aria-label={`${report.score} out of 100, ${report.label}`}>
           <span>

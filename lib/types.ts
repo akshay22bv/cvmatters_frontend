@@ -79,13 +79,13 @@ export const STEPS = [
 export const FLOW = ["details", "bio", "experience", "education", "skills", "extras", "job", "compare"] as const;
 
 /** Sections offered on the extras step, in the order they are suggested. */
-export const EXTRA_KINDS: { id: string; title: string; hint: string; pick?: boolean }[] = [
-  { id: "certifications", title: "Certifications", hint: "Courses and credentials worth naming", pick: true },
-  { id: "languages", title: "Languages", hint: "With a level, like \u201cHindi \u2014 native\u201d", pick: true },
-  { id: "projects", title: "Projects", hint: "Things you built that are not a job" },
-  { id: "awards", title: "Accomplishments and awards", hint: "Recognition worth a line" },
-  { id: "hobbies", title: "Hobbies and interests", hint: "Only where they say something" },
-  { id: "links", title: "Websites, portfolios, profiles", hint: "Where your work lives" },
+export const EXTRA_KINDS: { id: string; title: string; pick?: boolean }[] = [
+  { id: "certifications", title: "Certifications", pick: true },
+  { id: "languages", title: "Languages", pick: true },
+  { id: "projects", title: "Projects" },
+  { id: "awards", title: "Accomplishments and awards" },
+  { id: "hobbies", title: "Hobbies and interests" },
+  { id: "links", title: "Websites, portfolios, profiles" },
 ];
 
 export type TemplateId = (typeof TEMPLATES)[number]["id"];

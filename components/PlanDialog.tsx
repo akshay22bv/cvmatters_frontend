@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog } from "./Dialog";
 import { Field } from "./Field";
 import { IconCard, IconCheck, IconCrown, IconLock } from "./icons";
-import { loadPlans, payOrder, startCheckout, type Receipt } from "@/lib/api";
+import { ApiError, loadPlans, payOrder, startCheckout, type Receipt } from "@/lib/api";
 import type { AccountState } from "@/lib/useAccount";
 import type { Plan } from "@/lib/types";
 
@@ -30,12 +30,14 @@ export function PlanDialog({
   reason,
   onClose,
   onPaid,
+  onSignIn,
 }: {
   open: boolean;
   account: AccountState;
   reason?: string;
   onClose: () => void;
   onPaid?: () => void;
+  onSignIn?: () => void;
 }) {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [chosen, setChosen] = useState("yearly");
@@ -44,6 +46,7 @@ export function PlanDialog({
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState("");
+  const [signInRequired, setSignInRequired] = useState(false);
 
   const [nameOnCard, setNameOnCard] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -54,6 +57,7 @@ export function PlanDialog({
     if (!open) return;
     setStep("plans");
     setFailure("");
+    setSignInRequired(false);
     loadPlans()
       .then((result) => setPlans(result.plans))
       .catch(() => setFailure("Couldn't load the plans just now."));
@@ -68,12 +72,18 @@ export function PlanDialog({
   const toPayment = async () => {
     setBusy(true);
     setFailure("");
+    setSignInRequired(false);
     try {
       const result = await startCheckout(chosen);
       setOrderId(result.order.id);
       setStep("pay");
     } catch (error) {
-      setFailure(error instanceof Error ? error.message : "Couldn't start that order.");
+      if (error instanceof ApiError && error.needsSignIn) {
+        setSignInRequired(true);
+        setFailure(error.message);
+      } else {
+        setFailure(error instanceof Error ? error.message : "Couldn't start that order.");
+      }
     } finally {
       setBusy(false);
     }
@@ -143,7 +153,21 @@ export function PlanDialog({
             ))}
           </div>
 
-          {failure ? <p className="form-alert">{failure}</p> : null}
+          {signInRequired ? (
+            <p className="rate-gate">
+              {failure || "Sign in to continue."}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  onSignIn?.();
+                }}
+              >
+                Sign in
+              </button>
+            </p>
+          ) : failure ? (
+            <p className="form-alert">{failure}</p>
+          ) : null}
 
           <button type="button" className="btn-cta" disabled={busy || !plan} onClick={() => void toPayment()}>
             {busy ? "One moment…" : `Continue with ${plan?.name || "a plan"}`}

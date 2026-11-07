@@ -443,7 +443,7 @@ export function BioStep({
   improving: string | null;
 }) {
   return (
-    <StepCard title="How would you sum yourself up?" sub="Two or three lines at the top of the page. Write it plainly, or tap Improve. Start a line with “- ” only if you want a bullet there." grid={false} plain>
+    <StepCard title="How would you sum yourself up?" grid={false} plain>
       <RichEditor
         label="Summary"
         value={data.summary}
@@ -525,7 +525,7 @@ export function ExperienceStep({
   };
 
   return (
-    <StepCard title="Where have you worked?" sub="Most recent role first — that is the part people actually read." grid={false} plain>
+    <StepCard title="Where have you worked?" grid={false} plain>
       {data.experience.map((job) => {
         const shown = open[job.id] ? job.bullets : job.bullets.slice(0, 2);
         const range = [job.start, job.current ? "present" : job.end].filter(Boolean).join(" – ");
@@ -640,7 +640,7 @@ export function EducationStep({
   };
 
   return (
-    <StepCard title="What did you study?" sub="Schools, degrees and the years you want on the page." grid={false} plain>
+    <StepCard title="What did you study?" grid={false} plain>
       {data.education.map((item) => (
         <article className="item" key={item.id} data-entry={item.id}>
           {editing === item.id ? (
@@ -734,7 +734,7 @@ function splitSkillTags(tags: string[]): ResumeData["skills"] {
 
 export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: ResumeData) => void }) {
   return (
-    <StepCard title="What are you good at?" sub="Search for a skill or type your own. Click a chip to remove it." grid={false} plain>
+    <StepCard title="What are you good at?" grid={false} plain>
       <SearchTags
         label="Skills"
         lookup="skill"

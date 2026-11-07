@@ -13,10 +13,10 @@ function sameTitle(a: string, b: string) {
   return a.toLowerCase() === b.toLowerCase();
 }
 
-function summary(extra: Extra | undefined, hint: string) {
-  if (!extra) return hint;
+function preview(extra: Extra | undefined) {
+  if (!extra) return "";
   const filled = extra.items.map((item) => item.trim()).filter(Boolean);
-  if (!filled.length) return "Add a line";
+  if (!filled.length) return "";
   if (filled.length === 1) return filled[0];
   return `${filled[0]}  +${filled.length - 1}`;
 }
@@ -74,13 +74,7 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
   const customExtras = extras.filter((extra) => !EXTRA_KINDS.some((kind) => sameTitle(kind.title, extra.title)));
 
   return (
-    <StepCard
-      className="extras-step"
-      title="Anything else to add?"
-      sub="All optional. Add only the sections that say something a recruiter could not guess."
-      grid={false}
-      plain
-    >
+    <StepCard className="extras-step" title="Anything else to add?" grid={false} plain>
       <div className="acc-list">
         {EXTRA_KINDS.map((kind) => {
           const extra = find(kind.title);
@@ -88,7 +82,6 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
             <SectionRow
               key={kind.id}
               title={kind.title}
-              hint={kind.hint}
               pick={kind.pick}
               extra={extra}
               open={!!extra && openId === extra.id}
@@ -103,7 +96,6 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
           <SectionRow
             key={extra.id}
             title={extra.title}
-            hint="A section you named"
             extra={extra}
             custom
             open={openId === extra.id}
@@ -138,7 +130,6 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
 
 function SectionRow({
   title,
-  hint,
   pick,
   extra,
   custom,
@@ -149,7 +140,6 @@ function SectionRow({
   onBullets,
 }: {
   title: string;
-  hint: string;
   pick?: boolean;
   extra?: Extra;
   custom?: boolean;
@@ -181,7 +171,7 @@ function SectionRow({
         <button type="button" className="acc-main" aria-expanded={open} onClick={onOpen}>
           <span className="acc-copy">
             <strong>{title}</strong>
-            <small>{open ? hint : summary(extra, hint)}</small>
+            {!open && preview(extra) ? <small>{preview(extra)}</small> : null}
           </span>
           {pick && !on ? <em className="acc-flag">Recommended</em> : null}
           <Chevron />
