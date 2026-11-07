@@ -430,12 +430,8 @@ export default function Builder() {
         <AuthDialog
           open={gate === "auth"}
           reason={gateReason}
-          account={account}
+          ownerKey={owner.current}
           onClose={() => setGate(null)}
-          onDone={() => {
-            setGate(null);
-            void account.refresh();
-          }}
         />
       </div>
     );
@@ -454,7 +450,7 @@ export default function Builder() {
     }
   };
 
-  if (mode === "start" && view.kind !== "examples") {
+  if (mode === "start" && view.kind !== "examples" && view.kind !== "profile") {
     return (
       <Landing
         busy={busy}
@@ -857,27 +853,7 @@ export default function Builder() {
         onStyle={(look) => setSnapshot((current) => ({ ...current, data: { ...current.data, ...look } }))}
       />
 
-      <AuthDialog
-        open={gate === "auth"}
-        account={account}
-        reason={gateReason}
-        onClose={() => setGate(null)}
-        onDone={(entitlement) => {
-          const wanted = afterGate.current;
-          afterGate.current = null;
-          setGate(null);
-          if (!wanted) return;
-          // a brand new account still has to subscribe before the file
-          if (entitlement.canDownload) {
-            if (wanted === "print") print();
-            else void download();
-          } else {
-            setGateReason("Downloads come with a subscription. Pick a plan to carry on.");
-            afterGate.current = wanted;
-            setGate("plan");
-          }
-        }}
-      />
+      <AuthDialog open={gate === "auth"} ownerKey={owner.current} reason={gateReason} onClose={() => setGate(null)} />
 
       <PlanDialog
         open={gate === "plan"}

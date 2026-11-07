@@ -1431,6 +1431,7 @@
 
 .board-gallery {
   display: flex;
+  align-items: flex-start;
   gap: 22px;
   margin-top: 40px;
   padding: 8px var(--board-pad) 28px;
@@ -1464,7 +1465,7 @@
 
 .board-tile {
   display: grid;
-  grid-template-rows: auto minmax(72px, auto);
+  grid-template-rows: 340px minmax(72px, auto);
   gap: 14px;
   width: 100%;
   margin: 0;
@@ -1511,6 +1512,15 @@
   border-radius: 3px;
   box-shadow: 0 12px 28px rgba(20, 16, 12, 0.12);
   transition: transform 0.5s var(--ease-out);
+}
+
+/* Formal’s generous top padding reads as the whole thumb sitting lower. */
+.board-tile-paper .paper.formal {
+  padding: 0 54px 48px;
+}
+
+.board-tile-tilt .tilt-inner {
+  height: auto;
 }
 
 .board-tile:hover:not(:disabled) .board-tile-paper {
@@ -1910,8 +1920,10 @@
   .board-brand { font-size: 48px; }
   .board-heading { font-size: 28px; max-width: none; }
   .board-tile-tilt { width: min(250px, 78vw); }
+  .board-tile { grid-template-rows: 300px minmax(72px, auto); }
   .board-tile-stage { height: 300px; }
   .board-tile-paper { transform: translateX(-50%) scale(0.26); }
+  .board-tile-paper .paper.formal { padding: 0 54px 48px; }
   .board-tile:hover:not(:disabled) .board-tile-paper {
     transform: translateX(-50%) scale(0.275) translateY(-6px);
   }

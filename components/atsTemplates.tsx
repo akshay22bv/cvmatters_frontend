@@ -311,21 +311,28 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
     );
   }
   data.experience.forEach((job, index) => {
+    const jobCard = (
+      <div className={`formal-job${index > 0 ? " formal-job-continue" : ""}${job.bullets.some(Boolean) ? " is-split" : ""}`}>
+        <div className="formal-row">
+          <strong>{job.company || "Company"}</strong>
+          <span>{plainRange(job)}</span>
+        </div>
+        <div className="formal-row is-sub">
+          <em>{job.role || "Role"}</em>
+          <span>{job.location}</span>
+        </div>
+      </div>
+    );
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        <section className="formal-section">
-          {index === 0 && <h2 className="formal-label">Experience</h2>}
-          <div className={`formal-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
-            <div className="formal-row">
-              <strong>{job.company || "Company"}</strong>
-              <span>{plainRange(job)}</span>
-            </div>
-            <div className="formal-row is-sub">
-              <em>{job.role || "Role"}</em>
-              <span>{job.location}</span>
-            </div>
-          </div>
-        </section>
+        {index === 0 ? (
+          <section className="formal-section">
+            <h2 className="formal-label">Experience</h2>
+            {jobCard}
+          </section>
+        ) : (
+          jobCard
+        )}
       </Block>,
     );
     pushJobBullets(pieces, job, "formal-pad");

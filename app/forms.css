@@ -5749,3 +5749,4 @@ input:focus, textarea:focus {
   .ats-list li { grid-template-columns: 28px minmax(0, 1fr); }
   .ats-list li > button { grid-column: 2; justify-self: start; }
 }
+

@@ -1390,6 +1390,15 @@
   background: #fff;
   color: #111;
   font-family: var(--resume-font);
+  text-align: left;
+}
+
+.paper.formal > .flow-block {
+  width: 100%;
+  text-align: left;
+}
+
+.formal-head {
   text-align: center;
 }
 
@@ -1427,6 +1436,12 @@
 }
 
 .formal-job { margin-bottom: calc(10px * var(--space, 1)); }
+
+/* Continuation roles sit in their own flow-block (pagination); skip a nested section. */
+.paper.formal > .flow-block > .formal-job.formal-job-continue {
+  margin-top: calc(6px * var(--space, 1));
+  margin-bottom: calc(10px * var(--space, 1));
+}
 
 .formal-row {
   display: flex;

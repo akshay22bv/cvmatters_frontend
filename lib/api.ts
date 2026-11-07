@@ -156,6 +156,10 @@ export function loadAccount() {
   return request<{ user: Account; entitlement: Entitlement }>("/api/auth/me");
 }
 
+export function loadAuthConfig() {
+  return request<{ google: boolean; apple: boolean }>("/api/auth/config");
+}
+
 /* ------------------------------------------------------------ billing -- */
 
 export function loadPlans() {
