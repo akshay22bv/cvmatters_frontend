@@ -110,7 +110,29 @@
   margin-bottom: 4px;
 }
 
-.flow-li.banner-pad { padding: 0 42px; }
+.flow-li.banner-pad,
+.flow-li.horizon-pad,
+.paper.horizon > .flow-block > .flow-li,
+.paper.banner > .flow-block > .flow-li { padding: 0 42px; box-sizing: border-box; }
+
+.flow-li.plaza-pad,
+.paper.plaza > .flow-block > .flow-li { padding: 0 40px; box-sizing: border-box; }
+
+/* Split & ATS main columns — bullets sit flush with role lines above */
+.paper.split .split-main > .flow-block > .sig-job.is-split { margin-bottom: 2px; }
+.paper.split .split-main > .flow-block > .flow-li ul { margin-top: 0; }
+
+.cab-main > .flow-block > .flow-li ul,
+.vault-main > .flow-block > .flow-li ul,
+.canvas-main > .flow-block > .flow-li ul,
+.manor-main > .flow-block > .flow-li ul,
+.cobalt-main > .flow-block > .flow-li ul,
+.apex-main > .flow-block > .flow-li ul { margin-top: 2px; }
+
+.paper.mint > .flow-block > .flow-li,
+.paper.formal > .flow-block > .flow-li,
+.paper.editorial > .flow-block > .flow-li,
+.paper.classic > .flow-block > .flow-li { padding-inline: 0; }
 .flow-li.mint-pad,
 .flow-li.formal-pad,
 .flow-li.apex-pad,
@@ -119,8 +141,7 @@
 .flow-li.canvas-pad,
 .flow-li.cobalt-pad,
 .flow-li.studio-pad,
-.flow-li.vault-pad,
-.flow-li.plaza-pad { padding: 0; }
+.flow-li.vault-pad { padding: 0; }
 
 .flow-li.manor-pad {
   padding-left: 18px;

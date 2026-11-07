@@ -70,10 +70,7 @@ export function TemplateDialog({
         </section>
 
         <section className="picker-side" aria-label="Design options">
-          <div className="picker-block">
-            <div className="picker-row-head">
-              <span className="picker-label">Template</span>
-            </div>
+          <div className="picker-block" aria-label="Template">
             <div className="picker-strip-wrap picker-template-scroll">
               <TemplateFan
                 layout="strip"
@@ -86,15 +83,13 @@ export function TemplateDialog({
             </div>
           </div>
 
-          <div className="picker-block">
-            <span className="picker-label">Font</span>
+          <div className="picker-block" aria-label="Font">
             <div className="picker-fonts picker-fonts-row">
               <FontPicks value={data.fontId} onChange={onFont} />
             </div>
           </div>
 
-          <div className="picker-block">
-            <span className="picker-label">Type & spacing</span>
+          <div className="picker-block" aria-label="Type and spacing">
             <TypographyStripPicker
               typeSize={data.typeSize}
               spacing={data.spacing}

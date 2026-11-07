@@ -27,6 +27,14 @@ import { Monogram } from "./Monogram";
 import { plainRange } from "@/lib/content";
 import { fontClass, paperStyle, readTemplateId, type PanelId, type ResumeData, type StepId, type TemplateId } from "@/lib/types";
 
+/** Horizontal inset for split job bullets when the template body uses section padding, not paper padding. */
+function experienceBulletPad(templateId: TemplateId) {
+  if (templateId === "horizon") return "horizon-pad";
+  if (templateId === "banner") return "banner-pad";
+  if (templateId === "plaza") return "plaza-pad";
+  return "";
+}
+
 function SkillBlocks({ skills }: { skills: ResumeData["skills"] }) {
   const groups = [
     ["Industry Knowledge", skills.industry],
@@ -234,7 +242,8 @@ function editorialPieces(data: ResumeData, hideContact: boolean) {
   return pieces;
 }
 
-function signalPieces(data: ResumeData, hideContact: boolean) {
+function signalPieces(data: ResumeData, hideContact: boolean, templateId: TemplateId) {
+  const bulletPad = experienceBulletPad(templateId);
   const pieces: ReactNode[] = [
     <Block key="head" section="details">
       <header className="sig-top">
@@ -269,7 +278,7 @@ function signalPieces(data: ResumeData, hideContact: boolean) {
         </section>
       </Block>,
     );
-    pushJobBullets(pieces, job);
+    pushJobBullets(pieces, job, bulletPad);
   });
   pieces.push(
     <Block key="edu" section="education">
@@ -685,7 +694,7 @@ function basePieces(templateId: TemplateId, data: ResumeData, hideContact: boole
   if (templateId === "hello") return helloPieces(data, hideContact);
   if (templateId === "grid") return gridPieces(data, hideContact);
   if (isSidebar(templateId) || isRightbar(templateId)) return splitPieces(data);
-  return signalPieces(data, hideContact);
+  return signalPieces(data, hideContact, templateId);
 }
 
 function QuartzBanner({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {

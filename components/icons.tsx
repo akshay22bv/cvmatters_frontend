@@ -172,7 +172,7 @@ export function IconLayers() {
 
 export function IconPalette() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 22 22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinejoin="round">
       <path d="M11 3.2a7.8 7.8 0 0 0 0 15.6c1.3 0 1.9-.8 1.9-1.7 0-1.6-1.5-1.8-1.5-3 0-.9.7-1.6 1.7-1.6h1.6a3.9 3.9 0 0 0 3.9-3.9C18.6 5.4 15.3 3.2 11 3.2Z" />
       <circle cx="7.6" cy="8.4" r="1.1" fill="currentColor" stroke="none" />
       <circle cx="11" cy="6.6" r="1.1" fill="currentColor" stroke="none" />

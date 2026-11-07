@@ -22,10 +22,10 @@ export function FontPicks({
           role="radio"
           aria-checked={font.id === current}
           aria-label={font.name}
-          className={font.id === current ? `font-pick font-${font.id} is-active` : `font-pick font-${font.id}`}
+          className={font.id === current ? "font-pick is-active" : "font-pick"}
           onClick={() => onChange(font.id)}
         >
-          <b>{font.sample}</b>
+          <b className={`font-${font.id}`}>{font.sample}</b>
           {!compact && <span>{font.name}</span>}
         </button>
       ))}

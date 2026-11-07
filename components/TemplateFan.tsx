@@ -16,7 +16,7 @@ const SIZE = {
   rail: 112,
   grid: 98,
   picker: 168,
-  pickerMobile: 78,
+  pickerMobile: 84,
   strip: 88,
 } as const;
 

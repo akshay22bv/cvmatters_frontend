@@ -18,10 +18,6 @@ function suggestSlug(name: string) {
     .slice(0, 24);
 }
 
-/**
- * Account hub styled like an OpenAI partner surface: quiet neutrals, green
- * accents, black CTAs. Users pick their own public username here.
- */
 export function ProfilePage({
   data,
   category,
@@ -153,7 +149,7 @@ export function ProfilePage({
     }
   };
 
-  const makeAnother = async () => {
+  const startNewCv = async () => {
     if (!ownerKey) return;
     setCreating(true);
     setError("");
@@ -185,7 +181,7 @@ export function ProfilePage({
         </Link>
         {!account.entitlement.canDownload ? (
           <button type="button" className="prof-linkish" onClick={onPlans}>
-            Upgrade
+            Upgrade plan
           </button>
         ) : null}
       </div>
@@ -193,24 +189,21 @@ export function ProfilePage({
       <header className="prof-head">
         <Monogram name={name} photoUrl={data.personal.photoUrl} size={72} />
         <div className="prof-who">
-          <p className="prof-kicker">Profile</p>
+          <p className="prof-kicker">Account</p>
           <h1>{name}</h1>
           <p className="prof-title">{data.personal.title || "Add a job title on your CV"}</p>
           {data.personal.email ? <p className="prof-meta">{data.personal.email}</p> : null}
-          <p className="prof-meta">
-            {[data.personal.location, category, hosting || isPublic ? "Public" : "Private"].filter(Boolean).join(" · ")}
-          </p>
         </div>
-        <div className="prof-acts">
+        <div className="prof-quick">
           <Link href="/cv/details" className="prof-btn is-primary">
-            Edit CV
+            Edit current CV
           </Link>
-          <button type="button" className="prof-btn" disabled={creating} onClick={() => void makeAnother()}>
-            {creating ? "Creating…" : "Create CV"}
+          <button type="button" className="prof-btn" disabled={creating} onClick={() => void startNewCv()}>
+            {creating ? "Creating…" : "Start new CV"}
           </button>
           {account.user ? (
-            <button type="button" className="prof-btn" onClick={onShare}>
-              Contact sharing
+            <button type="button" className="prof-btn is-ghost" onClick={onShare}>
+              Sharing
             </button>
           ) : null}
         </div>
@@ -220,12 +213,12 @@ export function ProfilePage({
         <li>
           <span>Plan</span>
           <strong>{planName ? planName.replace(/^\w/, (c) => c.toUpperCase()) : "Free"}</strong>
-          <small>{account.entitlement.canDownload ? "Downloads unlocked" : "Upgrade to download PDFs"}</small>
+          <small>{account.entitlement.canDownload ? "PDF downloads on" : "Upgrade for PDF export"}</small>
         </li>
         <li>
-          <span>Resumes</span>
+          <span>CVs</span>
           <strong>{resumes.length}</strong>
-          <small>{resumes.length === 1 ? "Saved CV" : "Saved CVs"}</small>
+          <small>{resumes.length === 1 ? "Document saved" : "Documents saved"}</small>
         </li>
         <li>
           <span>Rating</span>
@@ -235,128 +228,150 @@ export function ProfilePage({
         <li>
           <span>Reviews</span>
           <strong>{likes}</strong>
-          <small>{likes ? "From your public page" : "None yet"}</small>
+          <small>{likes ? "On your public page" : "No reviews yet"}</small>
         </li>
       </ul>
 
-      <section className="prof-panel">
-        <div className="prof-panel-copy">
-          <h2>Your CVs</h2>
-          <p>Every CV you have saved or created.</p>
-        </div>
-        {resumes.length ? (
-          <ul className="prof-cvs">
-            {resumes.map((item) => {
-              const title = item.data.personal.fullName.trim() || "Untitled";
-              const role = item.data.personal.title.trim() || "No job title";
-              const current = item.id === resumeId;
-              return (
-                <li key={item.id} className={current ? "prof-cv is-current" : "prof-cv"}>
-                  <div>
-                    <strong>{title}</strong>
-                    <span>
-                      {role} · {templateName(item.templateId)}
-                      {item.slug ? ` · /${item.slug}` : ""}
-                    </span>
-                  </div>
-                  <button type="button" className="prof-btn" onClick={() => onUse(item)}>
-                    Open
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="prof-note">No CVs yet. Create one to start.</p>
-        )}
-      </section>
+      <div className="prof-layout">
+        <div className="prof-main">
+          <section className="prof-panel">
+            <div className="prof-panel-head">
+              <div className="prof-panel-copy">
+                <h2>Your CVs</h2>
+                <p>Switch between resumes or start a fresh one.</p>
+              </div>
+            </div>
+            <ul className="prof-cvs">
+              <li>
+                <button type="button" className="prof-start" disabled={creating} onClick={() => void startNewCv()}>
+                  <span className="prof-start-icon" aria-hidden="true">
+                    +
+                  </span>
+                  <span className="prof-start-copy">
+                    <strong>{creating ? "Creating…" : "Start new CV"}</strong>
+                    <small>Blank resume · saved to your account</small>
+                  </span>
+                </button>
+              </li>
+              {resumes.map((item) => {
+                const title = item.data.personal.fullName.trim() || "Untitled";
+                const role = item.data.personal.title.trim() || "No job title";
+                const current = item.id === resumeId;
+                return (
+                  <li key={item.id} className={current ? "prof-cv is-current" : "prof-cv"}>
+                    <div>
+                      <strong>{title}</strong>
+                      <span>
+                        {role} · {templateName(item.templateId)}
+                        {item.slug ? ` · /${item.slug}` : ""}
+                      </span>
+                    </div>
+                    <button type="button" className="prof-btn" onClick={() => onUse(item)}>
+                      Open
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {!resumes.length ? <p className="prof-note">No saved CVs yet — use Start new CV above.</p> : null}
+          </section>
 
-      <section className="prof-panel is-focus">
-        <div className="prof-panel-copy">
-          <h2>Unique username</h2>
-          <p>One name for this CV. Nobody else can use it.</p>
-        </div>
+          <section className="prof-panel is-focus">
+            <div className="prof-panel-copy">
+              <h2>Public page</h2>
+              <p>Choose a username and share one link to your CV.</p>
+            </div>
 
-        <label className="prof-user">
-          <span>Username</span>
-          <input
-            value={draft}
-            spellCheck={false}
-            autoCapitalize="off"
-            autoCorrect="off"
-            placeholder={suggestSlug(name) || "your-name"}
-            disabled={busy || !resumeId}
-            onChange={(event) => setDraft(event.target.value.toLowerCase())}
-          />
-        </label>
-        <p className="prof-preview">{preview}</p>
+            <label className="prof-user">
+              <span>Username</span>
+              <input
+                value={draft}
+                spellCheck={false}
+                autoCapitalize="off"
+                autoCorrect="off"
+                placeholder={suggestSlug(name) || "your-name"}
+                disabled={busy || !resumeId}
+                onChange={(event) => setDraft(event.target.value.toLowerCase())}
+              />
+            </label>
+            <p className="prof-preview">{preview}</p>
 
-        <label className="prof-switch">
-          <input
-            type="checkbox"
-            checked={hosting}
-            disabled={busy || !resumeId}
-            onChange={(event) => setHosting(event.target.checked)}
-          />
-          <span>Make this page public so anyone with the link can view and rate it</span>
-        </label>
+            <label className="prof-switch">
+              <input
+                type="checkbox"
+                checked={hosting}
+                disabled={busy || !resumeId}
+                onChange={(event) => setHosting(event.target.checked)}
+              />
+              <span>Anyone with the link can view and rate this CV</span>
+            </label>
 
-        {error ? <p className="prof-error">{error}</p> : null}
+            {error ? <p className="prof-error">{error}</p> : null}
 
-        <div className="prof-host-acts">
-          <button type="button" className="prof-btn is-primary" disabled={busy || !resumeId} onClick={() => void saveHosting()}>
-            {busy ? "Saving…" : "Save username"}
-          </button>
-          {isPublic && publicPath ? (
-            <>
-              <button type="button" className="prof-btn" onClick={() => void copyLink()}>
-                {copied ? "Copied" : "Copy link"}
+            <div className="prof-host-acts">
+              <button type="button" className="prof-btn is-primary" disabled={busy || !resumeId} onClick={() => void saveHosting()}>
+                {busy ? "Saving…" : "Save"}
               </button>
-              <Link href={publicPath} className="prof-btn">
-                Open page
-              </Link>
-            </>
+              {isPublic && publicPath ? (
+                <>
+                  <button type="button" className="prof-btn" onClick={() => void copyLink()}>
+                    {copied ? "Copied" : "Copy link"}
+                  </button>
+                  <Link href={publicPath} className="prof-btn">
+                    View page
+                  </Link>
+                </>
+              ) : null}
+            </div>
+          </section>
+        </div>
+
+        <aside className="prof-aside">
+          {orders.length > 0 ? (
+            <section className="prof-panel prof-panel-compact">
+              <div className="prof-panel-copy">
+                <h2>Billing</h2>
+                <p>Recent purchases.</p>
+              </div>
+              <ul className="prof-orders">
+                {orders.slice(0, 4).map((order) => (
+                  <li key={order.id}>
+                    <strong>{order.plan}</strong>
+                    <span>{order.status}</span>
+                    <small>{new Date(order.createdAt).toLocaleDateString()}</small>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
-        </div>
-      </section>
 
-      {orders.length > 0 ? (
-        <section className="prof-panel">
-          <div className="prof-panel-copy">
-            <h2>Purchases</h2>
-            <p>Plans on this account.</p>
-          </div>
-          <ul className="prof-orders">
-            {orders.slice(0, 6).map((order) => (
-              <li key={order.id}>
-                <strong>{order.plan}</strong>
-                <span>{order.status}</span>
-                <small>{new Date(order.createdAt).toLocaleDateString()}</small>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+          <section className="prof-panel prof-panel-compact">
+            <div className="prof-panel-copy">
+              <h2>Reviews</h2>
+              <p>Feedback on your hosted CV.</p>
+            </div>
+            {notes.length ? (
+              <ul className="prof-notes">
+                {notes.map((item, index) => (
+                  <li key={`${item.at}-${index}`}>
+                    <Stars value={item.stars} size={12} />
+                    <strong>{item.name}</strong>
+                    <p>{item.note}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="prof-note">Turn on your public page to collect reviews.</p>
+            )}
+          </section>
 
-      <section className="prof-panel">
-        <div className="prof-panel-copy">
-          <h2>Reviews</h2>
-          <p>What people wrote on your hosted resume.</p>
-        </div>
-        {notes.length ? (
-          <ul className="prof-notes">
-            {notes.map((item, index) => (
-              <li key={`${item.at}-${index}`}>
-                <Stars value={item.stars} size={12} />
-                <strong>{item.name}</strong>
-                <p>{item.note}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="prof-note">No written reviews yet.</p>
-        )}
-      </section>
+          <section className="prof-panel prof-panel-compact prof-panel-muted">
+            <p className="prof-aside-tip">
+              {[category, hosting || isPublic ? "Public" : "Private"].filter(Boolean).join(" · ")}
+            </p>
+          </section>
+        </aside>
+      </div>
     </div>
   );
 }
