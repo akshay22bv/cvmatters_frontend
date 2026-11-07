@@ -100,7 +100,9 @@ body {
 .brand-logo {
   display: block;
   height: 32px;
-  width: auto;
+  width: 32px;
+  max-width: 32px;
+  object-fit: contain;
 }
 
 .mn-mark i {
@@ -1871,13 +1873,13 @@ body {
   text-decoration: none;
 }
 
-.slice-rail-logo img,
-.slice-mobile-logo img {
+.slice-rail-logo .brand-logo,
+.slice-mobile-logo .brand-logo {
   display: block;
   width: 40px;
   height: 40px;
-  max-width: none;
-  object-fit: cover;
+  max-width: 40px;
+  object-fit: contain;
 }
 
 .slice-rail-nav {

@@ -4389,7 +4389,12 @@ input:focus, textarea:focus {
   text-decoration: none;
 }
 
-.app-nav-brand .brand-logo { height: 28px; }
+.app-nav-brand .brand-logo {
+  height: 28px;
+  width: 28px;
+  max-width: 28px;
+  object-fit: contain;
+}
 .app-nav-brand b { font-weight: 760; }
 
 .app-nav-links { display: flex; align-items: center; gap: 4px; }

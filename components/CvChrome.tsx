@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconDownload, IconEye, IconLayers, IconMenu, IconPalette, IconUser } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconDownload, IconEye, IconLayers, IconMenu, IconPalette, IconUser, Logo } from "./icons";
 import { SECTIONS, sectionFilled } from "./SideNav";
 import type { PanelId, ResumeData } from "@/lib/types";
 
@@ -29,7 +29,7 @@ export function CvSectionRail({
     <aside className="slice-rail" aria-label="CV sections">
       <div className="slice-rail-top">
         <Link href="/" className="slice-rail-logo" aria-label="CV Matters home">
-          <img src="/icon.png" alt="" />
+          <Logo />
         </Link>
       </div>
       <nav className="slice-rail-nav">
@@ -111,7 +111,7 @@ export function CvMobileChrome({
           <IconMenu />
         </button>
         <Link href="/" className="slice-mobile-logo" aria-label="CV Matters home">
-          <img src="/icon.png" alt="" />
+          <Logo />
         </Link>
         <span className="slice-mobile-title">{current?.title ?? "My CV"}</span>
       </header>

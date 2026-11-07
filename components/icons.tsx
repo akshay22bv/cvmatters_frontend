@@ -1,5 +1,5 @@
 export function Logo() {
-  return <img className="brand-logo" src="/logo.png" alt="" width={563} height={355} />;
+  return <img className="brand-logo" src="/logo.png" alt="" width={192} height={192} />;
 }
 
 export function Chevron() {
