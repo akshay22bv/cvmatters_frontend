@@ -1913,7 +1913,7 @@ input:focus, textarea:focus {
   height: 40px;
   margin-top: -20px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--accent) 12%, #e8eef5);
+  background: color-mix(in srgb, var(--accent) 12%, var(--lime-soft));
   pointer-events: none;
   z-index: 0;
 }

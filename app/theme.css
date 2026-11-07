@@ -1,7 +1,7 @@
 /*
   Theme — restrained palette
-  Pure white surfaces, charcoal ink, light grey lines, royal blue + teal accents.
-*/
+  Pure white surfaces, charcoal ink, light grey lines, brand green accents.
+ */
 
 :root {
   --black: #0a0a0a;
@@ -9,10 +9,10 @@
   --gray: #f4f4f5;
   --gray-soft: #ffffff;
   --gray-muted: #e4e4e7;
-  /* Legacy names kept so existing references keep working */
-  --lime: #2563eb;
-  --lime-deep: #1d4ed8;
-  --lime-soft: #eff6ff;
+  /* Legacy token names — values are the brand green */
+  --lime: #0abf53;
+  --lime-deep: #099e46;
+  --lime-soft: #e8faf0;
 
   --peach: var(--lime-soft);
   --peach-deep: var(--lime);
@@ -55,21 +55,21 @@
   --cta: var(--black);
   --cta-ink: var(--white);
   --accent: var(--lime-deep);
-  --accent-strong: #0f172a;
+  --accent-strong: #056b32;
   --accent-soft: var(--lime-soft);
-  --iris: #0d9488;
-  --mint: #14b8a6;
+  --iris: #12a85f;
+  --mint: #0abf53;
   --flare: var(--lime);
   --danger: var(--bad);
 
-  --grad: linear-gradient(120deg, var(--lime) 0%, #0d9488 100%);
+  --grad: linear-gradient(120deg, var(--lime) 0%, var(--iris) 100%);
   --grad-soft: linear-gradient(160deg, #fafafa 0%, var(--white) 78%);
 
-  --wash-lime: #f8fafc;
-  --wash-green: #f0fdfa;
+  --wash-lime: #f4fdf8;
+  --wash-green: #ecfdf3;
   --wash-pink: var(--gray);
-  --wash-lime-soft: #f1f5f9;
-  --wash-green-soft: #ecfeff;
+  --wash-lime-soft: #e8faf0;
+  --wash-green-soft: #dcf9e8;
   --wash-pink-soft: var(--gray);
 
   --shadow-1: 0 2px 6px rgba(10, 10, 10, 0.06);
@@ -90,7 +90,7 @@
   --mid: 0.3s;
   --slow: 0.62s;
 
-  --font-sans: var(--font-google-sans), "Google Sans", sans-serif;
+  --font-sans: var(--font-outfit), "Outfit", system-ui, sans-serif;
   --font-serif: var(--font-google-sans), "Google Sans", sans-serif;
-  --font-display: var(--font-google-sans), "Google Sans", sans-serif;
+  --font-display: var(--font-outfit), "Outfit", system-ui, sans-serif;
 }

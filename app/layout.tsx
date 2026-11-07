@@ -6,6 +6,7 @@ import {
   Lora,
   Merriweather,
   Montserrat,
+  Outfit,
   Playfair_Display,
   Poppins,
   Roboto,
@@ -30,6 +31,11 @@ const googleSans = localFont({
   display: "swap",
 });
 
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const roboto = Roboto({ weight: ["400", "500", "700"], subsets: ["latin"], variable: "--font-roboto", display: "swap" });
@@ -57,6 +63,7 @@ export const viewport: Viewport = {
 };
 
 const fontVars = [
+  outfit.variable,
   googleSans.variable,
   dmSans.variable,
   inter.variable,
@@ -73,7 +80,7 @@ const fontVars = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fontVars}>
-      <body className={googleSans.className}>
+      <body className={outfit.className}>
         <AppShell />
         {children}
       </body>
