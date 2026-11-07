@@ -149,16 +149,67 @@ async function printDocument() {
 </html>`;
 }
 
-function saveBlob(blob: Blob, name: string) {
+function isIos() {
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
+function cssForCanvas(value: string) {
+  if (!/color-mix|color\s*\(/i.test(value)) return value;
+  return value
+    .replace(/color-mix\([^;{}]*\)/g, "transparent")
+    .replace(/color\([^;{}]*\)/g, "transparent");
+}
+
+/** html2canvas cannot parse `color-mix()` / `color()` in stylesheets — inline what the browser already computed. */
+function mirrorComputedStyles(live: Element, clone: HTMLElement) {
+  const computed = getComputedStyle(live);
+  for (let index = 0; index < computed.length; index += 1) {
+    const prop = computed.item(index);
+    clone.style.setProperty(prop, cssForCanvas(computed.getPropertyValue(prop)), computed.getPropertyPriority(prop));
+  }
+  const liveKids = live.children;
+  const cloneKids = clone.children;
+  for (let index = 0; index < liveKids.length; index += 1) {
+    const liveKid = liveKids[index];
+    const cloneKid = cloneKids[index];
+    if (liveKid && cloneKid) mirrorComputedStyles(liveKid, cloneKid as HTMLElement);
+  }
+}
+
+function prepareCloneForCanvas(clonedDoc: Document, liveRoot: HTMLElement, clonedRoot: HTMLElement) {
+  clonedDoc.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => {
+    if (node instanceof HTMLStyleElement) {
+      node.textContent =
+        node.textContent?.replace(/color-mix\([^;{}]*\)/g, "transparent").replace(/color\([^;{}]*\)/g, "transparent") ?? "";
+    } else {
+      node.remove();
+    }
+  });
+  mirrorComputedStyles(liveRoot, clonedRoot);
+}
+
+async function saveBlob(blob: Blob, name: string) {
+  const out = fileName(name);
+  const file = new File([blob], out, { type: "application/pdf" });
+  if (isIos() && navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: out });
+      return;
+    } catch (reason) {
+      if (reason instanceof Error && reason.name === "AbortError") return;
+    }
+  }
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = fileName(name);
+  link.download = out;
   link.rel = "noopener";
   document.body.appendChild(link);
   link.click();
   link.remove();
-  // iOS Safari often needs the blob tab kept briefly.
   window.setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
@@ -186,6 +237,7 @@ async function downloadClientPdf(name: string) {
       logging: false,
       windowWidth: 794,
       windowHeight: 1123,
+      onclone: (clonedDoc, clonedNode) => prepareCloneForCanvas(clonedDoc, node, clonedNode),
     });
     const image = canvas.toDataURL("image/jpeg", 0.92);
     if (index > 0) pdf.addPage();
