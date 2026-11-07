@@ -165,7 +165,7 @@ export function CvMobileChrome({
             </Link>
             <Link href="/examples" className="slice-sheet-link" onClick={() => setOpen(false)}>
               <IconLayers />
-              Compare CVs
+              CV examples
             </Link>
           </nav>
         </div>

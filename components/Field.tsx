@@ -714,11 +714,24 @@ export function CountrySelect({
   optional?: boolean;
   className?: string;
 }) {
+  const mobile = useIsMobile();
   const { countries, ready } = useCountries();
   const options = useMemo(
     () => countries.map((country) => ({ id: country.name, name: country.name })),
     [countries],
   );
+  if (mobile) {
+    return (
+      <Field
+        label={label}
+        optional={optional}
+        className={className}
+        value={value}
+        placeholder={ready ? "India" : "Loading…"}
+        onChange={onChange}
+      />
+    );
+  }
   return (
     <SearchSelect
       label={label}
@@ -895,43 +908,6 @@ export function SearchTags({
       </div>
 
       {hint ? <p className="fld-note">{hint}</p> : null}
-
-      {mobile && open && rowCount > 0 ? (
-        <div className="tag-suggest" role="presentation">
-          <ul className="pop-list" role="listbox" aria-label={label}>
-            {options.map((item, index) => (
-              <li key={item}>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={false}
-                  data-active={index === active}
-                  className="pop-row"
-                  onMouseEnter={() => setActive(index)}
-                  onClick={() => add(item)}
-                >
-                  <span className="pop-name">{item}</span>
-                </button>
-              </li>
-            ))}
-            {custom ? (
-              <li>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={false}
-                  data-active={active === options.length}
-                  className="pop-row is-new"
-                  onMouseEnter={() => setActive(options.length)}
-                  onClick={() => add(query)}
-                >
-                  <span className="pop-name">Add “{query.trim()}”</span>
-                </button>
-              </li>
-            ) : null}
-          </ul>
-        </div>
-      ) : null}
 
       {!mobile && open && anchor && rowCount > 0 && typeof document !== "undefined" && createPortal(
         <div

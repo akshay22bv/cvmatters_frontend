@@ -69,6 +69,13 @@ export function createResume(ownerKey: string) {
   });
 }
 
+export function deleteResume(id: string, ownerKey: string) {
+  return request<{ ok: true }>(`/api/resumes/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ ownerKey }),
+  });
+}
+
 export function ensureResume(ownerKey: string, templateId: TemplateId, category: Category, data: ResumeData) {
   return request<ResumeRecord>("/api/resumes/ensure", {
     method: "POST",

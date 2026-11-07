@@ -5218,6 +5218,36 @@ input:focus, textarea:focus {
   background: #fff;
 }
 
+.prof-cv-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prof-cv-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--prof-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--prof-muted);
+  cursor: pointer;
+}
+
+.prof-cv-del:hover:not(:disabled) {
+  color: #b42318;
+  border-color: color-mix(in srgb, #b42318 35%, var(--prof-line));
+}
+
+.prof-cv-del:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .prof-cv.is-current {
   border-color: color-mix(in srgb, var(--prof-green) 45%, var(--prof-line));
   background: color-mix(in srgb, var(--prof-green) 6%, white);

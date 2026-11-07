@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Monogram } from "./Monogram";
 import { Stars } from "./Stars";
-import { ApiError, createResume, listResumes, loadBilling, loadRatings, updateHosting } from "@/lib/api";
+import { Trash } from "./icons";
+import { ApiError, createResume, deleteResume, listResumes, loadBilling, loadRatings, updateHosting } from "@/lib/api";
 import { publicResumePath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
 import { templateName, type Category, type RatingSummary, type ResumeData, type ResumeRecord } from "@/lib/types";
@@ -59,6 +60,7 @@ export function ProfilePage({
   const [orders, setOrders] = useState<{ id: string; plan: string; amount: number; status: string; createdAt: string }[]>([]);
   const [resumes, setResumes] = useState<ResumeRecord[]>([]);
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     setDraft(slug || "");
@@ -162,6 +164,27 @@ export function ProfilePage({
     }
   };
 
+  const removeCv = async (id: string) => {
+    if (!ownerKey || deletingId) return;
+    const title = resumes.find((item) => item.id === id)?.data.personal.fullName.trim() || "this CV";
+    if (!window.confirm(`Delete “${title}”? This can't be undone.`)) return;
+    setDeletingId(id);
+    setError("");
+    try {
+      await deleteResume(id, ownerKey);
+      const remaining = resumes.filter((item) => item.id !== id);
+      setResumes(remaining);
+      if (id === resumeId) {
+        if (remaining[0]) onUse(remaining[0]);
+        else onUse(await createResume(ownerKey));
+      }
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Couldn't delete that CV.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const copyLink = async () => {
     if (!publicUrl) return;
     try {
@@ -198,9 +221,6 @@ export function ProfilePage({
           <Link href="/cv/details" className="prof-btn is-primary">
             Edit current CV
           </Link>
-          <button type="button" className="prof-btn" disabled={creating} onClick={() => void startNewCv()}>
-            {creating ? "Creating…" : "Start new CV"}
-          </button>
           {account.user ? (
             <button type="button" className="prof-btn is-ghost" onClick={onShare}>
               Sharing
@@ -266,14 +286,25 @@ export function ProfilePage({
                         {item.slug ? ` · /${item.slug}` : ""}
                       </span>
                     </div>
-                    <button type="button" className="prof-btn" onClick={() => onUse(item)}>
-                      Open
-                    </button>
+                    <div className="prof-cv-acts">
+                      <button type="button" className="prof-btn" onClick={() => onUse(item)}>
+                        Open
+                      </button>
+                      <button
+                        type="button"
+                        className="prof-cv-del"
+                        aria-label={`Delete ${title}`}
+                        disabled={deletingId === item.id}
+                        onClick={() => void removeCv(item.id)}
+                      >
+                        <Trash />
+                      </button>
+                    </div>
                   </li>
                 );
               })}
             </ul>
-            {!resumes.length ? <p className="prof-note">No saved CVs yet — use Start new CV above.</p> : null}
+            {!resumes.length ? <p className="prof-note">No saved CVs yet — tap Start new CV to add one.</p> : null}
           </section>
 
           <section className="prof-panel is-focus">
