@@ -4391,8 +4391,8 @@ input:focus, textarea:focus {
 
 .app-nav-brand .brand-logo {
   height: 28px;
-  width: 28px;
-  max-width: 28px;
+  width: auto;
+  max-width: 84px;
   object-fit: contain;
 }
 .app-nav-brand b { font-weight: 760; }
@@ -4735,127 +4735,6 @@ input:focus, textarea:focus {
   color: var(--muted);
   font-size: 13.5px;
   line-height: 1.45;
-}
-
-/* A cropped, drifting resume — the clip on an Enhancv template card. */
-.film {
-  position: relative;
-  display: block;
-  aspect-ratio: 794 / 860;
-  height: auto;
-  overflow: hidden;
-  border-radius: 12px;
-  background:
-    radial-gradient(circle, #d5dbea 0.9px, transparent 1px) 0 0 / 12px 12px,
-    #e7ebf6;
-  container-type: inline-size;
-  contain: paint;
-}
-
-.film-reel {
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  width: 794px;
-  height: 1123px;
-  transform-origin: top left;
-  --fit: calc((100cqw - 40px) / 794px);
-  animation: film-pan 16s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-.film-reel .paper { box-shadow: 0 14px 32px rgba(17, 23, 54, 0.14); }
-
-.film.is-pair {
-  aspect-ratio: 794 / 560;
-}
-
-.film.is-pair .film-reel { animation-name: film-pan-pair; }
-
-.film.is-pair .film-reel.is-left {
-  left: 10px;
-  --fit: calc((50cqw - 14px) / 794px);
-}
-
-.film.is-pair .film-reel.is-right {
-  left: calc(50cqw + 4px);
-  --fit: calc((50cqw - 14px) / 794px);
-  animation-delay: -5s;
-}
-
-.film-job {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 12px;
-  z-index: 2;
-  display: grid;
-  gap: 5px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 10px 24px rgba(17, 23, 54, 0.16);
-}
-
-.film-job small {
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-strong);
-}
-
-.film-job i {
-  display: block;
-  height: 5px;
-  border-radius: 99px;
-  background: #d7dbea;
-  transform-origin: left center;
-  animation: film-line 16s ease-in-out infinite;
-}
-
-.film-job i:nth-of-type(1) { width: 92%; }
-.film-job i:nth-of-type(2) { width: 74%; animation-delay: 0.15s; }
-.film-job i:nth-of-type(3) { width: 58%; animation-delay: 0.3s; }
-
-@keyframes film-pan {
-  0%, 18% { transform: translate3d(0, 0, 0) scale(var(--fit)); }
-  100% { transform: translate3d(0, calc(var(--fit) * -180px), 0) scale(var(--fit)); }
-}
-
-@keyframes film-pan-pair {
-  0%, 22% { transform: translate3d(0, 0, 0) scale(var(--fit)); }
-  100% { transform: translate3d(0, calc(var(--fit) * -70px), 0) scale(var(--fit)); }
-}
-
-@keyframes film-line {
-  0%, 100% { transform: scaleX(0.72); }
-  50% { transform: scaleX(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .film-reel,
-  .film-job i { animation: none; }
-  .film-reel { transform: scale(var(--fit)); }
-  .film-job i { transform: none; }
-}
-
-.first-run {
-  display: grid;
-  gap: 12px;
-  margin: 0 0 16px;
-  padding: 0;
-  background: transparent;
-  border: 0;
-}
-
-.first-run p { margin: 0; line-height: 1.5; }
-
-.first-run-acts {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
 }
 
 /* --------------------------------------------------------- profile ----- */

@@ -866,8 +866,6 @@
 
 .eh-copy .eh-go { padding: 0 22px; }
 
-.eh-visual .film { aspect-ratio: 794 / 560; }
-
 @media (min-width: 900px) {
   .eh-feat {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);

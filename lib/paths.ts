@@ -46,6 +46,7 @@ const RESERVED_ROOT = new Set([
   "settings",
   "signup",
   "admin",
+  "auth",
   "about",
   "help",
   "support",

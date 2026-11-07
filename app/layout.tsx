@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { DEFAULT_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
 import {
   DM_Sans,
   Inter,
@@ -48,8 +49,37 @@ const merriweather = Merriweather({ weight: ["400", "700"], subsets: ["latin"], 
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "CV Matters",
-  description: "Paste a job description, edit your CV for it, and read resumes from people in your field.",
+  metadataBase: new URL(siteUrl("/")),
+  title: {
+    default: SITE_NAME,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  applicationName: SITE_NAME,
+  category: "business",
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  formatDetection: { email: false, telephone: false },
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
 };
 
 /** Keyboard overlays the page instead of resizing it — stops mobile field shake. */

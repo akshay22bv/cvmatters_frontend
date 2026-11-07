@@ -279,11 +279,9 @@ textarea {
 }
 
 .editor-scroll::-webkit-scrollbar,
-.scale-viewport::-webkit-scrollbar,
 .example-list::-webkit-scrollbar { width: 10px; }
 
 .editor-scroll::-webkit-scrollbar-thumb,
-.scale-viewport::-webkit-scrollbar-thumb,
 .example-list::-webkit-scrollbar-thumb {
   background: #e6dfd8;
   border-radius: 99px;
@@ -830,16 +828,6 @@ textarea.grow {
 @keyframes paper-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
-}
-
-.scale-viewport {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 8px;
 }
 
 .fan.is-curve {
