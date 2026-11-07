@@ -36,12 +36,15 @@ export function RichEditor({
   value,
   placeholder,
   aside,
+  /** When true, action (e.g. Improve) sits under the field instead of in the toolbar — better on mobile. */
+  asideBelow = false,
   onChange,
 }: {
   label: string;
   value: string;
   placeholder?: string;
   aside?: ReactNode;
+  asideBelow?: boolean;
   onChange: (next: string) => void;
 }) {
   const area = useRef<HTMLDivElement>(null);
@@ -101,7 +104,7 @@ export function RichEditor({
             <path d="M6 4h8M6 8h8M6 12h8" />
           </svg>
         </Tool>
-        {aside}
+        {!asideBelow ? aside : null}
       </div>
       <label className="field is-bare">
         <span>{label}</span>
@@ -117,6 +120,7 @@ export function RichEditor({
           onBlur={emit}
         />
       </label>
+      {asideBelow && aside ? <div className="editor-box-foot">{aside}</div> : null}
     </div>
   );
 }

@@ -323,6 +323,22 @@ input:focus, textarea:focus {
   margin-left: auto;
 }
 
+.editor-box-foot {
+  display: flex;
+  justify-content: stretch;
+  padding: 10px 12px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+  background: color-mix(in srgb, var(--gray) 55%, var(--white));
+}
+
+.editor-box-foot .ai-side {
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
 /* ------------------------------------------------------------- select ---- */
 
 .fld-trigger {
@@ -2388,6 +2404,77 @@ input:focus, textarea:focus {
   color: var(--picker-accent-deep);
 }
 
+.design-pick-color-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.design-pick-color-mark i {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 14px;
+  height: 3px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.design-pick-pop {
+  width: 272px;
+  max-width: calc(100vw - 16px);
+  padding: 12px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  background: var(--white);
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  box-shadow: 0 16px 40px rgba(22, 22, 22, 0.14), 0 2px 6px rgba(22, 22, 22, 0.06);
+  overflow: hidden;
+}
+
+.design-pick-pop-title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.design-pick-pop-colors {
+  display: grid;
+  grid-template-columns: repeat(8, 24px);
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.design-pick-pop-colors .swatch {
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+}
+
+.design-pick-pop-colors .swatch:hover {
+  transform: scale(1.06);
+}
+
+.design-pick-pop-colors .swatch.is-on {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px var(--ink);
+}
+
 .fan.is-strip {
   display: flex;
   flex-wrap: nowrap;
@@ -2626,6 +2713,87 @@ input:focus, textarea:focus {
 
 .picker-colors .swatch.is-on {
   box-shadow: 0 0 0 2px white, 0 0 0 4px var(--black);
+}
+
+.picker-fonts {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 0;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: var(--gray);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scroll-padding-inline: 8px;
+}
+
+.picker-fonts::-webkit-scrollbar {
+  height: 4px;
+}
+
+.picker-fonts::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: 999px;
+}
+
+/* Flatten radiogroup so cards sit in one aligned row */
+.picker-fonts .font-picks {
+  display: contents;
+}
+
+.picker-fonts .font-pick {
+  flex: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 72px;
+  min-width: 72px;
+  height: 52px;
+  padding: 6px 6px 7px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  vertical-align: top;
+}
+
+.picker-fonts .font-pick b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 18px;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.picker-fonts .font-pick span {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker-fonts .font-pick.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .picker-look-pane {
@@ -3429,11 +3597,28 @@ input:focus, textarea:focus {
 
   /* Row variant in design sheet: inset so scroll/track isn’t flush to screen edge */
   .picker-colors-row,
+  .picker-fonts-row,
   .picker-typography-row {
     margin-inline: 16px;
     width: auto;
     max-width: calc(100% - 32px);
     box-sizing: border-box;
+  }
+
+  .picker-fonts .font-pick {
+    width: 68px;
+    min-width: 68px;
+    height: 50px;
+    padding: 5px 4px 6px;
+  }
+
+  .picker-fonts .font-pick b {
+    height: 17px;
+    font-size: 14px;
+  }
+
+  .picker-fonts .font-pick span {
+    font-size: 9.5px;
   }
 
   .design-pick-row {

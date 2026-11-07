@@ -448,6 +448,7 @@ export function BioStep({
         label="Summary"
         value={data.summary}
         placeholder="A short professional summary"
+        asideBelow
         onChange={(summary) => onData({ ...data, summary })}
         aside={
           <button
@@ -689,17 +690,58 @@ export function EducationStep({
   );
 }
 
+const SKILL_SUGGESTIONS = [
+  ...new Map(
+    [...INDUSTRY_SKILLS, ...TOOL_SKILLS, ...OTHER_SKILLS].map((item) => [item.toLowerCase(), item] as const),
+  ).values(),
+];
+
+const TOOL_SKILL_SET = new Set(TOOL_SKILLS.map((item) => item.toLowerCase()));
+const INDUSTRY_SKILL_SET = new Set(INDUSTRY_SKILLS.map((item) => item.toLowerCase()));
+
+function skillBucket(skill: string): keyof ResumeData["skills"] {
+  const key = skill.toLowerCase();
+  if (TOOL_SKILL_SET.has(key)) return "tools";
+  if (INDUSTRY_SKILL_SET.has(key)) return "industry";
+  return "other";
+}
+
+function mergedSkillTags(skills: ResumeData["skills"]) {
+  const seen = new Set<string>();
+  const tags: string[] = [];
+  for (const list of [skills.industry, skills.tools, skills.other]) {
+    for (const item of list) {
+      const key = item.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      tags.push(item);
+    }
+  }
+  return tags;
+}
+
+function splitSkillTags(tags: string[]): ResumeData["skills"] {
+  const skills: ResumeData["skills"] = { industry: [], tools: [], other: [] };
+  const seen = new Set<string>();
+  for (const tag of tags) {
+    const key = tag.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    skills[skillBucket(tag)].push(tag);
+  }
+  return skills;
+}
+
 export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: ResumeData) => void }) {
-  const set = (key: keyof ResumeData["skills"], tags: string[]) => {
-    onData({ ...data, skills: { ...data.skills, [key]: tags } });
-  };
   return (
     <StepCard title="What are you good at?" sub="Search for a skill or type your own. Click a chip to remove it." grid={false} plain>
-      <div className="stack">
-        <SearchTags label="Industry knowledge" lookup="skill" group="industry" values={data.skills.industry} suggestions={INDUSTRY_SKILLS} onChange={(tags) => set("industry", tags)} />
-        <SearchTags label="Tools and technologies" lookup="skill" group="tools" values={data.skills.tools} suggestions={TOOL_SKILLS} onChange={(tags) => set("tools", tags)} />
-        <SearchTags label="Other skills" lookup="skill" group="other" values={data.skills.other} suggestions={OTHER_SKILLS} onChange={(tags) => set("other", tags)} />
-      </div>
+      <SearchTags
+        label="Skills"
+        lookup="skill"
+        values={mergedSkillTags(data.skills)}
+        suggestions={SKILL_SUGGESTIONS}
+        onChange={(tags) => onData({ ...data, skills: splitSkillTags(tags) })}
+      />
     </StepCard>
   );
 }

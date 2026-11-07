@@ -21,8 +21,8 @@ export function FontPicks({
           type="button"
           role="radio"
           aria-checked={font.id === current}
+          aria-label={font.name}
           className={font.id === current ? `font-pick font-${font.id} is-active` : `font-pick font-${font.id}`}
-          title={font.name}
           onClick={() => onChange(font.id)}
         >
           <b>{font.sample}</b>

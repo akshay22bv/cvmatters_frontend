@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { AccentSwatches } from "./LookBar";
 import { TypographyStripPicker } from "./DesignPickers";
+import { FontPicks } from "./FontPicks";
 import { ResumeView } from "./ResumeSheet";
 import { TemplateFan } from "./TemplateFan";
 import {
@@ -87,8 +87,10 @@ export function TemplateDialog({
           </div>
 
           <div className="picker-block">
-            <span className="picker-label">Colour</span>
-            <AccentSwatches accent={data.accent} onAccent={onAccent} className="picker-colors picker-colors-row" />
+            <span className="picker-label">Font</span>
+            <div className="picker-fonts picker-fonts-row">
+              <FontPicks value={data.fontId} onChange={onFont} />
+            </div>
           </div>
 
           <div className="picker-block">
@@ -96,8 +98,10 @@ export function TemplateDialog({
             <TypographyStripPicker
               typeSize={data.typeSize}
               spacing={data.spacing}
+              accent={data.accent}
               onTypeSize={(typeSize) => onStyle({ typeSize, spacing: data.spacing, leading: data.leading })}
               onSpacing={(spacing) => onStyle({ typeSize: data.typeSize, spacing, leading: data.leading })}
+              onAccent={onAccent}
             />
           </div>
         </section>

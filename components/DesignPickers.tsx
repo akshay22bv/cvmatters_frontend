@@ -1,5 +1,8 @@
 "use client";
 
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { AccentSwatches } from "./LookBar";
 import { FONT_SIZE, SPACING, readMetric, type ResumeData } from "@/lib/types";
 
 type SizeId = "sm" | "md" | "lg";
@@ -123,26 +126,137 @@ function SpacingCircles({
   );
 }
 
+function AccentColorPick({
+  accent,
+  onAccent,
+}: {
+  accent?: string;
+  onAccent: (hex: string | undefined) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ top: number; left: number } | null>(null);
+
+  const popWidth = 272;
+
+  const measure = useCallback(() => {
+    const node = trigger.current;
+    if (!node) return;
+    const rect = node.getBoundingClientRect();
+    const width = Math.min(popWidth, window.innerWidth - 16);
+    let left = rect.right - width;
+    left = Math.min(Math.max(8, left), window.innerWidth - width - 8);
+    setBox({ top: rect.top - 10, left });
+  }, [popWidth]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setBox(null);
+      return;
+    }
+    measure();
+    const view = window.visualViewport;
+    window.addEventListener("resize", measure);
+    window.addEventListener("scroll", measure, true);
+    view?.addEventListener("resize", measure);
+    view?.addEventListener("scroll", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure, true);
+      view?.removeEventListener("resize", measure);
+      view?.removeEventListener("scroll", measure);
+    };
+  }, [open, measure]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const onPointer = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (trigger.current?.contains(target)) return;
+      if (panel.current?.contains(target)) return;
+      setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("mousedown", onPointer);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("mousedown", onPointer);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={trigger}
+        type="button"
+        className={open ? "design-pick-circ design-pick-color is-on" : "design-pick-circ design-pick-color"}
+        aria-label="Accent colour"
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        title="Colour"
+        onClick={() => setOpen((was) => !was)}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <span className="design-pick-color-mark" aria-hidden="true">
+          A
+          <i style={{ background: accent || "var(--ink)" }} />
+        </span>
+      </button>
+      {open && box && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              ref={panel}
+              className="design-pick-pop"
+              role="dialog"
+              aria-label="Accent colour"
+              style={{
+                position: "fixed",
+                top: box.top,
+                left: box.left,
+                transform: "translateY(-100%)",
+                zIndex: 12000,
+              }}
+            >
+              <p className="design-pick-pop-title">Colour</p>
+              <AccentSwatches accent={accent} onAccent={onAccent} className="design-pick-pop-colors" />
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
+  );
+}
+
 /**
  * One horizontal strip (scroll on narrow screens) like colour swatches:
- * text-size circles, divider, spacing circles.
+ * text-size circles, divider, spacing circles, colour popover.
  */
 export function TypographyStripPicker({
   typeSize,
   spacing,
+  accent,
   onTypeSize,
   onSpacing,
+  onAccent,
 }: {
   typeSize: ResumeData["typeSize"];
   spacing: ResumeData["spacing"];
+  accent?: string;
   onTypeSize: (next: ResumeData["typeSize"]) => void;
   onSpacing: (next: ResumeData["spacing"]) => void;
+  onAccent: (hex: string | undefined) => void;
 }) {
   return (
     <div className="picker-typography-row" role="presentation">
       <TextSizeCircles typeSize={typeSize} onChange={onTypeSize} />
       <span className="design-pick-divider" aria-hidden="true" />
       <SpacingCircles spacing={spacing} onChange={onSpacing} />
+      <span className="design-pick-divider" aria-hidden="true" />
+      <AccentColorPick accent={accent} onAccent={onAccent} />
     </div>
   );
 }

@@ -193,15 +193,21 @@ export function SliceContinue({
   );
 }
 
-/** Mobile step footer: preview + design — icon only, no label. */
+/** Mobile step footer: preview + design — same pill pattern as Continue. */
 export function SliceViewCv({ onPreview, onDesign }: { onPreview: () => void; onDesign: () => void }) {
   return (
-    <div className="slice-template-view" role="group" aria-label="Preview and edit template">
-      <button type="button" className="slice-template-view-ico" onClick={onPreview} aria-label="Preview CV">
-        <IconEye />
+    <div className="slice-bar-acts" role="group" aria-label="Preview and edit template">
+      <button type="button" className="slice-pill" onClick={onPreview}>
+        <span className="slice-pill-mark" aria-hidden="true">
+          <IconEye />
+        </span>
+        <span className="slice-pill-text">Preview</span>
       </button>
-      <button type="button" className="slice-template-view-ico" onClick={onDesign} aria-label="Edit template">
-        <IconPalette />
+      <button type="button" className="slice-pill" onClick={onDesign}>
+        <span className="slice-pill-mark" aria-hidden="true">
+          <IconPalette />
+        </span>
+        <span className="slice-pill-text">Design</span>
       </button>
     </div>
   );
