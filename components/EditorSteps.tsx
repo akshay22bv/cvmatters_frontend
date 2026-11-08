@@ -49,18 +49,13 @@ function cleanBullet(text: string) {
   return text.replace(/^\s*(?:[•\-*–]|\d+[.)])\s+/, "");
 }
 
-/**
- * One list instead of a field per bullet. Enter opens the next line,
- * Backspace on an empty line removes it, and a pasted block splits into lines.
- */
+/** Simple bullet lines — no rich-text toolbar. */
 function BulletList({
   bullets,
   onChange,
-  onDone,
 }: {
   bullets: string[];
   onChange: (bullets: string[]) => void;
-  onDone: () => void;
 }) {
   const [lines, setLines] = useState<BulletLine[]>(() => linesFrom(bullets));
   const [focusTick, setFocusTick] = useState(0);
@@ -140,7 +135,9 @@ function BulletList({
     <div className="bullet-list" role="group" aria-label="What you did">
       {lines.map((line, index) => (
         <div className="bullet-line" key={line.id}>
-          <span className="bullet-mark" aria-hidden="true">•</span>
+          <span className="bullet-mark" aria-hidden="true">
+            •
+          </span>
           <textarea
             ref={(node) => {
               if (node) nodes.current.set(line.id, node);
@@ -148,7 +145,8 @@ function BulletList({
             }}
             rows={1}
             value={line.text}
-            aria-label={`What you did, line ${index + 1}`}
+            aria-label={`Bullet ${index + 1}`}
+            placeholder=""
             onChange={(event) => {
               const value = event.target.value;
               if (!/[\n\r]/.test(value)) {
@@ -221,10 +219,7 @@ function BulletList({
       ))}
       <div className="bullet-foot">
         <button type="button" className="bullet-add" onClick={addAtEnd}>
-          + Add another
-        </button>
-        <button type="button" className="ghost bullet-done" onClick={onDone}>
-          Done
+          + Add bullet
         </button>
       </div>
     </div>
@@ -487,7 +482,6 @@ export function ExperienceStep({
   errors?: Errors;
 }) {
   const [editing, setEditing] = useState<string | null>(null);
-  const [open, setOpen] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!focusId) return;
@@ -524,86 +518,149 @@ export function ExperienceStep({
     setEditing(job.id);
   };
 
+  const move = (id: string, dir: -1 | 1) => {
+    const idx = data.experience.findIndex((item) => item.id === id);
+    if (idx < 0) return;
+    const next = idx + dir;
+    if (next < 0 || next >= data.experience.length) return;
+    const list = [...data.experience];
+    [list[idx], list[next]] = [list[next], list[idx]];
+    onData({ ...data, experience: list });
+  };
+
+  const addAside = (
+    <button type="button" className="entry-add-head" onClick={add}>
+      <span className="add-plus">+</span>
+      Add experience
+    </button>
+  );
+
+  const editingJob = editing ? data.experience.find((job) => job.id === editing) : null;
+
   return (
-    <StepCard title="Where have you worked?" grid={false} plain>
-      {data.experience.map((job) => {
-        const shown = open[job.id] ? job.bullets : job.bullets.slice(0, 2);
-        const range = [job.start, job.current ? "present" : job.end].filter(Boolean).join(" – ");
-        return (
-          <article className="item" key={job.id} data-entry={job.id}>
-            {editing === job.id ? (
-              <div className="stack">
-                <div className="form-grid">
-                  <Field className="span-all" label="Role" error={errors[`role:${job.id}`]} value={job.role} placeholder="Product designer" onChange={(value) => update(job.id, { role: value })} />
-                  <Field className="span-all" label="Company" error={errors[`company:${job.id}`]} value={job.company} placeholder="Studio name" onChange={(value) => update(job.id, { company: value })} />
-                  <PlaceFields location={job.location} onChange={(value) => update(job.id, { location: value })} />
-                  <DateFields
-                    start={job.start}
-                    end={job.end}
-                    current={job.current}
-                    onStart={(start) => update(job.id, { start })}
-                    onEnd={(end) => update(job.id, { end, current: false })}
-                    onCurrent={(current) => update(job.id, { current, end: current ? "" : job.end })}
-                  />
-                </div>
-                <div className="desc-head">
-                  <div className="desc-copy">
-                    <span className="block-label">What you did</span>
+    <StepCard
+      title="Experience"
+      grid={false}
+      plain
+      className="resume-step"
+      aside={editing ? undefined : addAside}
+    >
+      {editingJob ? (
+        <article className="entry-card is-editing" data-entry={editingJob.id}>
+          <div className="entry-edit-top">
+            <button type="button" className="entry-edit-back" onClick={() => setEditing(null)}>
+              ← Back to all roles
+            </button>
+          </div>
+          <div className="stack entry-card-form is-compact">
+            <div className="form-grid">
+              <Field
+                label="Role"
+                error={errors[`role:${editingJob.id}`]}
+                value={editingJob.role}
+                placeholder="Host"
+                onChange={(value) => update(editingJob.id, { role: value })}
+              />
+              <Field
+                label="Company"
+                error={errors[`company:${editingJob.id}`]}
+                value={editingJob.company}
+                placeholder="TFI Fridays"
+                onChange={(value) => update(editingJob.id, { company: value })}
+              />
+              <DateFields
+                compact
+                start={editingJob.start}
+                end={editingJob.end}
+                current={editingJob.current}
+                onStart={(start) => update(editingJob.id, { start })}
+                onEnd={(end) => update(editingJob.id, { end, current: false })}
+                onCurrent={(current) => update(editingJob.id, { current, end: current ? "" : editingJob.end })}
+              />
+            </div>
+            <div className="desc-head">
+              <div className="desc-copy">
+                <span className="block-label">What you did</span>
+              </div>
+              <button
+                type="button"
+                className="ai-side"
+                disabled={improving === `bullets:${editingJob.id}` || !editingJob.bullets.some((b) => b.trim())}
+                onClick={async () => {
+                  const source = editingJob.bullets.filter(Boolean).join("\n");
+                  const next = await onImprove(`bullets:${editingJob.id}`, "bullets", source);
+                  if (!next) return;
+                  update(editingJob.id, {
+                    bullets: next
+                      .split("\n")
+                      .map((line) => line.replace(/^[-•*]\s*/, "").trim())
+                      .filter(Boolean),
+                  });
+                }}
+              >
+                <Spark />
+                <span>{improving === `bullets:${editingJob.id}` ? "Improving…" : "Improve"}</span>
+              </button>
+            </div>
+            <BulletList bullets={editingJob.bullets} onChange={(bullets) => update(editingJob.id, { bullets })} />
+          </div>
+        </article>
+      ) : (
+        <>
+          {data.experience.map((job, index) => {
+            const range = [job.start, job.current ? "Present" : job.end].filter(Boolean).join(" – ");
+            const heading = [job.role, job.company].filter(Boolean).join(", ");
+            const bullets = job.bullets.filter(Boolean);
+            return (
+              <article className="entry-card" key={job.id} data-entry={job.id}>
+                <div className="entry-card-split">
+                  <div className="entry-card-meta">
+                    <p className="entry-card-eyebrow">Role &amp; company</p>
+                    <h3 className="entry-card-title">{heading}</h3>
+                    {job.location ? <p className="entry-card-line">{job.location}</p> : null}
+                    {range ? <p className="entry-card-line entry-card-dates">{range}</p> : null}
                   </div>
+                  <div className="entry-card-detail">
+                    <p className="entry-card-eyebrow">What you did</p>
+                    {bullets.length ? (
+                      <ul className="entry-card-list">
+                        {bullets.map((bullet, i) => (
+                          <li key={i}>{bullet}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="entry-card-foot">
+                  <button type="button" className="entry-card-act" onClick={() => setEditing(job.id)}>
+                    <Pencil />
+                    <span>Edit</span>
+                  </button>
                   <button
                     type="button"
-                    className="ai-side"
-                    disabled={improving === `bullets:${job.id}` || !job.bullets.some((bullet) => bullet.trim())}
-                    onClick={async () => {
-                      const next = await onImprove(`bullets:${job.id}`, "bullets", job.bullets.filter(Boolean).join("\n"));
-                      if (!next) return;
-                      update(job.id, { bullets: next.split("\n").map((line) => line.replace(/^[-•*]\s*/, "").trim()).filter(Boolean) });
-                    }}
+                    className="entry-card-act"
+                    onClick={() => onData({ ...data, experience: data.experience.filter((item) => item.id !== job.id) })}
                   >
-                    <Spark />
-                    <span>{improving === `bullets:${job.id}` ? "Improving…" : "Improve"}</span>
+                    <Trash />
+                    <span>Delete</span>
+                  </button>
+                  <button type="button" className="entry-card-act" disabled={index === 0} onClick={() => move(job.id, -1)}>
+                    <span>Move up</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="entry-card-act"
+                    disabled={index === data.experience.length - 1}
+                    onClick={() => move(job.id, 1)}
+                  >
+                    <span>Move down</span>
                   </button>
                 </div>
-                <BulletList
-                  bullets={job.bullets}
-                  onChange={(bullets) => update(job.id, { bullets })}
-                  onDone={() => setEditing(null)}
-                />
-              </div>
-            ) : (
-              <>
-                <div className="item-top">
-                  <div>
-                    <h3>{[job.role || "Untitled role", job.company].filter(Boolean).join(", ")}</h3>
-                    <div className="meta">{[job.location, range && `(${range})`].filter(Boolean).join(" · ")}</div>
-                  </div>
-                  <div className="icon-row">
-                    <button type="button" className="icon-btn" aria-label="Edit experience" onClick={() => setEditing(job.id)}><Pencil /></button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      aria-label="Delete experience"
-                      onClick={() => onData({ ...data, experience: data.experience.filter((item) => item.id !== job.id) })}
-                    >
-                      <Trash />
-                    </button>
-                  </div>
-                </div>
-                <ul>
-                  {shown.filter(Boolean).map((bullet, index) => <li key={index}>{bullet}</li>)}
-                </ul>
-                {job.bullets.filter(Boolean).length > 2 && (
-                  <button type="button" className="see-more" onClick={() => setOpen((current) => ({ ...current, [job.id]: !current[job.id] }))}>
-                    {open[job.id] ? "See less" : "See more"}
-                  </button>
-                )}
-              </>
-            )}
-          </article>
-        );
-      })}
-      {!data.experience.length && <p className="empty-note">No roles yet.</p>}
-      <button type="button" className="add-row" onClick={add}><span className="add-plus">+</span> Add experience</button>
+              </article>
+            );
+          })}
+        </>
+      )}
     </StepCard>
   );
 }
@@ -639,53 +696,128 @@ export function EducationStep({
     onData({ ...data, education: data.education.map((item) => (item.id === id ? { ...item, ...patch } : item)) });
   };
 
+  const addEd = () => {
+    const item = { id: newId(), degree: "", school: "", year: "", detail: "" };
+    onData({ ...data, education: [...data.education, item] });
+    setEditing(item.id);
+  };
+
+  const moveEd = (id: string, dir: -1 | 1) => {
+    const idx = data.education.findIndex((entry) => entry.id === id);
+    if (idx < 0) return;
+    const next = idx + dir;
+    if (next < 0 || next >= data.education.length) return;
+    const list = [...data.education];
+    [list[idx], list[next]] = [list[next], list[idx]];
+    onData({ ...data, education: list });
+  };
+
+  const edAside = (
+    <button type="button" className="entry-add-head" onClick={addEd}>
+      <span className="add-plus">+</span>
+      Add education
+    </button>
+  );
+
+  const editingItem = editing ? data.education.find((item) => item.id === editing) : null;
+
   return (
-    <StepCard title="What did you study?" grid={false} plain>
-      {data.education.map((item) => (
-        <article className="item" key={item.id} data-entry={item.id}>
-          {editing === item.id ? (
-            <div className="stack">
-              <div className="form-grid">
-                <Field className="span-all" label="Degree" error={errors[`degree:${item.id}`]} value={item.degree} placeholder="B.Des, Product Design" onChange={(value) => update(item.id, { degree: value })} />
-                <Field className="span-all" label="School" error={errors[`school:${item.id}`]} value={item.school} placeholder="University" onChange={(value) => update(item.id, { school: value })} />
-                <SearchSelect label="Year" optional value={item.year} options={YEARS} placeholder="Year" allowCustom onChange={(year) => update(item.id, { year })} />
-                <Field label="Detail" optional value={item.detail} placeholder="A short note" onChange={(value) => update(item.id, { detail: value })} />
-              </div>
-              <button type="button" className="ghost" onClick={() => setEditing(null)}>Done</button>
+    <StepCard
+      title="Education"
+      grid={false}
+      plain
+      className="resume-step"
+      aside={editing ? undefined : edAside}
+    >
+      {editingItem ? (
+        <article className="entry-card entry-card--edu is-editing" data-entry={editingItem.id}>
+          <div className="entry-edit-top">
+            <button type="button" className="entry-edit-back" onClick={() => setEditing(null)}>
+              ← Back to all schools
+            </button>
+          </div>
+          <div className="stack entry-card-form">
+            <div className="form-grid">
+              <Field
+                className="span-all"
+                label="Degree"
+                error={errors[`degree:${editingItem.id}`]}
+                value={editingItem.degree}
+                placeholder="B.Des, Product Design"
+                onChange={(value) => update(editingItem.id, { degree: value })}
+              />
+              <Field
+                className="span-all"
+                label="School"
+                error={errors[`school:${editingItem.id}`]}
+                value={editingItem.school}
+                placeholder="University"
+                onChange={(value) => update(editingItem.id, { school: value })}
+              />
+              <SearchSelect
+                label="Year"
+                optional
+                value={editingItem.year}
+                options={YEARS}
+                placeholder="Year"
+                allowCustom
+                onChange={(year) => update(editingItem.id, { year })}
+              />
+              <Field
+                className="span-all"
+                label="Notes"
+                optional
+                value={editingItem.detail}
+                placeholder="Honors, concentration, or city"
+                onChange={(value) => update(editingItem.id, { detail: value })}
+              />
             </div>
-          ) : (
-            <div className="item-top">
-              <div>
-                <h3>{item.degree || "Untitled program"}</h3>
-                <div className="meta">{[item.school, item.year].filter(Boolean).join(" · ")}</div>
-                {item.detail && <div className="meta">{item.detail}</div>}
+          </div>
+        </article>
+      ) : (
+        <>
+          {data.education.map((item, index) => (
+            <article className="entry-card entry-card--edu" key={item.id} data-entry={item.id}>
+              <div className="entry-card-edu-body">
+                {item.degree ? <h3 className="entry-card-title">{item.degree}</h3> : null}
+                {item.school ? <p className="entry-card-school">{item.school}</p> : null}
+                {[item.detail, item.year].filter(Boolean).length ? (
+                  <p className="entry-card-line entry-card-dates">{[item.detail, item.year].filter(Boolean).join(" · ")}</p>
+                ) : null}
               </div>
-              <div className="icon-row">
-                <button type="button" className="icon-btn" aria-label="Edit education" onClick={() => setEditing(item.id)}><Pencil /></button>
+              <div className="entry-card-foot">
+                <button type="button" className="entry-card-act" onClick={() => setEditing(item.id)}>
+                  <Pencil />
+                  <span>Edit</span>
+                </button>
                 <button
                   type="button"
-                  className="icon-btn"
-                  aria-label="Delete education"
+                  className="entry-card-act"
                   onClick={() => onData({ ...data, education: data.education.filter((entry) => entry.id !== item.id) })}
                 >
                   <Trash />
+                  <span>Delete</span>
                 </button>
+                {data.education.length > 1 ? (
+                  <>
+                    <button type="button" className="entry-card-act" disabled={index === 0} onClick={() => moveEd(item.id, -1)}>
+                      <span>Move up</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="entry-card-act"
+                      disabled={index === data.education.length - 1}
+                      onClick={() => moveEd(item.id, 1)}
+                    >
+                      <span>Move down</span>
+                    </button>
+                  </>
+                ) : null}
               </div>
-            </div>
-          )}
-        </article>
-      ))}
-      <button
-        type="button"
-        className="add-row"
-        onClick={() => {
-          const item = { id: newId(), degree: "", school: "", year: "", detail: "" };
-          onData({ ...data, education: [...data.education, item] });
-          setEditing(item.id);
-        }}
-      >
-        <span className="add-plus">+</span> Add education
-      </button>
+            </article>
+          ))}
+        </>
+      )}
     </StepCard>
   );
 }

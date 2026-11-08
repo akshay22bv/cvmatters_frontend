@@ -212,13 +212,13 @@
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: var(--accent);
-  color: white;
+  background: var(--cta);
+  color: var(--cta-ink);
   font-size: 14.5px;
   font-weight: 680;
 }
 
-.land-form button:hover:not(:disabled) { background: var(--accent-strong); }
+.land-form button:hover:not(:disabled) { background: var(--cta-hover); }
 
 .land-alt {
   display: flex;
@@ -1206,20 +1206,20 @@
 
 .board-pill-primary {
   border: 0;
-  background: var(--accent);
-  color: var(--white);
+  background: var(--cta);
+  color: var(--cta-ink);
   box-shadow: var(--pill-shadow-primary);
 }
 
 .board-pill-primary:hover:not(:disabled) {
-  background: var(--accent-strong);
+  background: var(--cta-hover);
   transform: translateY(-2px);
   box-shadow: var(--pill-shadow-primary-hover);
 }
 
 .board-pill-primary .board-pill-icon {
   background: var(--white);
-  color: var(--accent);
+  color: var(--ink);
 }
 
 .board-pill-outline:hover:not(:disabled) {

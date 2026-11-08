@@ -52,7 +52,9 @@
   --forest-deep: var(--black);
   --line: rgba(10, 10, 10, 0.1);
 
-  --cta: var(--accent);
+  /* Primary actions: black fill, white label (green reserved for rare brand accents) */
+  --cta: var(--black);
+  --cta-hover: #1c1c1c;
   --cta-ink: var(--white);
   --accent: var(--lime-deep);
   --accent-strong: #056b32;
@@ -86,8 +88,8 @@
   --pill-radius: 999px;
   --pill-shadow: var(--shadow-1);
   --pill-shadow-hover: var(--shadow-2);
-  --pill-shadow-primary: 0 10px 28px color-mix(in srgb, var(--accent) 22%, transparent);
-  --pill-shadow-primary-hover: 0 14px 28px color-mix(in srgb, var(--accent) 30%, transparent);
+  --pill-shadow-primary: 0 10px 28px rgba(10, 10, 10, 0.12);
+  --pill-shadow-primary-hover: 0 14px 32px rgba(10, 10, 10, 0.18);
 
   --radius: 16px;
   --radius-lg: 24px;

@@ -1194,6 +1194,8 @@ export function DateFields({
   onStart,
   onEnd,
   onCurrent,
+  /** Side-by-side start/end — less height in role edit. */
+  compact = false,
 }: {
   start: string;
   end: string;
@@ -1201,10 +1203,67 @@ export function DateFields({
   onStart: (value: string) => void;
   onEnd: (value: string) => void;
   onCurrent: (value: boolean) => void;
+  compact?: boolean;
 }) {
   const mobile = useIsMobile();
   const from = parseMonthYear(start);
   const to = parseMonthYear(end);
+
+  if (compact && !mobile) {
+    return (
+      <div className="date-pair span-all date-pair--compact">
+        <div className="fld">
+          <div className="fld-top">
+            <span className="fld-label">Start</span>
+          </div>
+          <div className="date-row">
+            <SearchSelect
+              hideLabel
+              label="Start year"
+              value={from.year}
+              options={YEARS}
+              placeholder="Year"
+              onChange={(year) => onStart(joinMonthYear(from.month, year))}
+            />
+            <SearchSelect
+              hideLabel
+              label="Start month"
+              value={from.month}
+              options={MONTHS}
+              placeholder="Mon"
+              onChange={(month) => onStart(joinMonthYear(month, from.year))}
+            />
+          </div>
+        </div>
+        <div className="fld">
+          <div className="fld-top">
+            <span className="fld-label">End</span>
+          </div>
+          <div className="date-row">
+            <SearchSelect
+              hideLabel
+              label="End year"
+              value={current ? "" : to.year}
+              options={YEARS}
+              placeholder={current ? "Present" : "Year"}
+              disabled={current}
+              onChange={(year) => onEnd(joinMonthYear(to.month, year))}
+            />
+            <SearchSelect
+              hideLabel
+              label="End month"
+              value={current ? "" : to.month}
+              options={MONTHS}
+              placeholder={current ? "—" : "Mon"}
+              disabled={current}
+              onChange={(month) => onEnd(joinMonthYear(month, to.year))}
+            />
+          </div>
+          <CheckRow label="I work here now" checked={current} onChange={onCurrent} />
+        </div>
+      </div>
+    );
+  }
 
   if (mobile) {
     return (

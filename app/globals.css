@@ -670,8 +670,8 @@ textarea.bare:focus { box-shadow: none; }
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--accent);
-  color: white;
+  background: var(--cta);
+  color: var(--cta-ink);
   display: grid;
   place-items: center;
   font-size: 16px;
@@ -796,14 +796,14 @@ textarea.grow {
 
 .btn-primary {
   border-color: transparent;
-  background: var(--accent);
-  color: var(--white);
+  background: var(--cta);
+  color: var(--cta-ink);
   box-shadow: var(--pill-shadow-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  background: var(--accent-strong);
+  background: var(--cta-hover);
   box-shadow: var(--pill-shadow-primary-hover);
 }
 
@@ -1301,10 +1301,10 @@ button.example {
   height: 46px;
   width: auto;
   flex: none;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, white);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: white;
-  color: var(--accent-strong);
+  background: var(--white);
+  color: var(--ink);
   font-weight: 700;
   font-size: 13px;
   line-height: 1;
@@ -1318,8 +1318,8 @@ button.example {
 }
 
 .ai-side:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 12%, white);
-  border-color: var(--accent);
+  background: var(--gray);
+  border-color: color-mix(in srgb, var(--ink) 14%, var(--line));
 }
 
 .ai-side:disabled { opacity: 0.4; }
