@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { CheckRow } from "./Field";
 import { Monogram } from "./Monogram";
 import { Stars } from "./Stars";
 import { Trash } from "./icons";
@@ -313,29 +314,28 @@ export function ProfilePage({
               <p>Choose a username and share one link to your CV.</p>
             </div>
 
-            <label className="prof-user">
-              <span>Username</span>
-              <input
-                value={draft}
-                spellCheck={false}
-                autoCapitalize="off"
-                autoCorrect="off"
-                placeholder={suggestSlug(name) || "your-name"}
-                disabled={busy || !resumeId}
-                onChange={(event) => setDraft(event.target.value.toLowerCase())}
-              />
-            </label>
-            <p className="prof-preview">{preview}</p>
-
-            <label className="prof-switch">
-              <input
-                type="checkbox"
+            <div className="prof-host-fields">
+              <label className="prof-user">
+                <span>Username</span>
+                <input
+                  value={draft}
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  placeholder={suggestSlug(name) || "your-name"}
+                  disabled={busy || !resumeId}
+                  onChange={(event) => setDraft(event.target.value.toLowerCase())}
+                />
+              </label>
+              <p className="prof-preview">{preview}</p>
+              <CheckRow
+                className="prof-host-check"
+                label="Anyone with the link can view and rate this CV"
                 checked={hosting}
                 disabled={busy || !resumeId}
-                onChange={(event) => setHosting(event.target.checked)}
+                onChange={setHosting}
               />
-              <span>Anyone with the link can view and rate this CV</span>
-            </label>
+            </div>
 
             {error ? <p className="prof-error">{error}</p> : null}
 

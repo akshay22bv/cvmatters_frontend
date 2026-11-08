@@ -79,6 +79,15 @@ async function metadataForView(view: AppView, pathname: string): Promise<Metadat
     });
   }
 
+  if (view.kind === "about") {
+    return baseMeta({
+      title: titleTemplate("About"),
+      description:
+        "CV Matters is a resume builder with live preview, ATS-friendly templates, job-aware editing, and optional public sharing.",
+      path: "/about",
+    });
+  }
+
   if (view.kind === "public") {
     const record = await fetchPublicResume(view.id);
     const name = record?.data?.personal?.fullName?.trim() || view.id;

@@ -13,6 +13,7 @@ import { ProfilePage } from "./ProfilePage";
 import { PublicCvPage } from "./PublicCvPage";
 import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
+import { AboutPage } from "./AboutPage";
 import { Landing, type DashIntent } from "./Landing";
 import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
@@ -403,7 +404,7 @@ export default function Builder() {
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
 
-  if (mode === "loading" && view.kind !== "public") {
+  if (mode === "loading" && view.kind !== "public" && view.kind !== "about") {
     return (
       <div className="boot">
         <div className="boot-mark" aria-hidden="true">
@@ -414,6 +415,10 @@ export default function Builder() {
         <p className="boot-note">Opening CV Matters…</p>
       </div>
     );
+  }
+
+  if (view.kind === "about") {
+    return <AboutPage />;
   }
 
   if (view.kind === "public") {
@@ -450,7 +455,7 @@ export default function Builder() {
     }
   };
 
-  if (mode === "start" && view.kind !== "examples" && view.kind !== "profile") {
+  if (mode === "start" && view.kind !== "examples" && view.kind !== "profile" && view.kind !== "about") {
     return (
       <Landing
         busy={busy}

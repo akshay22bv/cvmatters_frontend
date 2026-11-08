@@ -347,15 +347,17 @@ export function CheckRow({
   checked,
   onChange,
   className,
+  disabled = false,
 }: {
   label: string;
   checked: boolean;
   onChange: (value: boolean) => void;
   className?: string;
+  disabled?: boolean;
 }) {
   return (
-    <label className={`check${className ? ` ${className}` : ""}`}>
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+    <label className={`check${className ? ` ${className}` : ""}${disabled ? " is-off" : ""}`}>
+      <input type="checkbox" checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
       <span className="check-box" aria-hidden="true">
         <IconCheck />
       </span>

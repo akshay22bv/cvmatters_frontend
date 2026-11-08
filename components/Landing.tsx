@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { SiteFooter } from "./SiteFooter";
 import { IconChevronRight, IconCreate, IconDrop, IconLinkedin, IconUpload } from "./icons";
 import { Reveal, Tilt } from "./motion";
 import { ResumeSheet } from "./ResumeSheet";
@@ -249,40 +250,12 @@ export function Landing({
           </div>
         </article>
 
-        <footer className="board-foot">
-          <div className="board-rail board-foot-grid">
-            <div className="board-foot-copy">
-              <strong>CV Matters</strong>
-              <p>Write a resume, match a job, and learn from people in your field.</p>
-            </div>
-            <nav className="board-foot-nav" aria-label="Footer">
-              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("build")}>
-                <span className="board-pill-label">Build your CV</span>
-                <span className="board-pill-icon" aria-hidden="true">
-                  <IconChevronRight />
-                </span>
-              </button>
-              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("job")}>
-                <span className="board-pill-label">Match a job</span>
-                <span className="board-pill-icon" aria-hidden="true">
-                  <IconChevronRight />
-                </span>
-              </button>
-              <button type="button" className="board-pill board-pill-outline board-pill-compact" disabled={busy} onClick={() => pickIntent("field")}>
-                <span className="board-pill-label">Your field</span>
-                <span className="board-pill-icon" aria-hidden="true">
-                  <IconChevronRight />
-                </span>
-              </button>
-              <a className="board-foot-link" href="#templates">
-                Templates
-              </a>
-              <a className="board-foot-link" href="/examples">
-                Examples
-              </a>
-            </nav>
-          </div>
-        </footer>
+        <SiteFooter
+          busy={busy}
+          onBuild={() => pickIntent("build")}
+          onJob={() => pickIntent("job")}
+          onField={() => pickIntent("field")}
+        />
 
         {ask && (
           <div className="board-ask" role="dialog" aria-labelledby="board-ask-title">

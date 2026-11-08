@@ -5054,9 +5054,15 @@ input:focus, textarea:focus {
   font-size: 12.5px;
 }
 
+.prof-host-fields {
+  display: grid;
+  gap: 10px;
+}
+
 .prof-user {
   display: grid;
   gap: 6px;
+  margin: 0;
 }
 
 .prof-user span {
@@ -5191,28 +5197,31 @@ input:focus, textarea:focus {
 .prof-slug input:focus { outline: none; box-shadow: none; }
 
 .prof-preview {
-  margin: 0;
+  margin: -4px 0 0;
+  padding: 0 1px;
   color: var(--prof-muted);
   font-size: 12.5px;
+  line-height: 1.45;
   word-break: break-all;
 }
 
-.prof-switch {
-  display: flex;
+.prof-host-check {
   align-items: flex-start;
-  gap: 10px;
+  width: 100%;
   margin: 2px 0 0;
   color: var(--prof-ink);
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.45;
   cursor: pointer;
 }
 
-.prof-switch input {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  accent-color: var(--prof-green);
+.prof-host-check .check-box {
+  margin-top: 1px;
+}
+
+.prof-host-check .check-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .prof-error {
