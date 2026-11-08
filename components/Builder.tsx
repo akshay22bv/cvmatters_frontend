@@ -455,7 +455,7 @@ export default function Builder() {
     }
   };
 
-  if (mode === "start" && view.kind !== "examples" && view.kind !== "profile" && view.kind !== "about") {
+  if (mode === "start" && view.kind !== "examples" && view.kind !== "profile") {
     return (
       <Landing
         busy={busy}
