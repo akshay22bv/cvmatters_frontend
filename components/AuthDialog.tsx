@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Dialog } from "./Dialog";
-import { loadAuthConfig } from "@/lib/api";
-
-type ProviderId = "google" | "apple";
-
-const PROVIDERS: { id: ProviderId; label: string }[] = [
-  { id: "google", label: "Continue with Google" },
-  { id: "apple", label: "Continue with Apple" },
-];
+import { ApiError, loadAuthConfig } from "@/lib/api";
 
 function GoogleMark() {
   return (
@@ -22,83 +15,172 @@ function GoogleMark() {
   );
 }
 
-function AppleMark() {
-  return (
-    <svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M13.05 9.52c-.02-2.16 1.76-3.2 1.84-3.25-1-.47-2.04-.5-2.47-.51-1.05-.11-2.05.62-2.59.62-.53 0-1.36-.6-2.24-.59-1.15.02-2.21.67-2.8 1.7-1.2 2.08-.3 5.16.86 6.85.57.83 1.25 1.76 2.14 1.73.86-.03 1.18-.55 2.22-.55s1.33.55 2.24.53c.93-.02 1.51-.84 2.08-1.67.65-.96.92-1.89.94-1.94-.02-.01-1.8-.69-1.82-2.74ZM11.2 4.48c.47-.57.79-1.36.7-2.15-.68.03-1.5.45-1.98 1.02-.44.5-.82 1.31-.72 2.08.76.06 1.53-.39 2-.95Z"
-      />
-    </svg>
-  );
-}
-
-function ProviderMark({ id }: { id: ProviderId }) {
-  return id === "google" ? <GoogleMark /> : <AppleMark />;
-}
-
-/** Sign up and sign-in: Google and Apple only. */
+/** Google OAuth plus email sign-up and sign-in. */
 export function AuthDialog({
   open,
   ownerKey,
   reason,
   onClose,
+  onRegister,
+  onLogin,
+  onAuthenticated,
 }: {
   open: boolean;
   ownerKey: string;
   reason?: string;
   onClose: () => void;
+  onRegister: (input: { email: string; name: string; password: string }) => Promise<unknown>;
+  onLogin: (input: { email: string; password: string }) => Promise<unknown>;
+  onAuthenticated?: () => void;
 }) {
   const [failure, setFailure] = useState("");
-  const [providers, setProviders] = useState<{ google: boolean; apple: boolean } | null>(null);
-
+  const [googleReady, setGoogleReady] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
   const openedAsSignIn = /^sign in/i.test(reason || "");
-  const title = openedAsSignIn ? "Welcome back" : "Get started with CV Matters";
-  const subtitle = openedAsSignIn
-    ? reason && !/^sign in/i.test(reason)
-      ? reason
-      : "Sign in to pick up where you left off."
-    : reason && !openedAsSignIn
-      ? reason
-      : "Create an account to download your resume.";
+  const [mode, setMode] = useState<"signup" | "login">(openedAsSignIn ? "login" : "signup");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const title =
+    mode === "login"
+      ? "Welcome back"
+      : openedAsSignIn
+        ? "Welcome back"
+        : "Get started with CV Matters";
+
+  const subtitle =
+    mode === "login"
+      ? reason && !/^sign in/i.test(reason)
+        ? reason
+        : "Sign in with email or Google."
+      : reason && !openedAsSignIn
+        ? reason
+        : "Create an account with email or Google.";
 
   useEffect(() => {
     if (!open) return;
     setFailure("");
+    setEmail("");
+    setName("");
+    setPassword("");
+    setMode(openedAsSignIn ? "login" : "signup");
     loadAuthConfig()
-      .then(setProviders)
-      .catch(() => setProviders({ google: false, apple: false }));
-  }, [open]);
+      .then((config) => setGoogleReady(config.google))
+      .catch(() => setGoogleReady(false));
+  }, [open, openedAsSignIn]);
 
-  const start = (id: ProviderId) => {
-    const ready = providers?.[id];
-    if (!ready) {
-      setFailure(`${id === "google" ? "Google" : "Apple"} sign-in is not configured on this server yet.`);
+  const startGoogle = () => {
+    if (!googleReady) {
+      setFailure("Google sign-in is not configured on this server yet.");
       return;
     }
     const query = ownerKey ? `?ownerKey=${encodeURIComponent(ownerKey)}` : "";
-    window.location.assign(`/backend/api/auth/${id}${query}`);
+    window.location.assign(`/backend/api/auth/google${query}`);
+  };
+
+  const submitEmail = async (event: FormEvent) => {
+    event.preventDefault();
+    setFailure("");
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        await onRegister({ email: email.trim(), name: name.trim(), password });
+      } else {
+        await onLogin({ email: email.trim(), password });
+      }
+      onAuthenticated?.();
+      onClose();
+    } catch (reason) {
+      if (reason instanceof ApiError) setFailure(reason.message);
+      else setFailure("Couldn't complete that. Try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <Dialog open={open} onClose={onClose} width={440} className="auth-modal" title={title} subtitle={subtitle}>
       <div className="modal-body auth-body">
         <div className="auth-providers">
-          {PROVIDERS.map((provider) => (
-            <button
-              key={provider.id}
-              type="button"
-              className="auth-provider"
-              disabled={providers !== null && !providers[provider.id]}
-              onClick={() => start(provider.id)}
-            >
-              <span className="auth-mark">
-                <ProviderMark id={provider.id} />
-              </span>
-              {provider.label}
-            </button>
-          ))}
+          <button
+            type="button"
+            className="auth-provider"
+            disabled={googleReady !== null && !googleReady}
+            onClick={startGoogle}
+          >
+            <span className="auth-mark">
+              <GoogleMark />
+            </span>
+            Continue with Google
+          </button>
         </div>
+
+        <p className="auth-or" aria-hidden="true">
+          or
+        </p>
+
+        <form className="auth-email-form" onSubmit={(event) => void submitEmail(event)}>
+          {mode === "signup" ? (
+            <label className="auth-field">
+              <span>Name</span>
+              <input
+                className="auth-input"
+                type="text"
+                autoComplete="name"
+                placeholder="How should we address you?"
+                value={name}
+                disabled={busy}
+                onChange={(event) => setName(event.target.value)}
+              />
+            </label>
+          ) : null}
+          <label className="auth-field">
+            <span>Email</span>
+            <input
+              className="auth-input"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={email}
+              disabled={busy}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+          <label className="auth-field">
+            <span>Password</span>
+            <input
+              className="auth-input"
+              type="password"
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+              value={password}
+              disabled={busy}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          <button type="submit" className="btn-cta" disabled={busy || !email.trim() || !password || (mode === "signup" && !name.trim())}>
+            {busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          {mode === "signup" ? (
+            <>
+              Already have an account?{" "}
+              <button type="button" onClick={() => setMode("login")}>
+                Sign in
+              </button>
+            </>
+          ) : (
+            <>
+              New here?{" "}
+              <button type="button" onClick={() => setMode("signup")}>
+                Create an account
+              </button>
+            </>
+          )}
+        </p>
 
         {failure ? <p className="form-alert">{failure}</p> : null}
 

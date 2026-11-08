@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ExamplesStep } from "./ExamplesStep";
 import { CvMobileChrome, CvSectionRail } from "./CvChrome";
 import { ResumeView } from "./ResumeSheet";
+import { IconChevronLeft, Pencil } from "./icons";
 import { Stars } from "./Stars";
 import { ApiError, rateResume } from "@/lib/api";
 import {
@@ -159,8 +160,19 @@ export function ExamplesBrowsePage({
           aria-label={`${sharedPreview.data.personal.fullName || "Shared"} resume`}
         >
           <div className="preview-sheet-top">
-            <button type="button" className="preview-sheet-close" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
-              ×
+            <button type="button" className="preview-sheet-icon preview-sheet-back" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
+              <IconChevronLeft />
+            </button>
+            <button
+              type="button"
+              className="preview-sheet-icon"
+              aria-label="Edit my CV"
+              onClick={() => {
+                setPreviewOpen(false);
+                router.push("/cv/details");
+              }}
+            >
+              <Pencil />
             </button>
           </div>
           {!sharedOwn ? (
@@ -183,21 +195,6 @@ export function ExamplesBrowsePage({
           ) : null}
           <div className="preview-sheet-body">
             <ResumeView templateId={sharedPreview.templateId} data={sharedPreview.data} hideContact />
-          </div>
-          <div className="preview-sheet-foot">
-            <button
-              type="button"
-              className="is-get"
-              onClick={() => {
-                setPreviewOpen(false);
-                router.push("/cv/details");
-              }}
-            >
-              Edit my CV
-            </button>
-            <button type="button" onClick={() => setPreviewOpen(false)}>
-              Close
-            </button>
           </div>
         </div>
       )}

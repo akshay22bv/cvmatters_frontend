@@ -197,17 +197,11 @@ export function SliceContinue({
 export function SliceViewCv({ onPreview, onDesign }: { onPreview: () => void; onDesign: () => void }) {
   return (
     <div className="slice-bar-acts" role="group" aria-label="Preview and edit template">
-      <button type="button" className="slice-pill" onClick={onPreview}>
-        <span className="slice-pill-mark" aria-hidden="true">
-          <IconEye />
-        </span>
-        <span className="slice-pill-text">Preview</span>
+      <button type="button" className="slice-round" aria-label="Preview resume" onClick={onPreview}>
+        <IconEye />
       </button>
-      <button type="button" className="slice-pill" onClick={onDesign}>
-        <span className="slice-pill-mark" aria-hidden="true">
-          <IconPalette />
-        </span>
-        <span className="slice-pill-text">Design</span>
+      <button type="button" className="slice-round" aria-label="Edit design" onClick={onDesign}>
+        <IconPalette />
       </button>
     </div>
   );

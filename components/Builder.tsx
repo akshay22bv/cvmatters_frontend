@@ -20,7 +20,7 @@ import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } 
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
-import { IconDownload, IconEye, IconPalette } from "./icons";
+import { IconChevronLeft, IconDownload, IconEye, IconPalette } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
@@ -428,6 +428,9 @@ export default function Builder() {
           open={gate === "auth"}
           reason={gateReason}
           ownerKey={owner.current}
+          onRegister={account.register}
+          onLogin={account.login}
+          onAuthenticated={() => setGate(null)}
           onClose={() => setGate(null)}
         />
       </div>
@@ -550,6 +553,10 @@ export default function Builder() {
           onUse={(record) => {
             applyRecord(record);
             router.push("/cv/details");
+          }}
+          onPreviewCv={(record) => {
+            applyRecord(record);
+            setPreviewOpen(true);
           }}
         />
       )}
@@ -780,11 +787,25 @@ export default function Builder() {
       </div>
       )}
 
-      {previewOpen && view.kind === "cv" && (
+      {previewOpen && (view.kind === "cv" || view.kind === "profile") && (
         <div className="preview-sheet" role="dialog" aria-label="Resume preview">
           <div className="preview-sheet-top">
-            <button type="button" className="preview-sheet-close" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
-              ×
+            <button
+              type="button"
+              className="preview-sheet-icon preview-sheet-back"
+              aria-label={view.kind === "profile" ? "Close preview" : "Back to editing"}
+              onClick={() => setPreviewOpen(false)}
+            >
+              <IconChevronLeft />
+            </button>
+            <button
+              type="button"
+              className="preview-sheet-icon preview-sheet-dl"
+              aria-label={downloading ? "Building PDF" : "Download PDF"}
+              disabled={downloading}
+              onClick={() => requestPdf("download")}
+            >
+              <IconDownload />
             </button>
           </div>
           <div className="preview-sheet-body">
@@ -792,20 +813,16 @@ export default function Builder() {
               templateId={snapshot.templateId}
               data={snapshot.data}
               hideContact={false}
-              onPick={(section, focusId) => {
-                setPreviewOpen(false);
-                goPanel(section);
-                setPicked({ section, focusId, tick: Date.now() });
-              }}
+              onPick={
+                view.kind === "cv"
+                  ? (section, focusId) => {
+                      setPreviewOpen(false);
+                      goPanel(section);
+                      setPicked({ section, focusId, tick: Date.now() });
+                    }
+                  : undefined
+              }
             />
-          </div>
-          <div className="preview-sheet-foot">
-            <button type="button" onClick={() => setPreviewOpen(false)}>
-              Back to editing
-            </button>
-            <button type="button" className="is-get" disabled={downloading} onClick={() => requestPdf("download")}>
-              {downloading ? "Building…" : "Download"}
-            </button>
           </div>
         </div>
       )}
@@ -847,7 +864,15 @@ export default function Builder() {
         onStyle={(look) => setSnapshot((current) => ({ ...current, data: { ...current.data, ...look } }))}
       />
 
-      <AuthDialog open={gate === "auth"} ownerKey={owner.current} reason={gateReason} onClose={() => setGate(null)} />
+      <AuthDialog
+        open={gate === "auth"}
+        ownerKey={owner.current}
+        reason={gateReason}
+        onRegister={account.register}
+        onLogin={account.login}
+        onAuthenticated={() => setGate(null)}
+        onClose={() => setGate(null)}
+      />
 
       <PlanDialog
         open={gate === "plan"}

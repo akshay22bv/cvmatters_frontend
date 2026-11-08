@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { LoadScreen } from "./LoadScreen";
 import { SiteFooter } from "./SiteFooter";
-import { IconChevronRight, IconCreate, IconDrop, IconLinkedin, IconUpload } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconCreate, IconDrop, IconLinkedinBrand, IconUpload } from "./icons";
 import { Reveal, Tilt } from "./motion";
 import { ResumeSheet } from "./ResumeSheet";
 import { offeredCatalog } from "@/lib/catalog";
@@ -252,15 +252,17 @@ export function Landing({
         {ask && (
           <div className="board-ask" role="dialog" aria-labelledby="board-ask-title">
             <div className="board-rail board-ask-inner">
+              <div className={step === "choose" ? "board-ask-stage is-wide" : "board-ask-stage is-form"}>
               <header className="board-ask-hero">
                 <button
                   type="button"
-                  className="board-back"
+                  className="board-ask-back"
                   onClick={() => {
                     if (step === "choose") setAsk(null);
                     else setStep("choose");
                   }}
                 >
+                  <IconChevronLeft />
                   Back
                 </button>
                 <p className="board-kicker">{ASK_TITLE[ask]}</p>
@@ -269,7 +271,7 @@ export function Landing({
                   {step === "upload" && "Upload your CV"}
                   {step === "linkedin" && "Import from LinkedIn"}
                 </h1>
-                <p className="board-lead is-narrow">
+                <p className="board-lead board-ask-lead">
                   {step === "choose" &&
                     (owned
                       ? "This replaces the CV you have now. A blank page, a file you already have, or a LinkedIn profile."
@@ -282,7 +284,9 @@ export function Landing({
                 </p>
               </header>
               <div className="board-ask-body">
+              <div className="board-ask-panel">
               {step === "choose" && (
+                <>
                   <div className="board-ask-cards">
                     <button type="button" className="board-ask-card" disabled={busy} onClick={() => onCreate(ask, layout)}>
                       <span className="board-ico">
@@ -303,8 +307,8 @@ export function Landing({
                       </span>
                     </button>
                     <button type="button" className="board-ask-card" disabled={busy} onClick={() => setStep("linkedin")}>
-                      <span className="board-ico">
-                        <IconLinkedin />
+                      <span className="board-ico is-brand">
+                        <IconLinkedinBrand />
                       </span>
                       <span className="board-ask-copy">
                         <strong>Import from LinkedIn</strong>
@@ -312,8 +316,20 @@ export function Landing({
                       </span>
                     </button>
                   </div>
+                  <aside className="board-ask-hints" aria-label="Quick guide">
+                    <p>
+                      <strong>Not sure?</strong> Start blank for a fast draft, upload if you already have a résumé file, or paste a
+                      LinkedIn profile link to pre-fill your name.
+                    </p>
+                    <ul>
+                      <li>Your data stays in your browser until you sign in.</li>
+                      <li>Switch layout anytime from the editor.</li>
+                    </ul>
+                  </aside>
+                </>
               )}
               {step === "upload" && (
+                <>
                   <label
                     className={dragging ? "board-drop is-drag" : "board-drop"}
                     onDragOver={(event) => {
@@ -342,6 +358,13 @@ export function Landing({
                       }}
                     />
                   </label>
+                  <aside className="board-ask-hints" aria-label="Upload tips">
+                    <p>
+                      <strong>What we read</strong> — headings, experience, education, and skills when the file is structured. You can
+                      fix anything in the editor after import.
+                    </p>
+                  </aside>
+                </>
               )}
               {step === "linkedin" && (
                 <>
@@ -360,28 +383,41 @@ export function Landing({
                       }
                     }}
                   >
-                    <label>
-                      <span>Profile link</span>
-                      <input
-                        value={link}
-                        autoFocus
-                        placeholder="https://www.linkedin.com/in/your-name"
-                        disabled={busy}
-                        onChange={(event) => setLink(event.target.value)}
-                      />
-                    </label>
-                    <button type="submit" className="board-pill board-pill-outline" disabled={busy}>
-                      <span className="board-pill-label">Continue</span>
-                      <span className="board-pill-icon" aria-hidden="true">
-                        <IconChevronRight />
+                    <div className="board-link-form-head">
+                      <span className="board-ico is-brand" aria-hidden="true">
+                        <IconLinkedinBrand />
                       </span>
-                    </button>
+                      <div className="board-link-form-intro">
+                        <strong>LinkedIn profile link</strong>
+                        <span>Use your public <em>linkedin.com/in/…</em> URL — we add your name; you complete the CV in the editor.</span>
+                      </div>
+                    </div>
+                    <div className="board-link-form-row">
+                      <label className="board-link-field">
+                        <span className="sr-only">Profile link</span>
+                        <input
+                          value={link}
+                          autoFocus
+                          placeholder="https://www.linkedin.com/in/your-name"
+                          disabled={busy}
+                          onChange={(event) => setLink(event.target.value)}
+                        />
+                      </label>
+                      <button type="submit" className="board-pill board-pill-primary board-link-submit" disabled={busy}>
+                        <span className="board-pill-label">Continue</span>
+                        <span className="board-pill-icon" aria-hidden="true">
+                          <IconChevronRight />
+                        </span>
+                      </button>
+                    </div>
                   </form>
                   {linkError ? <p className="banner">{linkError}</p> : null}
                 </>
               )}
               {busy && busyLabel ? <p className="board-note">{busyLabel}</p> : null}
               {error ? <p className="banner">{error}</p> : null}
+              </div>
+              </div>
               </div>
             </div>
           </div>

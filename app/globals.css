@@ -693,17 +693,25 @@ textarea.grow {
 }
 
 .ghost {
-  border: 0;
-  background: var(--soft);
-  border-radius: 10px;
-  height: 36px;
-  padding: 0 12px;
-  font-size: 13px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--pill-radius);
+  height: var(--pill-h-xs);
+  padding: 0 14px;
+  font-size: 13.5px;
   font-weight: 650;
   color: var(--label);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  box-shadow: var(--pill-shadow);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ghost:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
+  box-shadow: var(--pill-shadow-hover);
 }
 
 .ghost.accent { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, white); }
@@ -755,35 +763,49 @@ textarea.grow {
   background: white;
 }
 
-.btn {
+/* Outline pill (secondary) — white fill, soft border + shadow */
+.btn,
+.job-acts .btn {
   position: relative;
   overflow: hidden;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pill-h-sm);
+  padding: 0 20px;
+  border-radius: var(--pill-radius);
   border: 1px solid var(--line);
-  background: white;
-  font-size: 14px;
-  font-weight: 600;
-  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  box-shadow: var(--pill-shadow);
+  transition: transform 0.22s var(--ease, ease), background 0.18s ease, box-shadow 0.22s ease, border-color 0.18s ease;
 }
 
-.btn:hover:not(:disabled) {
+.btn:hover:not(:disabled),
+.job-acts .btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  border-color: #d5d0cb;
-  box-shadow: 0 8px 16px rgba(22, 22, 22, 0.06);
+  border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
+  box-shadow: var(--pill-shadow-hover);
 }
 
-.btn:disabled { opacity: 0.4; }
+.btn:disabled { opacity: 0.45; }
 
 .btn-primary {
-  background: var(--cta);
   border-color: transparent;
-  color: var(--cta-ink);
-  box-shadow: 0 8px 18px rgba(16, 16, 16, 0.16);
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: var(--pill-shadow-primary);
 }
 
-.btn-primary:hover:not(:disabled) { background: #2a2a2a; }
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--accent-strong);
+  box-shadow: var(--pill-shadow-primary-hover);
+}
 
 .save-state {
   color: var(--muted);

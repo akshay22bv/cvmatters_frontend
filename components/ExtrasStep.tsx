@@ -82,7 +82,6 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
             <SectionRow
               key={kind.id}
               title={kind.title}
-              pick={kind.pick}
               extra={extra}
               open={!!extra && openId === extra.id}
               onToggle={() => toggle(kind.title)}
@@ -130,7 +129,6 @@ export function ExtrasStep({ data, onData }: { data: ResumeData; onData: (data: 
 
 function SectionRow({
   title,
-  pick,
   extra,
   custom,
   open,
@@ -140,7 +138,6 @@ function SectionRow({
   onBullets,
 }: {
   title: string;
-  pick?: boolean;
   extra?: Extra;
   custom?: boolean;
   open: boolean;
@@ -173,7 +170,6 @@ function SectionRow({
             <strong>{title}</strong>
             {!open && preview(extra) ? <small>{preview(extra)}</small> : null}
           </span>
-          {pick && !on ? <em className="acc-flag">Recommended</em> : null}
           <Chevron />
         </button>
         {custom ? (

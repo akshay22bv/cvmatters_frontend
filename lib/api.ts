@@ -157,19 +157,38 @@ export function loadAccount() {
 }
 
 export function loadAuthConfig() {
-  return request<{ google: boolean; apple: boolean }>("/api/auth/config");
+  return request<{ google: boolean }>("/api/auth/config");
 }
 
 /* ------------------------------------------------------------ billing -- */
 
+export type BillingProvider = "demo" | "phonepe";
+
+export type CheckoutPayment =
+  | { mode: "card" }
+  | { mode: "redirect"; redirectUrl: string };
+
+export function loadBillingConfig() {
+  return request<{ provider: BillingProvider }>("/api/billing/config");
+}
+
 export function loadPlans() {
-  return request<{ plans: Plan[] }>("/api/billing/plans");
+  return request<{ plans: Plan[]; provider?: BillingProvider }>("/api/billing/plans");
 }
 
 export function startCheckout(plan: string) {
-  return request<{ order: { id: string; plan: string; amount: number; currency: string }; plan: Plan }>(
-    "/api/billing/checkout",
-    { method: "POST", body: JSON.stringify({ plan }) },
+  return request<{
+    provider: BillingProvider;
+    order: { id: string; plan: string; amount: number; currency: string };
+    plan: Plan;
+    payment: CheckoutPayment;
+  }>("/api/billing/checkout", { method: "POST", body: JSON.stringify({ plan }) });
+}
+
+export function confirmPhonePeOrder(orderId: string) {
+  return request<{ subscription: Entitlement["subscription"]; receipt: Receipt; canDownload: boolean }>(
+    "/api/billing/phonepe/confirm",
+    { method: "POST", body: JSON.stringify({ orderId }) },
   );
 }
 

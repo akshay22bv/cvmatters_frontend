@@ -55,7 +55,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="board-section" aria-label="How it works">
+      <section className="board-section" aria-label="How it works" id="how-it-works">
         <div className="board-rail">
           <h2 className="board-heading">How it works</h2>
           <ol className="board-about-steps">
@@ -69,6 +69,31 @@ export function AboutPage() {
               <strong>Share</strong> — Export a PDF or publish at a username link when you&apos;re ready.
             </li>
           </ol>
+        </div>
+      </section>
+
+      <section className="board-section is-soft" id="privacy" aria-labelledby="privacy-title">
+        <div className="board-rail board-about-legal">
+          <h2 id="privacy-title" className="board-heading">
+            Privacy
+          </h2>
+          <p className="board-lead is-narrow">
+            We store your account email, CV content you save, and subscription status so the product works. We do not sell your
+            data. Payment details are handled by PhonePe; we never store card numbers on our servers. Contact{" "}
+            <a href="mailto:support@cvmatters.com">support@cvmatters.com</a> to request account deletion.
+          </p>
+        </div>
+      </section>
+
+      <section className="board-section" id="terms" aria-labelledby="terms-title">
+        <div className="board-rail board-about-legal">
+          <h2 id="terms-title" className="board-heading">
+            Terms
+          </h2>
+          <p className="board-lead is-narrow">
+            CV Matters is offered as-is for personal resume building. You own the content you write. Paid plans unlock PDF downloads
+            for the subscription period shown at checkout. Refunds follow our payment partner&apos;s rules and applicable law in India.
+          </p>
         </div>
       </section>
 

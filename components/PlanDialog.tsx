@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { Dialog } from "./Dialog";
 import { Field } from "./Field";
 import { IconCard, IconCheck, IconCrown, IconLock } from "./icons";
-import { ApiError, loadPlans, payOrder, startCheckout, type Receipt } from "@/lib/api";
+import {
+  ApiError,
+  loadPlans,
+  payOrder,
+  startCheckout,
+  type BillingProvider,
+  type Receipt,
+} from "@/lib/api";
 import type { AccountState } from "@/lib/useAccount";
 import type { Plan } from "@/lib/types";
 
@@ -47,6 +54,7 @@ export function PlanDialog({
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState("");
   const [signInRequired, setSignInRequired] = useState(false);
+  const [provider, setProvider] = useState<BillingProvider>("demo");
 
   const [nameOnCard, setNameOnCard] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -59,7 +67,10 @@ export function PlanDialog({
     setFailure("");
     setSignInRequired(false);
     loadPlans()
-      .then((result) => setPlans(result.plans))
+      .then((result) => {
+        setPlans(result.plans);
+        setProvider(result.provider === "phonepe" ? "phonepe" : "demo");
+      })
       .catch(() => setFailure("Couldn't load the plans just now."));
   }, [open]);
 
@@ -75,6 +86,11 @@ export function PlanDialog({
     setSignInRequired(false);
     try {
       const result = await startCheckout(chosen);
+      setProvider(result.provider);
+      if (result.payment.mode === "redirect" && result.payment.redirectUrl) {
+        window.location.href = result.payment.redirectUrl;
+        return;
+      }
       setOrderId(result.order.id);
       setStep("pay");
     } catch (error) {
@@ -170,13 +186,23 @@ export function PlanDialog({
           ) : null}
 
           <button type="button" className="btn-cta" disabled={busy || !plan} onClick={() => void toPayment()}>
-            {busy ? "One moment…" : `Continue with ${plan?.name || "a plan"}`}
+            {busy
+              ? "One moment…"
+              : provider === "phonepe"
+                ? `Pay with PhonePe · ${plan?.price || ""}`
+                : `Continue with ${plan?.name || "a plan"}`}
           </button>
           <p className="modal-fine">
             <IconLock />
             <span>
-              Test gateway — no money moves. Card <b>4242 4242 4242 4242</b> succeeds, <b>4000 0000 0000 0002</b> is
-              declined.
+              {provider === "phonepe" ? (
+                <>You&apos;ll complete payment securely on PhonePe (UPI, cards, net banking).</>
+              ) : (
+                <>
+                  Test gateway — no money moves. Card <b>4242 4242 4242 4242</b> succeeds, <b>4000 0000 0000 0002</b> is
+                  declined.
+                </>
+              )}
             </span>
           </p>
         </div>
