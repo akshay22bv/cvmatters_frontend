@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LoadScreen } from "@/components/LoadScreen";
 import { writeToken } from "@/lib/session";
 
 function FinishAuth() {
@@ -17,12 +18,12 @@ function FinishAuth() {
     window.location.replace(next);
   }, [params, router]);
 
-  return <p className="auth-callback">Signing you in…</p>;
+  return <LoadScreen message="Signing you in…" variant="standalone" />;
 }
 
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={<p className="auth-callback">Signing you in…</p>}>
+    <Suspense fallback={<LoadScreen message="Signing you in…" variant="standalone" />}>
       <FinishAuth />
     </Suspense>
   );

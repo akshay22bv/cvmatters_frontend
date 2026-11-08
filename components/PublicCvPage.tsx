@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ResumeView } from "./ResumeSheet";
+import { LoadScreen } from "./LoadScreen";
 import { Stars } from "./Stars";
 import { ApiError, loadPublicResume, loadRatings, rateResume } from "@/lib/api";
 import type { RatingSummary, ResumeRecord } from "@/lib/types";
@@ -90,7 +91,7 @@ export function PublicCvPage({
   if (!record) {
     return (
       <div className="public-stage">
-        <p className="public-wait">Opening resume…</p>
+        <LoadScreen message="Opening resume…" variant="on-dark" />
       </div>
     );
   }

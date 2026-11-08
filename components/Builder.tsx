@@ -15,6 +15,7 @@ import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { AboutPage } from "./AboutPage";
 import { Landing, type DashIntent } from "./Landing";
+import { LoadScreen } from "./LoadScreen";
 import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
@@ -405,16 +406,7 @@ export default function Builder() {
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
 
   if (mode === "loading" && view.kind !== "public" && view.kind !== "about") {
-    return (
-      <div className="boot">
-        <div className="boot-mark" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <p className="boot-note">Opening CV Matters…</p>
-      </div>
-    );
+    return <LoadScreen message="Opening CV Matters…" />;
   }
 
   if (view.kind === "about") {

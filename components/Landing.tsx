@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { LoadScreen } from "./LoadScreen";
 import { SiteFooter } from "./SiteFooter";
 import { IconChevronRight, IconCreate, IconDrop, IconLinkedin, IconUpload } from "./icons";
 import { Reveal, Tilt } from "./motion";
@@ -111,16 +112,7 @@ export function Landing({
 
   return (
     <div className="board" aria-busy={busy || undefined}>
-      {busy ? (
-        <div className="board-busy" role="status" aria-live="polite">
-          <div className="board-busy-mark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <p>{busyLabel || "Starting your CV…"}</p>
-        </div>
-      ) : null}
+      {busy ? <LoadScreen message={busyLabel || "Starting your CV…"} variant="overlay" /> : null}
       {!ask && error ? <p className="board-flash banner">{error}</p> : null}
       <section className="board-story" aria-label="Home">
         <header className="board-hero">
