@@ -838,6 +838,13 @@ export function SearchTags({
   const custom = Boolean(query.trim()) && !known.has(query.trim().toLowerCase());
   const rowCount = options.length + (custom ? 1 : 0);
 
+  const sheetRows = useMemo(() => {
+    if (query.trim()) return options;
+    const seen = new Set(values.map((item) => item.toLowerCase()));
+    return suggestions.filter((item) => !seen.has(item.toLowerCase())).slice(0, 28);
+  }, [query, options, suggestions, values]);
+  const sheetCount = sheetRows.length + (custom ? 1 : 0);
+
   const add = (next: string) => {
     const value = next.trim();
     setQuery("");
@@ -954,6 +961,76 @@ export function SearchTags({
               </li>
             ) : null}
           </ul>
+        </div>,
+        document.body,
+      )}
+
+      {mobile && open && sheetCount > 0 && typeof document !== "undefined" && createPortal(
+        <div className="my-sheet" role="dialog" aria-modal="true" aria-label={`${label} suggestions`}>
+          <button type="button" className="my-sheet-scrim" aria-label="Close" onClick={() => setOpen(false)} />
+          <div className="my-sheet-panel">
+            <div className="my-sheet-bar">
+              <button type="button" className="my-sheet-action" onClick={() => setOpen(false)}>
+                Cancel
+              </button>
+              <span className="my-sheet-title">{label}</span>
+              <button
+                type="button"
+                className="my-sheet-action is-strong"
+                onClick={() => {
+                  if (query.trim()) add(query);
+                  setOpen(false);
+                }}
+              >
+                Done
+              </button>
+            </div>
+            <div className="my-sheet-search">
+              <input
+                type="search"
+                value={query}
+                placeholder="Search skills"
+                autoFocus
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setActive(0);
+                }}
+              />
+            </div>
+            <ul className="pop-list pop-list-sheet" role="listbox" aria-label={label}>
+              {sheetRows.map((item, index) => (
+                <li key={item}>
+                  <button
+                    type="button"
+                    role="option"
+                    data-active={index === active}
+                    className="pop-row"
+                    onClick={() => {
+                      add(item);
+                      setOpen(false);
+                    }}
+                  >
+                    <span className="pop-name">{item}</span>
+                  </button>
+                </li>
+              ))}
+              {custom ? (
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    className="pop-row is-new"
+                    onClick={() => {
+                      add(query);
+                      setOpen(false);
+                    }}
+                  >
+                    <span className="pop-name">Add “{query.trim()}”</span>
+                  </button>
+                </li>
+              ) : null}
+            </ul>
+          </div>
         </div>,
         document.body,
       )}

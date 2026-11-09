@@ -32,7 +32,6 @@ export const CATALOG: CatalogEntry[] = [
   { id: "signal", kind: "one", blurb: "Name, title, then contact on one line." },
   { id: "ledger", kind: "one", blurb: "Full serif page, small-caps headings." },
   { id: "horizon", kind: "one", blurb: "Name and contact in a dark band." },
-  { id: "ink", kind: "one", blurb: "A dark page." },
   { id: "blocks", kind: "one", blurb: "Section titles in solid bars." },
   { id: "sage", kind: "two", photo: true, blurb: "A green side column." },
   { id: "prime", kind: "one", blurb: "Dates in their own column." },

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog } from "./Dialog";
+import { IconEye, IconEyeOff } from "./icons";
 import { ApiError, loadAuthConfig } from "@/lib/api";
 
 function GoogleMark() {
@@ -41,6 +42,7 @@ export function AuthDialog({
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const title =
     mode === "login"
@@ -149,15 +151,26 @@ export function AuthDialog({
           </label>
           <label className="auth-field">
             <span>Password</span>
-            <input
-              className="auth-input"
-              type="password"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
-              value={password}
-              disabled={busy}
-              onChange={(event) => setPassword(event.target.value)}
-            />
+            <div className="auth-pass-wrap">
+              <input
+                className="auth-input"
+                type={showPassword ? "text" : "password"}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+                value={password}
+                disabled={busy}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <button
+                type="button"
+                className="auth-pass-toggle"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                disabled={busy}
+                onClick={() => setShowPassword((on) => !on)}
+              >
+                {showPassword ? <IconEyeOff /> : <IconEye />}
+              </button>
+            </div>
           </label>
           <button type="submit" className="btn-cta" disabled={busy || !email.trim() || !password || (mode === "signup" && !name.trim())}>
             {busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}

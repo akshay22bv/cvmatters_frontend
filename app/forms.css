@@ -990,8 +990,8 @@ input:focus, textarea:focus {
 
 .auth-modal .auth-email-form input.auth-input:focus,
 .auth-modal input.auth-email:focus {
-  border-color: var(--accent) !important;
-  box-shadow: var(--ring) !important;
+  border-color: var(--ink) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent) !important;
   background: var(--white) !important;
 }
 
@@ -1006,6 +1006,71 @@ input:focus, textarea:focus {
 .auth-email-wrap.is-bad input.auth-email:focus {
   border-color: var(--bad) !important;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 14%, transparent) !important;
+}
+
+.auth-pass-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-pass-wrap .auth-input {
+  padding-right: 46px !important;
+}
+
+.auth-pass-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.auth-pass-toggle:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--soft);
+}
+
+.auth-pass-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.my-sheet-title {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.my-sheet-search {
+  padding: 8px 12px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.my-sheet-search input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.pop-list-sheet {
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+  padding: 6px 0 12px;
 }
 
 .auth-error {
@@ -6213,19 +6278,25 @@ input:focus, textarea:focus {
 
 .resume-step.card.is-plain .card-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .resume-step.card.is-plain .card-head > div {
-  flex: 1 1 220px;
+  flex: 1 1 auto;
   min-width: 0;
+}
+
+.resume-step.card.is-plain .card-head h1 {
+  font-size: clamp(22px, 2.1vw, 31px);
+  line-height: 1.2;
 }
 
 .entry-add-head {
   flex: none;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -6238,6 +6309,7 @@ input:focus, textarea:focus {
   font-size: 14px;
   font-weight: 680;
   letter-spacing: -0.02em;
+  white-space: nowrap;
   box-shadow: var(--pill-shadow);
   transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
@@ -6246,6 +6318,35 @@ input:focus, textarea:focus {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
   background: var(--gray);
+}
+
+/* Same header row on mobile as desktop: title left, add button top-right */
+@media (max-width: 860px) {
+  .resume-step.card.is-plain .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .resume-step.card.is-plain .card-head > div {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .entry-add-head {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .entry-add-head .add-plus {
+    width: 20px;
+    height: 20px;
+    font-size: 15px;
+  }
 }
 
 .entry-empty {

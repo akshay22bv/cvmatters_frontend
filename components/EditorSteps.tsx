@@ -870,6 +870,7 @@ export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: 
       <SearchTags
         label="Skills"
         lookup="skill"
+        placeholder="Pick from the list or type your own"
         values={mergedSkillTags(data.skills)}
         suggestions={SKILL_SUGGESTIONS}
         onChange={(tags) => onData({ ...data, skills: splitSkillTags(tags) })}

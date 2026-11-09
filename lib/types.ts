@@ -17,7 +17,6 @@ export const TEMPLATES = [
   { id: "compact", name: "Essential" },
   { id: "horizon", name: "Corporate" },
   { id: "classic", name: "Harvard" },
-  { id: "ink", name: "Creative" },
   { id: "blocks", name: "Bold" },
   { id: "sage", name: "Sage" },
   { id: "navy", name: "Navy" },
@@ -114,6 +113,7 @@ export function isTemplateId(value: string | undefined): value is TemplateId {
 
 /** Unknown or retired ids land on Clean. */
 export function readTemplateId(value: string | undefined): TemplateId {
+  if (value === "ink") return "mint";
   return isTemplateId(value) ? value : "mint";
 }
 
