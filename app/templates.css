@@ -1393,6 +1393,12 @@
   text-align: left;
 }
 
+/* Match landing board tiles: large top pad reads misaligned in scaled thumbs. */
+.fan-thumb .paper.formal {
+  padding-top: 0;
+  padding-bottom: 48px;
+}
+
 .paper.formal > .flow-block {
   width: 100%;
   text-align: left;

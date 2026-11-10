@@ -551,6 +551,10 @@ export default function Builder() {
             setGateReason("");
             setGate("plan");
           }}
+          onSignIn={() => {
+            setGateReason("Sign in to host a public page.");
+            setGate("auth");
+          }}
           onSaved={({ slug, isPublic }) => {
             patch({ slug, isPublic });
             live.current = { ...live.current, slug, isPublic };

@@ -2720,11 +2720,20 @@ input:focus, textarea:focus {
   border-radius: 999px;
 }
 
+.fan.is-strip {
+  align-items: flex-start;
+}
+
 .fan.is-strip .fan-tilt {
   display: block;
   flex: 0 0 auto;
   scroll-snap-align: start;
   min-width: 0;
+}
+
+.fan.is-strip .fan-tilt.is-flat .fan-card {
+  height: var(--fan-card-h) !important;
+  min-height: var(--fan-card-h);
 }
 
 .fan.is-strip .fan-card {

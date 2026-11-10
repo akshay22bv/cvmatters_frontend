@@ -106,12 +106,14 @@ export function TemplateFan({
     leading: undefined,
   };
 
+  const cardH = frameH + PAD * 2;
+  const useTilt = layout !== "strip";
+
   return (
     <div className={`fan is-${layout}`} role="listbox" aria-label="Resume templates">
       {shown.map((template, index) => {
         const current = template.id === templateId;
-        return (
-          <Tilt key={template.id} className="fan-tilt" max={7} lift={4} style={{ "--i": index } as CSSProperties}>
+        const card = (
             <button
               ref={current ? currentRef : undefined}
               type="button"
@@ -119,7 +121,7 @@ export function TemplateFan({
               aria-label={template.name}
               aria-selected={current}
               className={current ? "fan-card is-current" : "fan-card"}
-              style={{ width: frameW + PAD * 2, height: frameH + PAD * 2 }}
+              style={{ width: frameW + PAD * 2, height: cardH, minHeight: cardH }}
               onClick={() => onChange(template.id)}
             >
               <span className="fan-frame" style={{ width: frameW, height: frameH }}>
@@ -142,7 +144,18 @@ export function TemplateFan({
                 <span className="fan-blurb">{template.blurb}</span>
               ) : null}
             </button>
-          </Tilt>
+        );
+        if (useTilt) {
+          return (
+            <Tilt key={template.id} className="fan-tilt" max={7} lift={4} style={{ "--i": index } as CSSProperties}>
+              {card}
+            </Tilt>
+          );
+        }
+        return (
+          <div key={template.id} className="fan-tilt is-flat" style={{ "--i": index, "--fan-card-h": `${cardH}px` } as CSSProperties}>
+            {card}
+          </div>
         );
       })}
     </div>

@@ -38,6 +38,7 @@ export function ProfilePage({
   ownerKey,
   onShare,
   onPlans,
+  onSignIn,
   onSaved,
   onUse,
   onPreviewCv,
@@ -52,6 +53,7 @@ export function ProfilePage({
   ownerKey: string;
   onShare: () => void;
   onPlans: () => void;
+  onSignIn: () => void;
   onSaved: (next: { slug: string | null; isPublic: boolean }) => void;
   onUse: (record: ResumeRecord) => void;
   onPreviewCv: (record: ResumeRecord) => void;
@@ -384,7 +386,16 @@ export function ProfilePage({
               />
             </div>
 
-            {error ? <p className="prof-error">{error}</p> : null}
+            {!account.user ? (
+              <p className="rate-gate">
+                Sign in to host a public page.{" "}
+                <button type="button" onClick={onSignIn}>
+                  Sign in
+                </button>
+              </p>
+            ) : error ? (
+              <p className="prof-error">{error}</p>
+            ) : null}
 
             <div className="prof-host-acts">
               <button type="button" className="prof-btn is-primary" disabled={busy || !resumeId} onClick={() => void saveHosting()}>
