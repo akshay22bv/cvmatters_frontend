@@ -285,7 +285,7 @@ async function downloadClientPdf(name: string) {
 
 async function downloadServerPdf(name: string) {
   const token = readToken();
-  const response = await fetch("/backend/api/resumes/pdf", {
+  const response = await fetch("/api/resumes/pdf", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -299,6 +299,10 @@ async function downloadServerPdf(name: string) {
     error.status = response.status;
     error.code = body.code;
     throw error;
+  }
+  const engine = response.headers.get("X-Pdf-Engine");
+  if (!engine) {
+    console.warn("PDF response missing X-Pdf-Engine — file may be a low-quality fallback path.");
   }
   saveBlob(await response.blob(), name);
 }
@@ -315,7 +319,16 @@ export async function downloadResumePdf(name: string) {
     if (status === 401 || status === 402) throw reason;
   }
 
-  // Chromium PDF failed (503) or network error — raster fallback so download still works.
+  // On production prefer a clear error over a blurry screenshot PDF.
+  const onLive =
+    typeof location !== "undefined" &&
+    !/localhost|127\.0\.0\.1/.test(location.hostname);
+  if (onLive) {
+    const message =
+      serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
+    throw new Error(`${message} Try again in a moment or use Print → Save as PDF.`);
+  }
+
   try {
     await downloadClientPdf(name);
   } catch (fallback) {

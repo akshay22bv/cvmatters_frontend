@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Hide the floating Next.js "N" badge so it does not sit on the builder bar.
   devIndicators: false,
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
   async rewrites() {
     return [
       {
