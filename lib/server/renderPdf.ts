@@ -2,25 +2,32 @@ import fs from "fs";
 import chromium from "@sparticuz/chromium";
 import puppeteer, { type Browser } from "puppeteer-core";
 
+/** Matched to @sparticuz/chromium@131 (Puppeteer v23). */
+const CHROMIUM_PACK =
+  process.env.CHROMIUM_PACK_URL ||
+  "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.x64.tar";
+
 const CHROME_CANDIDATES = [
-  process.env.CHROME_PATH,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "/Applications/Chromium.app/Contents/MacOS/Chromium",
   "/usr/bin/google-chrome",
   "/usr/bin/google-chrome-stable",
   "/usr/bin/chromium",
-].filter(Boolean) as string[];
+].filter(Boolean);
 
 function onVercel() {
   return Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
 }
 
 function usePackagedChromium() {
+  if (onVercel()) return true;
   if (process.env.USE_PACKAGED_CHROMIUM === "1") return true;
-  return onVercel() || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
+  return Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
 }
 
 function localChromePath() {
+  const fromEnv = process.env.CHROME_PATH;
+  if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
   return CHROME_CANDIDATES.find((candidate) => fs.existsSync(candidate)) || null;
 }
 
@@ -29,7 +36,7 @@ async function launchBrowser(): Promise<Browser> {
 
   if (usePackagedChromium()) {
     chromium.setGraphicsMode = false;
-    const executablePath = await chromium.executablePath();
+    const executablePath = await chromium.executablePath(CHROMIUM_PACK);
     return puppeteer.launch({
       args: [...chromium.args, ...extraArgs],
       defaultViewport: { width: 794, height: 1123, deviceScaleFactor: 1 },
