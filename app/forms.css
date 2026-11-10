@@ -516,7 +516,9 @@ input:focus, textarea:focus {
 }
 
 .tag-suggest .pop-list {
-  max-height: min(200px, 34dvh);
+  max-height: min(220px, 28dvh);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tag {
@@ -606,7 +608,8 @@ input:focus, textarea:focus {
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  /* Above .preview-sheet (80) and .picker (90) so sign-in / plans open on top. */
+  z-index: 100;
   display: grid;
   place-items: center;
   padding: 20px;

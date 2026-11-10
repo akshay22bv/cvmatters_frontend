@@ -1618,6 +1618,136 @@
   font-size: 15px;
 }
 
+.board-contact-hero {
+  padding-top: clamp(48px, 8vw, 88px);
+  padding-bottom: 8px;
+}
+
+.board-contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border: 1px solid #e8e4df;
+  border-radius: 16px;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 620;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--shadow-1);
+}
+
+.board-contact-email:hover {
+  border-color: color-mix(in srgb, var(--black) 18%, #e8e4df);
+}
+
+.board-contact-note {
+  margin: 16px 0 0;
+  max-width: 52ch;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.board-contact-channels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+  max-width: 760px;
+}
+
+.board-contact-channel {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 18px 20px;
+  border: 1px solid #e8e4df;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.board-contact-channel strong {
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.board-contact-channel p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.board-contact-channel a {
+  margin-top: 4px;
+  color: var(--board-accent-blue);
+  font-weight: 620;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.board-contact-channel a:hover {
+  text-decoration: underline;
+}
+
+.board-contact-links {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.board-contact-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 580;
+  color: var(--board-accent-blue);
+  text-decoration: none;
+}
+
+.board-contact-links a:hover {
+  text-decoration: underline;
+}
+
+.board-contact-checklist {
+  margin: 18px 0 0;
+  padding-left: 1.15em;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #4a4556;
+}
+
+.board-contact-checklist li + li {
+  margin-top: 8px;
+}
+
+.board-contact-aside {
+  margin-top: 22px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lime) 10%, #fff);
+  border: 1px solid color-mix(in srgb, var(--lime) 32%, #e8e4df);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #4a4556;
+  max-width: 52ch;
+}
+
+@media (max-width: 640px) {
+  .board-contact-channels {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---- footer ---- */
 
 .board-foot {

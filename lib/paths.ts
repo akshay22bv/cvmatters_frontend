@@ -3,6 +3,7 @@ import type { PanelId } from "./types";
 export type AppView =
   | { kind: "start" }
   | { kind: "about" }
+  | { kind: "contact" }
   | { kind: "profile" }
   | { kind: "examples" }
   | { kind: "public"; id: string }
@@ -49,6 +50,7 @@ const RESERVED_ROOT = new Set([
   "admin",
   "auth",
   "about",
+  "contact",
   "help",
   "support",
   "billing",
@@ -62,6 +64,7 @@ const RESERVED_ROOT = new Set([
 export const SECTION_LABEL: Record<string, string> = {
   start: "Home",
   about: "About",
+  contact: "Contact",
   profile: "Profile",
   examples: "Your field",
   details: "Details",
@@ -79,6 +82,7 @@ export const SECTION_LABEL: Record<string, string> = {
 export function viewToPath(view: AppView) {
   if (view.kind === "start") return "/";
   if (view.kind === "about") return "/about";
+  if (view.kind === "contact") return "/contact";
   if (view.kind === "profile") return "/profile";
   if (view.kind === "examples") return "/examples";
   if (view.kind === "public") return publicResumePath(view.id);
@@ -90,6 +94,7 @@ export function pathToView(pathname: string): AppView {
   if (parts.length === 0 || parts[0] === "home") return { kind: "start" };
   if (parts[0] === "profile") return { kind: "profile" };
   if (parts[0] === "about") return { kind: "about" };
+  if (parts[0] === "contact") return { kind: "contact" };
   if (parts[0] === "examples") return { kind: "examples" };
   // Legacy `/r/name` still works; prefer bare `/name`.
   if (parts[0] === "r" && parts[1]) {
@@ -117,6 +122,7 @@ export function panelPath(panel: PanelId) {
 export function crumbsFor(view: AppView) {
   if (view.kind === "start") return [{ href: "/", label: "Home" }];
   if (view.kind === "about") return [{ href: "/", label: "Home" }, { href: "/about", label: "About" }];
+  if (view.kind === "contact") return [{ href: "/", label: "Home" }, { href: "/contact", label: "Contact" }];
   if (view.kind === "profile") return [{ href: "/", label: "Home" }, { href: "/profile", label: "Profile" }];
   if (view.kind === "examples") return [{ href: "/", label: "Home" }, { href: "/examples", label: "Your field" }];
   if (view.kind === "public") return [{ href: "/", label: "Home" }, { href: publicResumePath(view.id), label: "Resume" }];

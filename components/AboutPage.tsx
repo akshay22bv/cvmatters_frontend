@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SUPPORT_EMAIL } from "@/lib/site";
 import { SiteFooter } from "./SiteFooter";
 
 const VALUES = [
@@ -79,8 +80,9 @@ export function AboutPage() {
           </h2>
           <p className="board-lead is-narrow">
             We store your account email, CV content you save, and subscription status so the product works. We do not sell your
-            data. Payment details are handled by PhonePe; we never store card numbers on our servers. Contact{" "}
-            <a href="mailto:support@cvmatters.com">support@cvmatters.com</a> to request account deletion.
+            data. Payment details are handled by Cashfree; we never store card numbers on our servers.{" "}
+            <Link href="/contact">Contact us</Link> or email{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> to request account deletion.
           </p>
         </div>
       </section>

@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
+import { SITE_NAME, SITE_TAGLINE, SUPPORT_EMAIL } from "@/lib/site";
 import { IconChevronRight, IconLock } from "./icons";
-
-const SUPPORT_EMAIL = "support@cvmatters.com";
 
 export function SiteFooter({
   busy = false,
@@ -100,6 +98,9 @@ export function SiteFooter({
               <h3 className="board-foot-col-title">Support</h3>
               <ul className="board-foot-list">
                 <li>
+                  <Link href="/contact">Contact us</Link>
+                </li>
+                <li>
                   <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
                 </li>
                 <li>
@@ -124,9 +125,10 @@ export function SiteFooter({
           </p>
           <p className="board-foot-trust">
             <IconLock />
-            <span>Secure checkout · UPI · Cards · Net banking via PhonePe</span>
+            <span>Secure checkout · UPI · Cards · Net banking via Cashfree</span>
           </p>
           <div className="board-foot-bar-links">
+            <Link href="/contact">Contact</Link>
             <Link href="/about#privacy">Privacy</Link>
             <Link href="/about#terms">Terms</Link>
           </div>

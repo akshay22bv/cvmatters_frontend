@@ -162,11 +162,11 @@ export function loadAuthConfig() {
 
 /* ------------------------------------------------------------ billing -- */
 
-export type BillingProvider = "demo" | "phonepe";
+export type BillingProvider = "demo" | "cashfree";
 
 export type CheckoutPayment =
   | { mode: "card" }
-  | { mode: "redirect"; redirectUrl: string };
+  | { mode: "redirect"; paymentSessionId: string; cashfreeMode: "sandbox" | "production" };
 
 export function loadBillingConfig() {
   return request<{ provider: BillingProvider }>("/api/billing/config");
@@ -185,9 +185,9 @@ export function startCheckout(plan: string) {
   }>("/api/billing/checkout", { method: "POST", body: JSON.stringify({ plan }) });
 }
 
-export function confirmPhonePeOrder(orderId: string) {
+export function confirmCashfreeOrder(orderId: string) {
   return request<{ subscription: Entitlement["subscription"]; receipt: Receipt; canDownload: boolean }>(
-    "/api/billing/phonepe/confirm",
+    "/api/billing/cashfree/confirm",
     { method: "POST", body: JSON.stringify({ orderId }) },
   );
 }

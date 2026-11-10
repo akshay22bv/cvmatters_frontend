@@ -14,6 +14,7 @@ import { PublicCvPage } from "./PublicCvPage";
 import { ResumeView } from "./ResumeSheet";
 import { StepCard } from "./StepCard";
 import { AboutPage } from "./AboutPage";
+import { ContactPage } from "./ContactPage";
 import { Landing, type DashIntent } from "./Landing";
 import { LoadScreen } from "./LoadScreen";
 import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
@@ -405,12 +406,16 @@ export default function Builder() {
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
 
-  if (mode === "loading" && view.kind !== "public" && view.kind !== "about") {
+  if (mode === "loading" && view.kind !== "public" && view.kind !== "about" && view.kind !== "contact") {
     return <LoadScreen message="Opening CV Matters…" />;
   }
 
   if (view.kind === "about") {
     return <AboutPage />;
+  }
+
+  if (view.kind === "contact") {
+    return <ContactPage />;
   }
 
   if (view.kind === "public") {

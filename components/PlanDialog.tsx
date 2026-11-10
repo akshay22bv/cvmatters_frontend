@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import type { AccountState } from "@/lib/useAccount";
 import type { Plan } from "@/lib/types";
+import { openCashfreeCheckout } from "@/lib/cashfree";
 
 type Step = "plans" | "pay" | "done";
 
@@ -69,7 +70,7 @@ export function PlanDialog({
     loadPlans()
       .then((result) => {
         setPlans(result.plans);
-        setProvider(result.provider === "phonepe" ? "phonepe" : "demo");
+        setProvider(result.provider === "cashfree" ? "cashfree" : "demo");
       })
       .catch(() => setFailure("Couldn't load the plans just now."));
   }, [open]);
@@ -87,8 +88,8 @@ export function PlanDialog({
     try {
       const result = await startCheckout(chosen);
       setProvider(result.provider);
-      if (result.payment.mode === "redirect" && result.payment.redirectUrl) {
-        window.location.href = result.payment.redirectUrl;
+      if (result.payment.mode === "redirect") {
+        await openCashfreeCheckout(result.payment.paymentSessionId, result.payment.cashfreeMode);
         return;
       }
       setOrderId(result.order.id);
@@ -188,15 +189,15 @@ export function PlanDialog({
           <button type="button" className="btn-cta" disabled={busy || !plan} onClick={() => void toPayment()}>
             {busy
               ? "One moment…"
-              : provider === "phonepe"
-                ? `Pay with PhonePe · ${plan?.price || ""}`
+              : provider === "cashfree"
+                ? `Pay with Cashfree · ${plan?.price || ""}`
                 : `Continue with ${plan?.name || "a plan"}`}
           </button>
           <p className="modal-fine">
             <IconLock />
             <span>
-              {provider === "phonepe" ? (
-                <>You&apos;ll complete payment securely on PhonePe (UPI, cards, net banking).</>
+              {provider === "cashfree" ? (
+                <>You&apos;ll complete payment securely on Cashfree (UPI, cards, net banking).</>
               ) : (
                 <>
                   Test gateway — no money moves. Card <b>4242 4242 4242 4242</b> succeeds, <b>4000 0000 0000 0002</b> is

@@ -88,6 +88,15 @@ async function metadataForView(view: AppView, pathname: string): Promise<Metadat
     });
   }
 
+  if (view.kind === "contact") {
+    return baseMeta({
+      title: titleTemplate("Contact us"),
+      description:
+        "Get help with CV Matters — product support, billing, privacy requests, and feedback. We typically reply within 1–2 business days.",
+      path: "/contact",
+    });
+  }
+
   if (view.kind === "public") {
     const record = await fetchPublicResume(view.id);
     const name = record?.data?.personal?.fullName?.trim() || view.id;

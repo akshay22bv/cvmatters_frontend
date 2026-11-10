@@ -446,6 +446,7 @@ function useOutside(open: boolean, onClose: () => void) {
       const target = event.target as HTMLElement | null;
       if (root.current?.contains(target)) return;
       if (target?.closest(".pop")) return;
+      if (target?.closest(".tag-suggest")) return;
       onClose();
     };
     document.addEventListener("mousedown", close);
@@ -748,6 +749,17 @@ export function CountrySelect({
   );
 }
 
+const TAG_OPTION_CAP = 5;
+
+function skillLooksRelevant(item: string, needle: string) {
+  if (!needle) return true;
+  const hay = item.toLowerCase();
+  const n = needle.toLowerCase();
+  if (hay.startsWith(n)) return true;
+  if (hay.split(/\s+/).length > 4) return false;
+  return hay.includes(n);
+}
+
 function matchRank(item: string, needle: string) {
   if (!needle) return 1;
   const hay = item.toLowerCase();
@@ -789,7 +801,7 @@ export function SearchTags({
   const wrap = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const root = useOutside(open, () => setOpen(false));
-  const anchor = useAnchor(open && !mobile, wrap, 260);
+  const anchor = useAnchor(open && !mobile, wrap, 220);
 
   const [remote, setRemote] = useState<string[]>([]);
 
@@ -820,7 +832,18 @@ export function SearchTags({
   const options = useMemo(() => {
     const needle = query.trim().toLowerCase();
     const seen = new Set(values.map((item) => item.toLowerCase()));
+    if (!needle) {
+      const out: string[] = [];
+      for (const item of suggestions) {
+        const key = item.toLowerCase();
+        if (seen.has(key)) continue;
+        out.push(item);
+        if (out.length >= TAG_OPTION_CAP) break;
+      }
+      return out;
+    }
     const ranked = [...suggestions, ...remote]
+      .filter((item) => skillLooksRelevant(item, needle))
       .map((item, index) => ({ item, index, score: matchRank(item, needle) }))
       .filter((row) => row.score < 4)
       .sort((a, b) => a.score - b.score || a.index - b.index);
@@ -830,21 +853,10 @@ export function SearchTags({
       if (seen.has(key)) continue;
       seen.add(key);
       out.push(row.item);
-      if (out.length >= 12) break;
+      if (out.length >= TAG_OPTION_CAP) break;
     }
     return out;
   }, [suggestions, remote, query, values]);
-  const known = new Set([...suggestions, ...remote].map((item) => item.toLowerCase()));
-  const custom = Boolean(query.trim()) && !known.has(query.trim().toLowerCase());
-  const rowCount = options.length + (custom ? 1 : 0);
-
-  const sheetRows = useMemo(() => {
-    if (query.trim()) return options;
-    const seen = new Set(values.map((item) => item.toLowerCase()));
-    return suggestions.filter((item) => !seen.has(item.toLowerCase())).slice(0, 28);
-  }, [query, options, suggestions, values]);
-  const sheetCount = sheetRows.length + (custom ? 1 : 0);
-
   const add = (next: string) => {
     const value = next.trim();
     setQuery("");
@@ -853,6 +865,48 @@ export function SearchTags({
     onChange([...values, value]);
     input.current?.focus();
   };
+
+  const custom =
+    Boolean(query.trim()) &&
+    !values.some((item) => item.toLowerCase() === query.trim().toLowerCase()) &&
+    !options.some((item) => item.toLowerCase() === query.trim().toLowerCase());
+  const rowCount = options.length + (custom ? 1 : 0);
+  const showMenu = open && rowCount > 0;
+
+  const optionList = (
+    <ul className="pop-list tag-suggest-list" role="listbox" aria-label={label}>
+      {options.map((item, index) => (
+        <li key={item}>
+          <button
+            type="button"
+            role="option"
+            aria-selected={index === active}
+            data-active={index === active}
+            className="pop-row"
+            onMouseEnter={() => setActive(index)}
+            onClick={() => add(item)}
+          >
+            <span className="pop-name">{item}</span>
+          </button>
+        </li>
+      ))}
+      {custom ? (
+        <li>
+          <button
+            type="button"
+            role="option"
+            aria-selected={active === options.length}
+            data-active={active === options.length}
+            className="pop-row is-new"
+            onMouseEnter={() => setActive(options.length)}
+            onClick={() => add(query)}
+          >
+            <span className="pop-name">Add “{query.trim()}”</span>
+          </button>
+        </li>
+      ) : null}
+    </ul>
+  );
 
   return (
     <div className="fld" ref={root}>
@@ -918,7 +972,9 @@ export function SearchTags({
 
       {hint ? <p className="fld-note">{hint}</p> : null}
 
-      {!mobile && open && anchor && rowCount > 0 && typeof document !== "undefined" && createPortal(
+      {mobile && showMenu ? <div className="tag-suggest">{optionList}</div> : null}
+
+      {!mobile && showMenu && anchor && typeof document !== "undefined" && createPortal(
         <div
           className={`pop drop-${anchor.drop}`}
           style={{
@@ -929,108 +985,7 @@ export function SearchTags({
             maxHeight: anchor.max,
           }}
         >
-          <ul className="pop-list" role="listbox" aria-label={label}>
-            {options.map((item, index) => (
-              <li key={item}>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={false}
-                  data-active={index === active}
-                  className="pop-row"
-                  onMouseEnter={() => setActive(index)}
-                  onClick={() => add(item)}
-                >
-                  <span className="pop-name">{item}</span>
-                </button>
-              </li>
-            ))}
-            {custom ? (
-              <li>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={false}
-                  data-active={active === options.length}
-                  className="pop-row is-new"
-                  onMouseEnter={() => setActive(options.length)}
-                  onClick={() => add(query)}
-                >
-                  <span className="pop-name">Add “{query.trim()}”</span>
-                </button>
-              </li>
-            ) : null}
-          </ul>
-        </div>,
-        document.body,
-      )}
-
-      {mobile && open && sheetCount > 0 && typeof document !== "undefined" && createPortal(
-        <div className="my-sheet" role="dialog" aria-modal="true" aria-label={`${label} suggestions`}>
-          <button type="button" className="my-sheet-scrim" aria-label="Close" onClick={() => setOpen(false)} />
-          <div className="my-sheet-panel">
-            <div className="my-sheet-bar">
-              <button type="button" className="my-sheet-action" onClick={() => setOpen(false)}>
-                Cancel
-              </button>
-              <span className="my-sheet-title">{label}</span>
-              <button
-                type="button"
-                className="my-sheet-action is-strong"
-                onClick={() => {
-                  if (query.trim()) add(query);
-                  setOpen(false);
-                }}
-              >
-                Done
-              </button>
-            </div>
-            <div className="my-sheet-search">
-              <input
-                type="search"
-                value={query}
-                placeholder="Search skills"
-                autoFocus
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setActive(0);
-                }}
-              />
-            </div>
-            <ul className="pop-list pop-list-sheet" role="listbox" aria-label={label}>
-              {sheetRows.map((item, index) => (
-                <li key={item}>
-                  <button
-                    type="button"
-                    role="option"
-                    data-active={index === active}
-                    className="pop-row"
-                    onClick={() => {
-                      add(item);
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="pop-name">{item}</span>
-                  </button>
-                </li>
-              ))}
-              {custom ? (
-                <li>
-                  <button
-                    type="button"
-                    role="option"
-                    className="pop-row is-new"
-                    onClick={() => {
-                      add(query);
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="pop-name">Add “{query.trim()}”</span>
-                  </button>
-                </li>
-              ) : null}
-            </ul>
-          </div>
+          {optionList}
         </div>,
         document.body,
       )}

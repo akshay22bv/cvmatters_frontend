@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ApiError, confirmPhonePeOrder } from "@/lib/api";
+import { ApiError, confirmCashfreeOrder } from "@/lib/api";
 import { useAccount } from "@/lib/useAccount";
 import { IconCheck, IconLock } from "@/components/icons";
 import { LoadScreen } from "@/components/LoadScreen";
@@ -33,7 +33,7 @@ function BillingReturnInner() {
     let cancelled = false;
     (async () => {
       try {
-        const result = await confirmPhonePeOrder(orderId);
+        const result = await confirmCashfreeOrder(orderId);
         if (cancelled) return;
         account.setEntitlement({ canDownload: true, subscription: result.subscription });
         setPhase("done");
@@ -102,7 +102,7 @@ function BillingReturnInner() {
   );
 }
 
-/** Land here after PhonePe redirects the user (Standard Checkout redirectUrl). */
+/** Land here after Cashfree checkout (return_url). */
 export default function BillingReturnPage() {
   return (
     <Suspense fallback={<LoadScreen message="Confirming your payment…" variant="standalone" />}>

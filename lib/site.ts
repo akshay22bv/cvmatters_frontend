@@ -3,6 +3,9 @@ export const SITE_NAME = "CV Matters";
 
 export const SITE_TAGLINE = "Build a resume, match a job post, and learn from people in your field.";
 
+/** Primary support inbox — shown on Contact and in the footer. */
+export const SUPPORT_EMAIL = "developer28tester@gmail.com";
+
 export const DEFAULT_DESCRIPTION =
   "Free resume builder with live preview and ATS-friendly templates. Paste a job description to tailor your CV, browse resumes in your field, and export a PDF.";
 
