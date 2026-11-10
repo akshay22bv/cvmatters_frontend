@@ -229,8 +229,9 @@ async function downloadClientPdf(name: string) {
 
   for (let index = 0; index < sheets.length; index += 1) {
     const node = sheets[index];
+    const scale = Math.min(4, Math.max(3, (window.devicePixelRatio || 1) * 2));
     const canvas = await html2canvas(node, {
-      scale: Math.min(2, window.devicePixelRatio || 1.5),
+      scale,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
@@ -239,9 +240,9 @@ async function downloadClientPdf(name: string) {
       windowHeight: 1123,
       onclone: (clonedDoc, clonedNode) => prepareCloneForCanvas(clonedDoc, node, clonedNode),
     });
-    const image = canvas.toDataURL("image/jpeg", 0.92);
+    const image = canvas.toDataURL("image/png");
     if (index > 0) pdf.addPage();
-    pdf.addImage(image, "JPEG", 0, 0, pageW, pageH, undefined, "FAST");
+    pdf.addImage(image, "PNG", 0, 0, pageW, pageH, undefined, "SLOW");
   }
 
   const blob = pdf.output("blob");

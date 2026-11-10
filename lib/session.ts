@@ -25,3 +25,24 @@ export function clearToken() {
     /* nothing to clean up */
   }
 }
+
+const ENTITLEMENT_REFRESH_KEY = "cv-matters-refresh-entitlement";
+
+/** After Cashfree return, Builder reloads subscription from the server. */
+export function markEntitlementRefresh() {
+  try {
+    sessionStorage.setItem(ENTITLEMENT_REFRESH_KEY, "1");
+  } catch {
+    /* private window */
+  }
+}
+
+export function consumeEntitlementRefresh() {
+  try {
+    const hit = sessionStorage.getItem(ENTITLEMENT_REFRESH_KEY);
+    if (hit) sessionStorage.removeItem(ENTITLEMENT_REFRESH_KEY);
+    return Boolean(hit);
+  } catch {
+    return false;
+  }
+}

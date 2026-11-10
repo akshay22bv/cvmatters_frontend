@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ApiError, loadAccount, signIn, signOut, signUp } from "./api";
-import { clearToken, readToken, writeToken } from "./session";
+import { clearToken, consumeEntitlementRefresh, readToken, writeToken } from "./session";
 import type { Account, Entitlement } from "./types";
 
 const NO_ACCESS: Entitlement = { canDownload: false, subscription: null };
@@ -85,6 +85,21 @@ export function useAccount(ownerKey: () => string) {
       /* keep what we have */
     }
   }, []);
+
+  useEffect(() => {
+    if (!ready || !readToken()) return;
+    if (!consumeEntitlementRefresh()) return;
+    void refresh();
+  }, [ready, refresh]);
+
+  useEffect(() => {
+    if (!readToken()) return;
+    const onFocus = () => {
+      void refresh();
+    };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [refresh]);
 
   return { user, entitlement, ready, register, login, logout, refresh, setEntitlement };
 }

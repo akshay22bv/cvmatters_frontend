@@ -15,6 +15,7 @@ import {
 import type { AccountState } from "@/lib/useAccount";
 import type { Plan } from "@/lib/types";
 import { openCashfreeCheckout } from "@/lib/cashfree";
+import { markEntitlementRefresh } from "@/lib/session";
 
 type Step = "plans" | "pay" | "done";
 
@@ -89,6 +90,7 @@ export function PlanDialog({
       const result = await startCheckout(chosen);
       setProvider(result.provider);
       if (result.payment.mode === "redirect") {
+        markEntitlementRefresh();
         await openCashfreeCheckout(result.payment.paymentSessionId, result.payment.cashfreeMode);
         return;
       }

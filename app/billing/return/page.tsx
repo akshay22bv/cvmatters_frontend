@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ApiError, confirmCashfreeOrder } from "@/lib/api";
+import { confirmCashfreeWithRetry } from "@/lib/billingConfirm";
 import { useAccount } from "@/lib/useAccount";
+import { markEntitlementRefresh } from "@/lib/session";
 import { IconCheck, IconLock } from "@/components/icons";
 import { LoadScreen } from "@/components/LoadScreen";
 
@@ -33,17 +34,13 @@ function BillingReturnInner() {
     let cancelled = false;
     (async () => {
       try {
-        const result = await confirmCashfreeOrder(orderId);
+        const result = await confirmCashfreeWithRetry(orderId);
         if (cancelled) return;
         account.setEntitlement({ canDownload: true, subscription: result.subscription });
+        markEntitlementRefresh();
         setPhase("done");
       } catch (error) {
         if (cancelled) return;
-        if (error instanceof ApiError && error.status === 202) {
-          setPhase("pending");
-          setMessage(error.message);
-          return;
-        }
         setPhase("failed");
         setMessage(error instanceof Error ? error.message : "Payment could not be confirmed.");
       }
@@ -92,9 +89,15 @@ function BillingReturnInner() {
               <IconCheck />
             </div>
             <p className="billing-return-lead">You&apos;re all set — PDF downloads are unlocked.</p>
-            <Link className="btn-cta" href="/cv/compare">
+            <a
+              className="btn-cta"
+              href="/cv/compare"
+              onClick={() => {
+                markEntitlementRefresh();
+              }}
+            >
               Download my PDF
-            </Link>
+            </a>
           </>
         ) : null}
       </div>
