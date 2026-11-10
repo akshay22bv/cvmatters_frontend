@@ -2,11 +2,6 @@ import fs from "fs";
 import chromium from "@sparticuz/chromium";
 import puppeteer, { type Browser } from "puppeteer-core";
 
-/** Matched to @sparticuz/chromium@131 (Puppeteer v23). */
-const CHROMIUM_PACK =
-  process.env.CHROMIUM_PACK_URL ||
-  "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.x64.tar";
-
 const CHROME_CANDIDATES = [
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "/Applications/Chromium.app/Contents/MacOS/Chromium",
@@ -36,12 +31,15 @@ async function launchBrowser(): Promise<Browser> {
 
   if (usePackagedChromium()) {
     chromium.setGraphicsMode = false;
-    const executablePath = await chromium.executablePath(CHROMIUM_PACK);
+    const packUrl = process.env.CHROMIUM_PACK_URL?.trim();
+    const executablePath = packUrl
+      ? await chromium.executablePath(packUrl)
+      : await chromium.executablePath();
     return puppeteer.launch({
       args: [...chromium.args, ...extraArgs],
-      defaultViewport: { width: 794, height: 1123, deviceScaleFactor: 1 },
+      defaultViewport: chromium.defaultViewport,
       executablePath,
-      headless: true,
+      headless: chromium.headless,
     });
   }
 
@@ -65,10 +63,11 @@ export async function renderHtmlToPdf(html: string) {
     try {
       await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 1 });
       await page.emulateMediaType("print");
-      await page.setContent(html, { waitUntil: "load", timeout: 45000 });
+      await page.setContent(html, { waitUntil: "domcontentloaded", timeout: 55_000 });
       await page.evaluate(async () => {
-        await Promise.all([...document.fonts].map((face) => face.load().catch(() => {})));
-        await document.fonts.ready;
+        const fontsReady = Promise.all([...document.fonts].map((face) => face.load().catch(() => {})));
+        const timeout = new Promise<void>((resolve) => window.setTimeout(resolve, 2500));
+        await Promise.race([fontsReady.then(() => document.fonts.ready), timeout]);
       });
       const pdf = await page.pdf({
         printBackground: true,
