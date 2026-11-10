@@ -141,6 +141,11 @@ async function printDocument() {
   }
   .print-root .paper {
     overflow: hidden !important;
+    width: 794px !important;
+    height: 1123px !important;
+    max-width: none !important;
+    transform: none !important;
+    zoom: 1 !important;
   }
   .continued { display: none !important; }
 </style>
@@ -213,7 +218,26 @@ async function saveBlob(blob: Blob, name: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
-/** Client-side A4 export used when the server has no Chrome. */
+function freezeSheetLayout(node: HTMLElement) {
+  const saved = {
+    transform: node.style.transform,
+    width: node.style.width,
+    height: node.style.height,
+    maxWidth: node.style.maxWidth,
+  };
+  node.style.transform = "none";
+  node.style.width = "794px";
+  node.style.height = "1123px";
+  node.style.maxWidth = "none";
+  return () => {
+    node.style.transform = saved.transform;
+    node.style.width = saved.width;
+    node.style.height = saved.height;
+    node.style.maxWidth = saved.maxWidth;
+  };
+}
+
+/** Client-side A4 export when the API has no Chromium (always raster — zoom will pixelate). */
 async function downloadClientPdf(name: string) {
   const sheets = pages();
   if (!sheets.length) throw new Error("Nothing to download");
@@ -223,26 +247,36 @@ async function downloadClientPdf(name: string) {
     import("jspdf"),
   ]);
 
-  const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4", compress: true });
+  const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4", compress: false });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
+  // ~192 DPI on A4 (794 CSS px × 2.5)
+  const rasterScale = 2.5;
 
   for (let index = 0; index < sheets.length; index += 1) {
     const node = sheets[index];
-    const scale = Math.min(4, Math.max(3, (window.devicePixelRatio || 1) * 2));
-    const canvas = await html2canvas(node, {
-      scale,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-      windowWidth: 794,
-      windowHeight: 1123,
-      onclone: (clonedDoc, clonedNode) => prepareCloneForCanvas(clonedDoc, node, clonedNode),
-    });
-    const image = canvas.toDataURL("image/png");
-    if (index > 0) pdf.addPage();
-    pdf.addImage(image, "PNG", 0, 0, pageW, pageH, undefined, "SLOW");
+    const restore = freezeSheetLayout(node);
+    try {
+      const canvas = await html2canvas(node, {
+        scale: rasterScale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        width: 794,
+        height: 1123,
+        windowWidth: 794,
+        windowHeight: 1123,
+        onclone: (clonedDoc, clonedNode) => prepareCloneForCanvas(clonedDoc, node, clonedNode),
+      });
+      const image = canvas.toDataURL("image/jpeg", 0.96);
+      if (index > 0) pdf.addPage();
+      const aspect = canvas.height / canvas.width;
+      const drawH = pageW * aspect;
+      pdf.addImage(image, "JPEG", 0, 0, pageW, drawH, undefined, "FAST");
+    } finally {
+      restore();
+    }
   }
 
   const blob = pdf.output("blob");
@@ -270,13 +304,24 @@ async function downloadServerPdf(name: string) {
 }
 
 export async function downloadResumePdf(name: string) {
+  let serverError: unknown = null;
   try {
     await downloadServerPdf(name);
+    return;
   } catch (reason) {
+    serverError = reason;
     const status = reason && typeof reason === "object" && "status" in reason ? Number(reason.status) : 0;
-    // Auth / paywall must stay visible; everything else falls back to the browser.
+    // Auth / paywall must stay visible.
     if (status === 401 || status === 402) throw reason;
+  }
+
+  // Chromium PDF failed (503) or network error — raster fallback so download still works.
+  try {
     await downloadClientPdf(name);
+  } catch (fallback) {
+    const primary = serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
+    if (fallback instanceof Error) throw new Error(fallback.message || primary);
+    throw new Error(primary);
   }
 }
 
