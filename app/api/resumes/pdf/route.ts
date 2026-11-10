@@ -1,7 +1,8 @@
 import { renderHtmlToPdf } from "@/lib/server/renderPdf";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+/** Hobby plan allows up to 10s; raise on Pro if PDF times out. */
+export const maxDuration = 10;
 export const dynamic = "force-dynamic";
 
 function apiOrigin() {
