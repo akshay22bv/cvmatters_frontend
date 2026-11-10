@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
   // Hide the floating Next.js "N" badge so it does not sit on the builder bar.
   devIndicators: false,
   serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  // Vercel file tracing only follows JS imports — ship chromium.br + al2023.tar.br for PDF.
+  outputFileTracingIncludes: {
+    "/api/resumes/pdf": ["./node_modules/@sparticuz/chromium/bin/**"],
+  },
   async rewrites() {
     return [
       {

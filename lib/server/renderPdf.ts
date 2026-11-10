@@ -1,4 +1,7 @@
+import "./chromium-vercel-env";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import chromium from "@sparticuz/chromium";
 import puppeteer, { type Browser } from "puppeteer-core";
 
@@ -21,9 +24,35 @@ function usePackagedChromium() {
 }
 
 function localChromePath() {
+  // Never use host Chrome on Vercel — it is not in the container and breaks with libnss3 errors.
+  if (onVercel()) return null;
   const fromEnv = process.env.CHROME_PATH;
   if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
   return CHROME_CANDIDATES.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+function packagedChromiumBinDir(): string | null {
+  try {
+    const pkgRoot = path.dirname(fileURLToPath(import.meta.url));
+    const fromRoute = path.join(pkgRoot, "..", "..", "node_modules", "@sparticuz", "chromium", "bin");
+    if (fs.existsSync(fromRoute)) return fromRoute;
+  } catch {
+    // import.meta may be unavailable in some bundles
+  }
+  const fromCwd = path.join(process.cwd(), "node_modules", "@sparticuz", "chromium", "bin");
+  return fs.existsSync(fromCwd) ? fromCwd : null;
+}
+
+/** Stale /tmp/chromium from a half-failed run blocks lib extraction and causes libnss3 errors. */
+function resetStaleChromiumExtract() {
+  if (!fs.existsSync("/tmp/chromium")) return;
+  const libCandidates = ["/tmp/al2023/lib/libnss3.so", "/tmp/al2/lib/libnss3.so"];
+  if (libCandidates.some((lib) => fs.existsSync(lib))) return;
+  try {
+    fs.unlinkSync("/tmp/chromium");
+  } catch {
+    // ignore
+  }
 }
 
 async function launchBrowser(): Promise<Browser> {
@@ -31,10 +60,18 @@ async function launchBrowser(): Promise<Browser> {
 
   if (usePackagedChromium()) {
     chromium.setGraphicsMode = false;
-    const packUrl = process.env.CHROMIUM_PACK_URL?.trim();
-    const executablePath = packUrl
-      ? await chromium.executablePath(packUrl)
-      : await chromium.executablePath();
+    resetStaleChromiumExtract();
+
+    const packUrl = onVercel() ? "" : process.env.CHROMIUM_PACK_URL?.trim();
+    const binDir = packagedChromiumBinDir();
+    let executablePath: string;
+    if (packUrl) {
+      executablePath = await chromium.executablePath(packUrl);
+    } else if (binDir) {
+      executablePath = await chromium.executablePath(binDir);
+    } else {
+      executablePath = await chromium.executablePath();
+    }
     return puppeteer.launch({
       args: [...chromium.args, ...extraArgs],
       defaultViewport: chromium.defaultViewport,
