@@ -221,6 +221,16 @@ export function IconEye() {
   );
 }
 
+/** Open book / view CV — two filled pages with a center gap. */
+export function IconOpenBook() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 22 22" aria-hidden="true" fill="currentColor">
+      <path d="M3.2 3.6c0-.6.5-1.1 1.1-1.1h5.2c.4 0 .7.3.7.7v15.6c0 .5-.5.8-.9.6L3.9 17.2a1.1 1.1 0 0 1-.7-1V3.6Z" />
+      <path d="M11.8 3.2c0-.4.3-.7.7-.7h5.2c.6 0 1.1.5 1.1 1.1v12.6c0 .4-.3.8-.7 1l-5.4 2.2c-.4.2-.9-.1-.9-.6V3.2Z" />
+    </svg>
+  );
+}
+
 export function IconDownload() {
   return (
     <svg width="17" height="17" viewBox="0 0 22 22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

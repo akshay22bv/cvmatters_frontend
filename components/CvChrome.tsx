@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconDownload, IconEye, IconLayers, IconMenu, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconDownload, IconLayers, IconMenu, IconOpenBook, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
 import { SECTIONS, sectionFilled } from "./SideNav";
 import type { PanelId, ResumeData } from "@/lib/types";
 
@@ -131,7 +131,7 @@ export function CvMobileChrome({
                   onPreview();
                 }}
               >
-                <IconEye />
+                <IconOpenBook />
                 Preview
               </button>
               <button
@@ -210,7 +210,7 @@ export function SliceViewCv({ onPreview, onDesign }: { onPreview: () => void; on
   return (
     <div className="slice-bar-acts" role="group" aria-label="Preview and edit template">
       <button type="button" className="slice-round" aria-label="Preview resume" onClick={onPreview}>
-        <IconEye />
+        <IconOpenBook />
       </button>
       <button type="button" className="slice-round" aria-label="Edit design" onClick={onDesign}>
         <IconPalette />

@@ -22,7 +22,7 @@ import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } 
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
-import { IconChevronLeft, IconDownload, IconEye, IconPalette, IconSpinner } from "./icons";
+import { IconChevronLeft, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
@@ -786,7 +786,7 @@ export default function Builder() {
                   <span>Template</span>
                 </button>
                 <button type="button" className="look-action" onClick={() => setPreviewOpen(true)}>
-                  <IconEye />
+                  <IconOpenBook />
                   <span>Preview</span>
                 </button>
                 <button type="button" className="look-action" disabled={downloading} aria-busy={downloading || undefined} onClick={() => requestPdf("download")}>
