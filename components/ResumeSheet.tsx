@@ -25,6 +25,7 @@ import {
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
 import { plainRange } from "@/lib/content";
+import { orderPieces, resolveSectionOrder } from "@/lib/sectionOrder";
 import { fontClass, paperStyle, readTemplateId, type PanelId, type ResumeData, type StepId, type TemplateId } from "@/lib/types";
 
 /** Horizontal inset for split job bullets when the template body uses section padding, not paper padding. */
@@ -657,21 +658,24 @@ function extraPieces(data: ResumeData, kind: ExtraKind, skip?: RegExp) {
 function piecesFor(templateId: TemplateId, data: ResumeData, hideContact: boolean) {
   const base = basePieces(templateId, data, hideContact);
   // Profile already parks languages + awards in the side column.
+  let pieces: ReactNode[];
   if (templateId === "apex") {
-    return [...base, ...extraPieces(data, "apex", /language|strength|award|accomplishment/i)];
+    pieces = [...base, ...extraPieces(data, "apex", /language|strength|award|accomplishment/i)];
+  } else if (templateId === "cabinet") pieces = [...base, ...extraPieces(data, "cab")];
+  else if (templateId === "manor") pieces = [...base, ...extraPieces(data, "manor", /language/i)];
+  else if (templateId === "canvas") pieces = [...base, ...extraPieces(data, "canvas", /hobb|interest/i)];
+  else if (templateId === "cobalt") pieces = [...base, ...extraPieces(data, "cobalt")];
+  else if (templateId === "studio") pieces = [...base, ...extraPieces(data, "studio")];
+  else if (templateId === "vault") pieces = [...base, ...extraPieces(data, "vault", /language|certif/i)];
+  else if (templateId === "plaza") pieces = [...base, ...extraPieces(data, "plaza")];
+  else if (templateId === "mint") pieces = [...base, ...extraPieces(data, "mint")];
+  else if (templateId === "banner") pieces = [...base, ...extraPieces(data, "banner")];
+  else if (templateId === "formal") pieces = [...base, ...extraPieces(data, "formal")];
+  else {
+    const kind: ExtraKind = templateId === "editorial" || templateId === "classic" ? "ed" : "sig";
+    pieces = [...base, ...extraPieces(data, kind)];
   }
-  if (templateId === "cabinet") return [...base, ...extraPieces(data, "cab")];
-  if (templateId === "manor") return [...base, ...extraPieces(data, "manor", /language/i)];
-  if (templateId === "canvas") return [...base, ...extraPieces(data, "canvas", /hobb|interest/i)];
-  if (templateId === "cobalt") return [...base, ...extraPieces(data, "cobalt")];
-  if (templateId === "studio") return [...base, ...extraPieces(data, "studio")];
-  if (templateId === "vault") return [...base, ...extraPieces(data, "vault", /language|certif/i)];
-  if (templateId === "plaza") return [...base, ...extraPieces(data, "plaza")];
-  if (templateId === "mint") return [...base, ...extraPieces(data, "mint")];
-  if (templateId === "banner") return [...base, ...extraPieces(data, "banner")];
-  if (templateId === "formal") return [...base, ...extraPieces(data, "formal")];
-  const kind: ExtraKind = templateId === "editorial" || templateId === "classic" ? "ed" : "sig";
-  return [...base, ...extraPieces(data, kind)];
+  return orderPieces(pieces, resolveSectionOrder(data));
 }
 
 function basePieces(templateId: TemplateId, data: ResumeData, hideContact: boolean) {

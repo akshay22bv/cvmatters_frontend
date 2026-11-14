@@ -27,6 +27,7 @@ import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRa
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
 import { checkpoints, completeness } from "@/lib/progress";
+import { isBodySectionId, moveSectionOrder, resolveSectionOrder, type BodySectionId } from "@/lib/sectionOrder";
 import { stepErrors } from "@/lib/validate";
 import { useAccount } from "@/lib/useAccount";
 import { downloadResumePdf, printResume } from "@/lib/pdf";
@@ -89,6 +90,8 @@ export default function Builder() {
   const [downloading, setDownloading] = useState(false);
   const [pdfError, setPdfError] = useState("");
   const [aiNote, setAiNote] = useState("");
+  const [dragSection, setDragSection] = useState<BodySectionId | null>(null);
+  const [dropSection, setDropSection] = useState<BodySectionId | null>(null);
   const [picked, setPicked] = useState<{ section: PanelId; focusId?: string; tick: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
@@ -675,7 +678,7 @@ export default function Builder() {
                 <div className="finish-panel">
                   <header className="finish-head">
                     <h1>Your PDF</h1>
-                    <p>Check the page on the right, then download when it looks right.</p>
+                    <p>Drag sections to place them, then download when the page looks right.</p>
                   </header>
 
                   <div className="finish-sheet">
@@ -690,23 +693,85 @@ export default function Builder() {
                     </div>
 
                     <ul className="finish-checks">
-                      {checkpoints(snapshot.data).map((mark) => (
-                        <li key={mark.id}>
-                          <button
-                            type="button"
-                            className={mark.done ? "finish-check is-done" : "finish-check"}
-                            onClick={() => goPanel(mark.id)}
+                      {checkpoints(snapshot.data).map((mark) => {
+                        const sectionId = isBodySectionId(mark.id) ? mark.id : null;
+                        const dragging = !!sectionId && dragSection === sectionId;
+                        const over = !!sectionId && dropSection === sectionId && !!dragSection && dragSection !== sectionId;
+                        return (
+                          <li
+                            key={mark.id}
+                            className={[
+                              "finish-check-item",
+                              dragging ? "is-dragging" : "",
+                              over ? "is-over" : "",
+                              sectionId ? "is-movable" : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                            draggable={!!sectionId}
+                            onDragStart={(event) => {
+                              if (!sectionId) return;
+                              event.dataTransfer.effectAllowed = "move";
+                              event.dataTransfer.setData("text/plain", sectionId);
+                              setDragSection(sectionId);
+                            }}
+                            onDragOver={(event) => {
+                              if (!dragSection || !sectionId || dragSection === sectionId) return;
+                              event.preventDefault();
+                              event.dataTransfer.dropEffect = "move";
+                              if (dropSection !== sectionId) setDropSection(sectionId);
+                            }}
+                            onDragLeave={() => {
+                              if (sectionId && dropSection === sectionId) setDropSection(null);
+                            }}
+                            onDrop={(event) => {
+                              event.preventDefault();
+                              if (!dragSection || !sectionId || dragSection === sectionId) {
+                                setDragSection(null);
+                                setDropSection(null);
+                                return;
+                              }
+                              const order = resolveSectionOrder(snapshot.data);
+                              patch({
+                                data: {
+                                  ...snapshot.data,
+                                  sectionOrder: moveSectionOrder(order, dragSection, sectionId),
+                                },
+                              });
+                              setDragSection(null);
+                              setDropSection(null);
+                            }}
+                            onDragEnd={() => {
+                              setDragSection(null);
+                              setDropSection(null);
+                            }}
                           >
-                            <span className="finish-check-mark" aria-hidden="true">
-                              {mark.done ? "✓" : ""}
-                            </span>
-                            <span className="finish-check-copy">
-                              <strong>{mark.label}</strong>
-                              <em>{mark.tally}</em>
-                            </span>
-                          </button>
-                        </li>
-                      ))}
+                            <div className={mark.done ? "finish-check is-done" : "finish-check"}>
+                              <span className={sectionId ? "finish-check-grip" : "finish-check-grip is-locked"} aria-hidden="true">
+                                {sectionId ? (
+                                  <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor">
+                                    <circle cx="2.5" cy="2.5" r="1.2" />
+                                    <circle cx="7.5" cy="2.5" r="1.2" />
+                                    <circle cx="2.5" cy="8" r="1.2" />
+                                    <circle cx="7.5" cy="8" r="1.2" />
+                                    <circle cx="2.5" cy="13.5" r="1.2" />
+                                    <circle cx="7.5" cy="13.5" r="1.2" />
+                                  </svg>
+                                ) : null}
+                              </span>
+                              <button type="button" className="finish-check-main" onClick={() => goPanel(mark.id)}>
+                                <span className="finish-check-mark" aria-hidden="true">
+                                  {mark.done ? "✓" : ""}
+                                </span>
+                                <span className="finish-check-copy">
+                                  <strong>{mark.label}</strong>
+                                  <em>{mark.tally}</em>
+                                </span>
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
 
                     <button type="button" className="finish-get" disabled={downloading} aria-busy={downloading || undefined} onClick={() => requestPdf("download")}>

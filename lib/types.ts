@@ -335,6 +335,11 @@ export type ResumeData = {
     other: string[];
   };
   extras?: Extra[];
+  /**
+   * Order of movable body sections on the page. Details / header stay first.
+   * Absent means bio → experience → education → skills → extras.
+   */
+  sectionOrder?: Array<"bio" | "experience" | "education" | "skills" | "extras">;
   /** What a shared copy reveals. Absent means neither. */
   share?: { email: boolean; phone: boolean };
 };

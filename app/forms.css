@@ -4416,23 +4416,72 @@ input:focus, textarea:focus {
   width: 100%;
 }
 
+.finish-check-item.is-movable {
+  cursor: grab;
+}
+
+.finish-check-item.is-dragging {
+  opacity: 0.45;
+}
+
+.finish-check-item.is-dragging .finish-check {
+  box-shadow: none;
+}
+
+.finish-check-item.is-over .finish-check {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
 .finish-check {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 58px;
+  padding: 10px 12px 10px 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  text-align: left;
+}
+
+.finish-check-grip {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  color: rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.finish-check-grip.is-locked {
+  visibility: hidden;
+}
+
+.finish-check-main {
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr);
   align-items: center;
   gap: 12px;
   width: 100%;
-  box-sizing: border-box;
-  min-height: 58px;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--white);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
   text-align: left;
   cursor: pointer;
+  color: inherit;
+  font: inherit;
 }
 
-.finish-check:hover {
+.finish-check-item.is-movable:active {
+  cursor: grabbing;
+}
+
+.finish-check-item:hover .finish-check {
   border-color: color-mix(in srgb, var(--accent) 28%, transparent);
   box-shadow: var(--shadow-1);
 }
