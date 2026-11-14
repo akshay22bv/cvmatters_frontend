@@ -1243,8 +1243,22 @@ body {
   z-index: 120;
 }
 
+.boot-on-dark {
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  min-height: 100%;
+  height: auto;
+  background: #050505;
+}
+
 .boot-on-dark .boot-note {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.boot-on-dark .load-mark span {
+  background: var(--lime);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--lime) 35%, transparent);
 }
 
 .boot-note {

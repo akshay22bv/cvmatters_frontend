@@ -90,7 +90,7 @@ export function PublicCvPage({
 
   if (!record) {
     return (
-      <div className="public-stage">
+      <div className="public-stage is-loading">
         <LoadScreen message="Opening resume…" variant="on-dark" />
       </div>
     );
