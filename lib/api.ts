@@ -109,7 +109,7 @@ export function loadPublicResume(id: string) {
 }
 
 export function improveText(input: { kind: "summary" | "bullets" | "tailor"; text: string; role: string; jobDescription: string }) {
-  return request<{ text: string; source: string }>("/api/ai/improve", {
+  return request<{ text: string; source: string; warning?: string }>("/api/ai/improve", {
     method: "POST",
     body: JSON.stringify(input),
   });

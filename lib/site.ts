@@ -25,7 +25,7 @@ function normalizeBase(url: string) {
 }
 
 export function siteUrl(path = "/") {
-  const base = normalizeBase(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "https://cvmatters.com");
+  const base = normalizeBase(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "https://cvmatters.net");
   if (!path || path === "/") return base;
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }

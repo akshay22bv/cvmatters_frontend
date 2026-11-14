@@ -62,6 +62,17 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   formatDetection: { email: false, telephone: false },
   alternates: { canonical: "/" },
+  // Square icons only — Google Search drops non-1:1 favicons (old logo was 512×341).
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

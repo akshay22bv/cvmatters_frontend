@@ -1,5 +1,12 @@
-export function Logo() {
-  return <img className="brand-logo" src="/logo.png" alt="" width={1024} height={682} />;
+/** Brand mark (charcoal + green). Prefer square mark in chrome; wide lockup for dark surfaces. */
+export function Logo({ variant = "mark" }: { variant?: "mark" | "wide" | "dark" } = {}) {
+  if (variant === "wide") {
+    return <img className="brand-logo" src="/logo.png" alt="" width={816} height={473} />;
+  }
+  if (variant === "dark") {
+    return <img className="brand-logo" src="/logo-dark.png" alt="" width={1024} height={682} />;
+  }
+  return <img className="brand-logo" src="/logo-mark.png" alt="" width={512} height={512} />;
 }
 
 export function Chevron() {

@@ -179,19 +179,27 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
   ];
   data.experience.forEach((job, index) => {
+    const jobCard = (
+      <div className={`mint-job${index > 0 ? " mint-job-continue" : ""}${job.bullets.some(Boolean) ? " is-split" : ""}`}>
+        <div className="mint-job-top">
+          <strong>{job.role || "Role"}</strong>
+          <span className="mint-date">{plainRange(job)}</span>
+        </div>
+        {job.company || job.location ? (
+          <div className="mint-sub">{[job.company, job.location].filter(Boolean).join(" · ")}</div>
+        ) : null}
+      </div>
+    );
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        <section className="mint-section">
-          {index === 0 && <h2 className="mint-label">Work Experience</h2>}
-          <div className={`mint-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
-            <div className="mint-job-top">
-              <strong>
-                {[job.role, job.company, job.location].filter(Boolean).join(" · ") || "Role"}
-              </strong>
-              <span className="mint-date">{plainRange(job)}</span>
-            </div>
-          </div>
-        </section>
+        {index === 0 ? (
+          <section className="mint-section">
+            <h2 className="mint-label">Work Experience</h2>
+            {jobCard}
+          </section>
+        ) : (
+          jobCard
+        )}
       </Block>,
     );
     pushJobBullets(pieces, job, "mint-pad");
@@ -206,7 +214,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
               <strong>{item.school || item.degree || "School"}</strong>
               <span className="mint-date">{item.year}</span>
             </div>
-            {item.degree ? <div className="mint-sub"><RichLine text={item.degree} /></div> : null}
+            {item.degree && item.school ? <div className="mint-sub"><RichLine text={item.degree} /></div> : null}
             {item.detail ? <div className="mint-sub"><RichLine text={item.detail} /></div> : null}
           </div>
         ))}

@@ -1227,12 +1227,38 @@
 }
 
 .mint-contacts {
-  justify-content: flex-end;
+  display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 0;
+  max-width: 240px;
   color: #333;
   text-align: right;
+}
+
+.mint-contacts .ats-contact {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: center;
+  justify-items: end;
+  column-gap: 6px;
+  width: 100%;
+  text-align: right;
+}
+
+.mint-contacts .ats-contact svg {
+  grid-column: 1;
+  justify-self: center;
+}
+
+.mint-contacts .ats-contact span {
+  grid-column: 2;
+  justify-self: end;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .mint-section { margin-top: calc(16px * var(--space, 1)); }
@@ -1255,30 +1281,42 @@
 
 .mint-job { margin-bottom: calc(10px * var(--space, 1)); }
 
+/* Continuation roles sit in their own flow-block; skip nested section spacing. */
+.paper.mint > .flow-block > .mint-job.mint-job-continue {
+  margin-top: calc(6px * var(--space, 1));
+  margin-bottom: calc(10px * var(--space, 1));
+}
+
 .mint-job-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
   align-items: baseline;
 }
 
 .mint-job-top strong {
+  margin: 0;
   font-size: calc(13px * var(--type, 1));
+  font-weight: 700;
+  line-height: 1.35;
   min-width: 0;
 }
 
 .mint-date {
-  flex: none;
+  margin: 0;
   color: #0f8f8a;
   font-size: calc(12px * var(--type, 1));
   font-weight: 650;
+  line-height: 1.35;
   white-space: nowrap;
+  text-align: right;
 }
 
 .mint-sub {
   margin-top: 2px;
   color: #444;
   font-size: calc(12.5px * var(--type, 1));
+  line-height: 1.4;
 }
 
 .mint-job ul {

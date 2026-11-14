@@ -1429,17 +1429,18 @@ input:focus, textarea:focus {
 .fan.is-grid .fan-card {
   width: 100% !important;
   gap: 8px;
-  padding: 7px 7px 8px;
+  padding: 0 0 8px;
   border: 0;
-  border-radius: 15px;
-  background: white;
-  box-shadow: var(--shadow-1);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .fan.is-grid .fan-frame {
   margin: 0 auto;
-  border-radius: 6px;
-  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 10px 24px rgba(20, 16, 12, 0.14);
 }
 
 .fan.is-grid .fan-name {
@@ -1454,7 +1455,11 @@ input:focus, textarea:focus {
 }
 
 .fan.is-grid .fan-card.is-current {
-  box-shadow: var(--shadow-2);
+  box-shadow: none;
+}
+
+.fan.is-grid .fan-card.is-current .fan-frame {
+  box-shadow: 0 14px 32px rgba(20, 16, 12, 0.18);
 }
 
 /* ---------------------------------------------------------- responsive ---- */
@@ -2734,20 +2739,21 @@ input:focus, textarea:focus {
 .fan.is-strip .fan-tilt.is-flat .fan-card {
   height: var(--fan-card-h) !important;
   min-height: var(--fan-card-h);
+  padding: 0;
 }
 
 .fan.is-strip .fan-card {
   position: relative;
   /* Keep TemplateFan inline width (thumb + padding) — no 100% grid squash */
-  padding: 5px;
-  border: 2px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
-  box-shadow: var(--shadow-1);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .fan.is-strip .fan-card.is-current {
-  border-color: var(--picker-accent);
+  border: 0;
   box-shadow: none;
 }
 
@@ -2758,9 +2764,14 @@ input:focus, textarea:focus {
 
 .fan.is-strip .fan-frame {
   margin: 0 auto;
-  border-radius: 4px;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent);
+  box-shadow: 0 10px 24px rgba(20, 16, 12, 0.14);
+}
+
+.fan.is-strip .fan-card.is-current .fan-frame {
+  box-shadow: 0 0 0 2px var(--picker-accent), 0 12px 28px rgba(20, 16, 12, 0.16);
 }
 
 .fan-check {
@@ -2784,7 +2795,11 @@ input:focus, textarea:focus {
 }
 
 .fan.is-picker .fan-card.is-current {
-  box-shadow: 0 0 0 2px var(--picker-accent), var(--shadow-2);
+  box-shadow: none;
+}
+
+.fan.is-picker .fan-card.is-current .fan-frame {
+  box-shadow: 0 0 0 2px var(--picker-accent), 0 14px 32px rgba(20, 16, 12, 0.16);
 }
 
 .picker-colors .swatch.is-on {
@@ -3507,16 +3522,24 @@ input:focus, textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 8px;
+  padding: 0;
   border: 0;
-  border-radius: 12px;
-  background: white;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.fan.is-picker .fan-card:hover { box-shadow: var(--shadow-2); }
+.fan.is-picker .fan-card:hover { box-shadow: none; }
+.fan.is-picker .fan-card:hover .fan-frame {
+  box-shadow: 0 14px 32px rgba(20, 16, 12, 0.16);
+}
 
 .fan.is-picker .fan-card.is-current {
-  box-shadow: 0 0 0 2px var(--picker-green), var(--shadow-2);
+  box-shadow: none;
+}
+
+.fan.is-picker .fan-card.is-current .fan-frame {
+  box-shadow: 0 0 0 2px var(--picker-green), 0 14px 32px rgba(20, 16, 12, 0.16);
 }
 
 .fan.is-picker .fan-card.is-current .fan-name {
@@ -3545,8 +3568,9 @@ input:focus, textarea:focus {
 
 .fan.is-picker .fan-frame {
   margin: 0 auto;
-  border-radius: 6px;
-  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 10px 24px rgba(20, 16, 12, 0.14);
 }
 
 .fan.is-picker .fan-name {
@@ -3603,8 +3627,10 @@ input:focus, textarea:focus {
 }
 
 .picker-stage .page-slot {
-  border-radius: 8px;
-  box-shadow: var(--shadow-3);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .picker-foot {
@@ -3910,17 +3936,23 @@ input:focus, textarea:focus {
     width: auto !important;
     height: auto !important;
     gap: 8px;
-    padding: 10px 10px 8px;
-    border-radius: 16px;
-    box-shadow: 0 10px 28px rgba(20, 16, 12, 0.08);
+    padding: 0 0 8px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .fan.is-picker .fan-card.is-current {
-    box-shadow: 0 0 0 2px var(--picker-green), 0 12px 30px rgba(20, 16, 12, 0.12);
+    box-shadow: none;
   }
 
   .fan.is-picker .fan-frame {
-    border-radius: 8px;
+    border-radius: 0;
+    box-shadow: 0 10px 28px rgba(20, 16, 12, 0.14);
+  }
+
+  .fan.is-picker .fan-card.is-current .fan-frame {
+    box-shadow: 0 0 0 2px var(--picker-green), 0 12px 30px rgba(20, 16, 12, 0.16);
   }
 
   .fan.is-picker .fan-name {
@@ -4255,12 +4287,13 @@ input:focus, textarea:focus {
 .cmp-paper {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  background: white;
-  box-shadow: var(--shadow-2);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.cmp-paper .paper { box-shadow: none; }
+.cmp-paper .paper { box-shadow: 0 16px 40px rgba(20, 16, 12, 0.16); }
 
 .cmp-table {
   width: 100%;
@@ -4689,7 +4722,8 @@ input:focus, textarea:focus {
   overflow: hidden;
   width: 100%;
   aspect-ratio: 794 / 1123;
-  border-radius: 6px;
+  border: 0;
+  border-radius: 0;
   background: white;
   box-shadow: var(--shadow-2);
   container-type: inline-size;
@@ -4715,7 +4749,7 @@ input:focus, textarea:focus {
 .look-peek .dash-shot {
   width: 36px;
   flex: none;
-  border-radius: 3px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(17, 23, 54, 0.16);
 }
 
@@ -5944,12 +5978,15 @@ input:focus, textarea:focus {
 .public-sheet {
   width: min(860px, 100%);
   padding: 0;
-  border-radius: 4px;
-  background: #fff;
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
-  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.public-sheet .paper {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
 }
 
 .public-notes {
@@ -6037,7 +6074,7 @@ input:focus, textarea:focus {
   .prof-slug-prefix { width: 100%; font-size: 12px; }
   .prof-slug input { height: 36px; padding: 0; }
   .public-stage { padding: 52px 10px 32px; }
-  .public-sheet { border-radius: 2px; }
+  .public-sheet { border-radius: 0; }
   .app-nav-bar { gap: 8px; padding: 0 12px; }
   .app-nav-brand { flex: none; }
   .app-nav-brand span:last-child { display: none; }

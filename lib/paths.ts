@@ -56,7 +56,13 @@ const RESERVED_ROOT = new Set([
   "billing",
   "plans",
   "icon.png",
+  "icon-48.png",
+  "icon-192.png",
+  "apple-icon.png",
   "logo.png",
+  "logo-mark.png",
+  "logo-dark.png",
+  "logo-square.jpg",
   "favicon.ico",
   "sw.js",
 ]);

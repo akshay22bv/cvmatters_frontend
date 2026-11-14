@@ -10,7 +10,8 @@ import { TEMPLATES, type ResumeData, type TemplateId } from "@/lib/types";
 
 const PAGE_W = 794;
 const PAGE_H = 1123;
-const PAD = 6;
+/** No card chrome around thumbs — size matches the scaled page only. */
+const PAD = 0;
 
 const SIZE = {
   rail: 112,

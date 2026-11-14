@@ -291,6 +291,7 @@ export default function Builder() {
         role: live.current.data.personal.title,
         jobDescription: live.current.jobDescription,
       });
+      if (result.warning) setAiNote(result.warning);
       return result.text;
     } catch {
       setAiNote("Couldn't improve that just now.");

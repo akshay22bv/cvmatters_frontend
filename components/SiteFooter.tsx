@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SITE_NAME, SITE_TAGLINE, SUPPORT_EMAIL } from "@/lib/site";
-import { IconChevronRight, IconLock } from "./icons";
+import { IconChevronRight, IconLock, Logo } from "./icons";
 
 export function SiteFooter({
   busy = false,
@@ -25,6 +25,9 @@ export function SiteFooter({
         <div className="board-foot-glow" aria-hidden="true" />
         <div className="board-rail board-foot-layout">
           <div className="board-foot-brand">
+            <div className="board-foot-logo" aria-hidden="true">
+              <Logo variant="dark" />
+            </div>
             <p className="board-foot-kicker">Resume builder</p>
             <strong className="board-foot-title">{SITE_NAME}</strong>
             <p className="board-foot-tagline">{SITE_TAGLINE}</p>
