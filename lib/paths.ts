@@ -1,7 +1,11 @@
 import type { PanelId } from "./types";
 
+export type StartIntent = "build" | "job" | "field";
+export type StartStep = "choose" | "upload" | "linkedin";
+
 export type AppView =
   | { kind: "start" }
+  | { kind: "begin"; step: StartStep; intent: StartIntent }
   | { kind: "about" }
   | { kind: "contact" }
   | { kind: "profile" }
@@ -56,6 +60,7 @@ const RESERVED_ROOT = new Set([
   "billing",
   "plans",
   "blog",
+  "start",
   "icon.png",
   "icon-48.png",
   "icon-192.png",
@@ -70,6 +75,7 @@ const RESERVED_ROOT = new Set([
 
 export const SECTION_LABEL: Record<string, string> = {
   start: "Home",
+  begin: "Start",
   about: "About",
   contact: "Contact",
   profile: "Profile",
@@ -86,8 +92,24 @@ export const SECTION_LABEL: Record<string, string> = {
   compare: "Download",
 };
 
+export function parseStartIntent(value: string | null | undefined): StartIntent {
+  if (value === "job" || value === "field") return value;
+  return "build";
+}
+
+export function parseStartStep(value: string | null | undefined): StartStep {
+  if (value === "upload" || value === "linkedin") return value;
+  return "choose";
+}
+
+export function startPath(step: StartStep = "choose", intent: StartIntent = "build") {
+  const base = step === "choose" ? "/start" : `/start/${step}`;
+  return intent === "build" ? base : `${base}?intent=${intent}`;
+}
+
 export function viewToPath(view: AppView) {
   if (view.kind === "start") return "/";
+  if (view.kind === "begin") return startPath(view.step, view.intent);
   if (view.kind === "about") return "/about";
   if (view.kind === "contact") return "/contact";
   if (view.kind === "profile") return "/profile";
@@ -96,9 +118,17 @@ export function viewToPath(view: AppView) {
   return `/cv/${PANEL_TO_SLUG[view.section] || "details"}`;
 }
 
-export function pathToView(pathname: string): AppView {
+export function pathToView(pathname: string, search = ""): AppView {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
+  const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   if (parts.length === 0 || parts[0] === "home") return { kind: "start" };
+  if (parts[0] === "start") {
+    return {
+      kind: "begin",
+      step: parseStartStep(parts[1]),
+      intent: parseStartIntent(params.get("intent")),
+    };
+  }
   if (parts[0] === "profile") return { kind: "profile" };
   if (parts[0] === "about") return { kind: "about" };
   if (parts[0] === "contact") return { kind: "contact" };
@@ -128,6 +158,15 @@ export function panelPath(panel: PanelId) {
 
 export function crumbsFor(view: AppView) {
   if (view.kind === "start") return [{ href: "/", label: "Home" }];
+  if (view.kind === "begin") {
+    const crumbs = [
+      { href: "/", label: "Home" },
+      { href: startPath("choose", view.intent), label: "Start" },
+    ];
+    if (view.step === "upload") crumbs.push({ href: startPath("upload", view.intent), label: "Upload" });
+    if (view.step === "linkedin") crumbs.push({ href: startPath("linkedin", view.intent), label: "LinkedIn" });
+    return crumbs;
+  }
   if (view.kind === "about") return [{ href: "/", label: "Home" }, { href: "/about", label: "About" }];
   if (view.kind === "contact") return [{ href: "/", label: "Home" }, { href: "/contact", label: "Contact" }];
   if (view.kind === "profile") return [{ href: "/", label: "Home" }, { href: "/profile", label: "Profile" }];

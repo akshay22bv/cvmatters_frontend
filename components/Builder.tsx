@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AuthDialog } from "./AuthDialog";
 import { AppNav } from "./AppNav";
 import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
@@ -16,6 +16,7 @@ import { StepCard } from "./StepCard";
 import { AboutPage } from "./AboutPage";
 import { ContactPage } from "./ContactPage";
 import { Landing, type DashIntent } from "./Landing";
+import { StartPage } from "./StartPage";
 import { LoadScreen } from "./LoadScreen";
 import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
@@ -68,8 +69,9 @@ function fileToBase64(file: File) {
 
 export default function Builder() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const view = pathToView(pathname);
+  const view = pathToView(pathname, searchParams.toString());
   const [mode, setMode] = useState<"loading" | "start" | "ready">("loading");
   const [panel, setPanel] = useState<PanelId | null>(null);
 
@@ -270,7 +272,7 @@ export default function Builder() {
   }, [mode, pathname]);
 
   useEffect(() => {
-    if (mode !== "start" || view.kind !== "examples") return;
+    if (mode !== "start" || (view.kind !== "examples" && view.kind !== "profile")) return;
     router.replace("/");
   }, [mode, view.kind, router]);
 
@@ -407,7 +409,7 @@ export default function Builder() {
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
 
-  if (mode === "loading" && view.kind !== "public" && view.kind !== "about" && view.kind !== "contact") {
+  if (mode === "loading" && view.kind !== "public" && view.kind !== "about" && view.kind !== "contact" && view.kind !== "begin") {
     return <LoadScreen message="Opening CV Matters…" />;
   }
 
@@ -456,6 +458,59 @@ export default function Builder() {
     }
   };
 
+  const beginFromUpload = async (file: File, intent: DashIntent, templateId: TemplateId) => {
+    if (file.size > 4_000_000) {
+      setError("That file is larger than 4 MB.");
+      return;
+    }
+    setBusy(true);
+    setBusyLabel("Reading your CV with AI…");
+    setError("");
+    try {
+      const encoded = await fileToBase64(file);
+      const parsed = await importResume(file.name, encoded);
+      const data = {
+        ...structuredClone(blank),
+        ...parsed.data,
+        personal: { ...blank.personal, ...parsed.data.personal },
+        skills: {
+          industry: parsed.data.skills?.industry || [],
+          tools: parsed.data.skills?.tools || [],
+          other: parsed.data.skills?.other || [],
+        },
+        extras: parsed.data.extras || [],
+      };
+      await replaceRecord(data, intent, templateId);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Couldn't read that file.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const beginFromLinkedin = (url: string, name: string, intent: DashIntent, templateId: TemplateId) =>
+    begin(intent, templateId, { ...blank, personal: { ...blank.personal, fullName: name, linkedin: url } }, "Starting from your profile…");
+
+  if (view.kind === "begin") {
+    return (
+      <div className="app-frame">
+        <AppNav view={view} />
+        <StartPage
+          intent={view.intent}
+          step={view.step}
+          templateId={snapshot.templateId}
+          owned={mode === "ready"}
+          busy={busy}
+          busyLabel={busyLabel}
+          error={error}
+          onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
+          onUpload={(file, intent, templateId) => void beginFromUpload(file, intent, templateId)}
+          onLinkedin={beginFromLinkedin}
+        />
+      </div>
+    );
+  }
+
   if (mode === "start" && view.kind !== "examples" && view.kind !== "profile") {
     return (
       <Landing
@@ -463,38 +518,6 @@ export default function Builder() {
         busyLabel={busyLabel}
         error={error}
         onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
-        onUpload={async (file, intent, templateId) => {
-          if (file.size > 4_000_000) {
-            setError("That file is larger than 4 MB.");
-            return;
-          }
-          setBusy(true);
-          setBusyLabel("Reading your CV with AI…");
-          setError("");
-          try {
-            const encoded = await fileToBase64(file);
-            const parsed = await importResume(file.name, encoded);
-            const data = {
-              ...structuredClone(blank),
-              ...parsed.data,
-              personal: { ...blank.personal, ...parsed.data.personal },
-              skills: {
-                industry: parsed.data.skills?.industry || [],
-                tools: parsed.data.skills?.tools || [],
-                other: parsed.data.skills?.other || [],
-              },
-              extras: parsed.data.extras || [],
-            };
-            await replaceRecord(data, intent, templateId);
-          } catch (reason) {
-            setError(reason instanceof Error ? reason.message : "Couldn't read that file.");
-          } finally {
-            setBusy(false);
-          }
-        }}
-        onLinkedin={(url, name, intent, templateId) =>
-          begin(intent, templateId, { ...blank, personal: { ...blank.personal, fullName: name, linkedin: url } }, "Starting from your profile…")
-        }
       />
     );
   }
@@ -518,38 +541,6 @@ export default function Builder() {
           router.push(panelPath(next));
         }}
         onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
-        onUpload={async (file, intent, templateId) => {
-          if (file.size > 4_000_000) {
-            setError("That file is larger than 4 MB.");
-            return;
-          }
-          setBusy(true);
-          setBusyLabel("Reading your CV with AI…");
-          setError("");
-          try {
-            const encoded = await fileToBase64(file);
-            const parsed = await importResume(file.name, encoded);
-            const data = {
-              ...structuredClone(blank),
-              ...parsed.data,
-              personal: { ...blank.personal, ...parsed.data.personal },
-              skills: {
-                industry: parsed.data.skills?.industry || [],
-                tools: parsed.data.skills?.tools || [],
-                other: parsed.data.skills?.other || [],
-              },
-              extras: parsed.data.extras || [],
-            };
-            await replaceRecord(data, intent, templateId);
-          } catch (reason) {
-            setError(reason instanceof Error ? reason.message : "Couldn't read that file.");
-          } finally {
-            setBusy(false);
-          }
-        }}
-        onLinkedin={(url, name, intent, templateId) =>
-          begin(intent, templateId, { ...blank, personal: { ...blank.personal, fullName: name, linkedin: url } }, "Starting from your profile…")
-        }
       />
     );
   }

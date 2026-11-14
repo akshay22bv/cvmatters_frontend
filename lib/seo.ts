@@ -71,6 +71,20 @@ async function metadataForView(view: AppView, pathname: string): Promise<Metadat
     };
   }
 
+  if (view.kind === "begin") {
+    const stepLabel = view.step === "upload" ? "Upload your CV" : view.step === "linkedin" ? "Import from LinkedIn" : "Start your CV";
+    const title = `${stepLabel} · ${SITE_NAME}`;
+    return {
+      ...baseMeta({
+        title,
+        description:
+          "Start a CV blank, upload a PDF or DOCX, or import from LinkedIn. Live preview and ATS-friendly templates on CV Matters.",
+        path: pathname,
+      }),
+      title: { absolute: title },
+    };
+  }
+
   if (view.kind === "examples") {
     return baseMeta({
       title: titleTemplate("Resumes in your field"),

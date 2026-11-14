@@ -15,7 +15,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function AppPage({ params }: PageProps) {
   const { slug } = await params;
   const path = `/${(slug || []).join("/")}`.replace(/\/+$/, "") || "/";
-  if (pathToView(path).kind === "start") {
+  const view = pathToView(path);
+  if (view.kind === "start" || view.kind === "begin") {
     return <HomeJsonLd />;
   }
   return null;

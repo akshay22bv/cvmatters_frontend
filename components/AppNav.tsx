@@ -5,7 +5,7 @@ import { Logo } from "./icons";
 import { crumbsFor, type AppView } from "@/lib/paths";
 
 const LINKS: { href: string; label: string; on: (view: AppView) => boolean }[] = [
-  { href: "/", label: "Home", on: (view) => view.kind === "start" },
+  { href: "/", label: "Home", on: (view) => view.kind === "start" || view.kind === "begin" },
   { href: "/cv/details", label: "My CV", on: (view) => view.kind === "cv" && view.section !== "job" },
   { href: "/profile", label: "Profile", on: (view) => view.kind === "profile" },
   { href: "/cv/job", label: "Job post", on: (view) => view.kind === "cv" && view.section === "job" },

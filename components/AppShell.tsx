@@ -1,8 +1,10 @@
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Builder from "./Builder";
 import { ConfirmProvider } from "./ConfirmProvider";
+import { LoadScreen } from "./LoadScreen";
 import { MobileFormStable } from "./MobileFormStable";
 
 /** Keeps the builder mounted across /cv/* routes so section changes do not remount. */
@@ -14,7 +16,9 @@ export function AppShell() {
   return (
     <ConfirmProvider>
       <MobileFormStable />
-      <Builder />
+      <Suspense fallback={<LoadScreen message="Opening CV Matters…" />}>
+        <Builder />
+      </Suspense>
     </ConfirmProvider>
   );
 }
