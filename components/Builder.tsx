@@ -21,7 +21,7 @@ import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } 
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
-import { IconChevronLeft, IconDownload, IconEye, IconPalette } from "./icons";
+import { IconChevronLeft, IconDownload, IconEye, IconPalette, IconSpinner } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
@@ -718,8 +718,8 @@ export default function Builder() {
                       ))}
                     </ul>
 
-                    <button type="button" className="finish-get" disabled={downloading} onClick={() => requestPdf("download")}>
-                      {downloading ? <i className="mn-spin" aria-hidden="true" /> : <IconDownload />}
+                    <button type="button" className="finish-get" disabled={downloading} aria-busy={downloading || undefined} onClick={() => requestPdf("download")}>
+                      {downloading ? <IconSpinner /> : <IconDownload />}
                       {downloading ? "Building PDF…" : account.entitlement.canDownload ? "Download PDF" : "Unlock PDF"}
                     </button>
 
@@ -758,7 +758,9 @@ export default function Builder() {
               />
               <SliceContinue
                 label={dockIndex >= steps.length - 1 ? "Download" : "Continue"}
+                busy={dockIndex >= steps.length - 1 && downloading}
                 onClick={async () => {
+                  if (dockIndex >= steps.length - 1 && downloading) return;
                   const found = panel ? stepErrors(panel, page, live.current.data) : {};
                   if (Object.keys(found).length) {
                     setShowErrors(true);
@@ -796,8 +798,8 @@ export default function Builder() {
                   <IconEye />
                   <span>Preview</span>
                 </button>
-                <button type="button" className="look-action" disabled={downloading} onClick={() => requestPdf("download")}>
-                  <IconDownload />
+                <button type="button" className="look-action" disabled={downloading} aria-busy={downloading || undefined} onClick={() => requestPdf("download")}>
+                  {downloading ? <IconSpinner /> : <IconDownload />}
                   <span>{downloading ? "Building…" : "Download"}</span>
                 </button>
               </div>
@@ -834,10 +836,11 @@ export default function Builder() {
               type="button"
               className="preview-sheet-icon preview-sheet-dl"
               aria-label={downloading ? "Building PDF" : "Download PDF"}
+              aria-busy={downloading || undefined}
               disabled={downloading}
               onClick={() => requestPdf("download")}
             >
-              <IconDownload />
+              {downloading ? <IconSpinner /> : <IconDownload />}
             </button>
           </div>
           <div className="preview-sheet-body">

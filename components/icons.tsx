@@ -218,6 +218,23 @@ export function IconDownload() {
   );
 }
 
+/** Inline spinner for download / busy buttons — uses currentColor. */
+export function IconSpinner({ size = 17 }: { size?: number }) {
+  return (
+    <svg
+      className="icon-spin"
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+    >
+      <circle cx="10" cy="10" r="7.25" stroke="currentColor" strokeOpacity="0.22" strokeWidth="2.4" />
+      <path d="M17.25 10a7.25 7.25 0 0 0-7.25-7.25" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function IconCheck() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">

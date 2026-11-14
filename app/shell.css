@@ -2145,6 +2145,12 @@ body {
   opacity: 0.45;
 }
 
+.slice-continue.is-busy {
+  padding-right: 22px;
+  justify-content: center;
+  gap: 10px;
+}
+
 .slice-continue-arrow {
   width: 32px;
   height: 32px;

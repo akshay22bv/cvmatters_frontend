@@ -312,6 +312,12 @@
   to { transform: rotate(360deg); }
 }
 
+.icon-spin {
+  display: block;
+  flex: none;
+  animation: spin-slow 0.7s linear infinite;
+}
+
 /* ---------- load mark (brand green bars) ---------- */
 
 .load-mark {

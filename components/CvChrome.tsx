@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconDownload, IconEye, IconLayers, IconMenu, IconPalette, IconUser, Logo } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconDownload, IconEye, IconLayers, IconMenu, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
 import { SECTIONS, sectionFilled } from "./SideNav";
 import type { PanelId, ResumeData } from "@/lib/types";
 
@@ -138,12 +138,13 @@ export function CvMobileChrome({
                 type="button"
                 className="slice-sheet-action"
                 disabled={downloading}
+                aria-busy={downloading || undefined}
                 onClick={() => {
                   setOpen(false);
                   onDownload();
                 }}
               >
-                <IconDownload />
+                {downloading ? <IconSpinner /> : <IconDownload />}
                 {downloading ? "Building…" : "Download"}
               </button>
               <button
@@ -177,18 +178,29 @@ export function CvMobileChrome({
 export function SliceContinue({
   label,
   disabled,
+  busy = false,
   onClick,
 }: {
   label: string;
   disabled?: boolean;
+  busy?: boolean;
   onClick: () => void;
 }) {
   return (
-    <button type="button" className="slice-continue" disabled={disabled} onClick={onClick}>
-      <span>{label}</span>
-      <span className="slice-continue-arrow" aria-hidden="true">
-        <IconChevronRight />
-      </span>
+    <button
+      type="button"
+      className={`slice-continue${busy ? " is-busy" : ""}`}
+      disabled={disabled || busy}
+      aria-busy={busy || undefined}
+      onClick={onClick}
+    >
+      {busy ? <IconSpinner size={16} /> : null}
+      <span>{busy ? "Building…" : label}</span>
+      {!busy ? (
+        <span className="slice-continue-arrow" aria-hidden="true">
+          <IconChevronRight />
+        </span>
+      ) : null}
     </button>
   );
 }
