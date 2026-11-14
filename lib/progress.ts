@@ -1,4 +1,4 @@
-import { resolveSectionOrder, type BodySectionId } from "./sectionOrder";
+import { resolveSectionOrder, skillTags, type BodySectionId } from "./sectionOrder";
 import type { ResumeData, StepId } from "./types";
 
 export type Checkpoint = {
@@ -15,7 +15,7 @@ export type Checkpoint = {
  */
 export function checkpoints(data: ResumeData): Checkpoint[] {
   const { personal, summary, experience, education, skills } = data;
-  const skillCount = skills.industry.length + skills.tools.length + skills.other.length;
+  const skillCount = skillTags(skills).length;
   const bulletCount = experience.reduce((total, role) => total + role.bullets.filter((line) => line.trim()).length, 0);
 
   const details: Checkpoint = {
@@ -28,7 +28,7 @@ export function checkpoints(data: ResumeData): Checkpoint[] {
   const body: Record<Exclude<BodySectionId, "extras">, Checkpoint> = {
     bio: {
       id: "bio",
-      label: "Short bio",
+      label: "Summary",
       done: summary.trim().length > 0,
       tally: summary.trim()
         ? `${summary.trim().split(/\s+/).length} ${summary.trim().split(/\s+/).length === 1 ? "word" : "words"}`

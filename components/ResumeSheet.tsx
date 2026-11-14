@@ -25,7 +25,7 @@ import {
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
 import { plainRange } from "@/lib/content";
-import { orderPieces, resolveSectionOrder } from "@/lib/sectionOrder";
+import { orderPieces, resolveHiddenSections, resolveSectionOrder, sectionOnCv, skillTags } from "@/lib/sectionOrder";
 import { fontClass, paperStyle, readTemplateId, type PanelId, type ResumeData, type StepId, type TemplateId } from "@/lib/types";
 
 /** Horizontal inset for split job bullets when the template body uses section padding, not paper padding. */
@@ -37,29 +37,19 @@ function experienceBulletPad(templateId: TemplateId) {
 }
 
 function SkillBlocks({ skills }: { skills: ResumeData["skills"] }) {
-  const groups = [
-    ["Industry Knowledge", skills.industry],
-    ["Tools & Technologies", skills.tools],
-    ["Other Skills", skills.other],
-  ] as const;
+  const tags = skillTags(skills);
+  if (!tags.length) return null;
   return (
-    <>
-      {groups.map(([label, items]) =>
-        items.length ? (
-          <div className="skill-block" key={label}>
-            <strong>{label}</strong>
-            <p>
-              {items.map((item, index) => (
-                <span key={`${item}-${index}`}>
-                  {item}
-                  {index < items.length - 1 ? ", " : ""}
-                </span>
-              ))}
-            </p>
-          </div>
-        ) : null,
-      )}
-    </>
+    <div className="skill-block">
+      <p>
+        {tags.map((item, index) => (
+          <span key={`${item}-${index}`}>
+            {item}
+            {index < tags.length - 1 ? ", " : ""}
+          </span>
+        ))}
+      </p>
+    </div>
   );
 }
 
@@ -675,7 +665,7 @@ function piecesFor(templateId: TemplateId, data: ResumeData, hideContact: boolea
     const kind: ExtraKind = templateId === "editorial" || templateId === "classic" ? "ed" : "sig";
     pieces = [...base, ...extraPieces(data, kind)];
   }
-  return orderPieces(pieces, resolveSectionOrder(data));
+  return orderPieces(pieces, resolveSectionOrder(data), resolveHiddenSections(data));
 }
 
 function basePieces(templateId: TemplateId, data: ResumeData, hideContact: boolean) {
@@ -724,19 +714,23 @@ function SplitSide({ data, hideContact, plain = false, identity = true }: { data
           <div className="split-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
         </div>
       )}
-      <div data-section="skills">
-        <h2 className="sig-label">Skills</h2>
-        <SkillBlocks skills={data.skills} />
-      </div>
-      <div data-section="education">
-        <h2 className="sig-label">Education</h2>
-        {data.education.map((item) => (
-          <div className="side-edu" key={item.id} data-section="education" data-focus={item.id}>
-            <strong><RichLine text={item.degree} /></strong>
-            <div>{[item.school, item.year].filter(Boolean).join(" · ")}</div>
-          </div>
-        ))}
-      </div>
+      {sectionOnCv(data, "skills") ? (
+        <div data-section="skills">
+          <h2 className="sig-label">Skills</h2>
+          <SkillBlocks skills={data.skills} />
+        </div>
+      ) : null}
+      {sectionOnCv(data, "education") ? (
+        <div data-section="education">
+          <h2 className="sig-label">Education</h2>
+          {data.education.map((item) => (
+            <div className="side-edu" key={item.id} data-section="education" data-focus={item.id}>
+              <strong><RichLine text={item.degree} /></strong>
+              <div>{[item.school, item.year].filter(Boolean).join(" · ")}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </aside>
   );
 }

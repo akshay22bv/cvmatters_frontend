@@ -65,7 +65,7 @@ export function fieldFromText(text: string): (typeof CATEGORIES)[number] | null 
 
 export const STEPS = [
   { id: "details", label: "Your Details" },
-  { id: "bio", label: "Short Bio" },
+  { id: "bio", label: "Summary" },
   { id: "experience", label: "Experience" },
   { id: "education", label: "Education" },
   { id: "skills", label: "Skills" },
@@ -340,6 +340,8 @@ export type ResumeData = {
    * Absent means bio → experience → education → skills → extras.
    */
   sectionOrder?: Array<"bio" | "experience" | "education" | "skills" | "extras">;
+  /** Body sections turned off on the compare page. Absent means all on. */
+  hiddenSections?: Array<"bio" | "experience" | "education" | "skills" | "extras">;
   /** What a shared copy reveals. Absent means neither. */
   share?: { email: boolean; phone: boolean };
 };

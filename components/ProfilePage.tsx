@@ -73,6 +73,7 @@ export function ProfilePage({
 
   const [draft, setDraft] = useState(slug || suggestSlug(name) || "");
   const [hosting, setHosting] = useState(isPublic);
+  const [hostCvId, setHostCvId] = useState<string | null>(resumeId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -84,6 +85,7 @@ export function ProfilePage({
   const atCvLimit = !downloadsOn && resumes.length >= freeCvLimit;
 
   useEffect(() => {
+    setHostCvId(resumeId);
     setDraft(slug || "");
     setHosting(isPublic);
   }, [slug, isPublic, resumeId]);
@@ -121,7 +123,10 @@ export function ProfilePage({
     };
   }, [account.user]);
 
-  const liveSlug = (slug || "").trim();
+  const hostCv = resumes.find((item) => item.id === hostCvId);
+  const savedSlug = (hostCvId === resumeId ? slug : hostCv?.slug) || "";
+  const savedPublic = hostCvId === resumeId ? isPublic : Boolean(hostCv?.isPublic);
+  const liveSlug = savedSlug.trim();
   const publicPath = liveSlug ? publicResumePath(liveSlug) : null;
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const publicUrl = publicPath ? `${origin}${publicPath}` : "";
@@ -130,6 +135,7 @@ export function ProfilePage({
   const previewSlug = useMemo(() => {
     return draft.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") || "your-name";
   }, [draft]);
+  const previewUrl = `${origin}/${previewSlug}`;
 
   const websites = useMemo(() => {
     const rows: { label: string; href: string }[] = [];
@@ -144,8 +150,18 @@ export function ProfilePage({
     return rows;
   }, [data.personal]);
 
+  const selectHostCv = (id: string) => {
+    const row = resumes.find((item) => item.id === id);
+    if (!row) return;
+    setHostCvId(row.id);
+    setDraft(row.slug || "");
+    setHosting(row.isPublic);
+    setError("");
+  };
+
   const saveHosting = async () => {
-    if (!resumeId || !ownerKey) {
+    const targetId = hostCvId || resumeId;
+    if (!targetId || !ownerKey) {
       setError("Create a CV first, then come back to host it.");
       return;
     }
@@ -156,12 +172,15 @@ export function ProfilePage({
     setBusy(true);
     setError("");
     try {
-      const saved = await updateHosting(resumeId, {
+      const saved = await updateHosting(targetId, {
         ownerKey,
         isPublic: hosting,
         slug: draft.trim() || null,
       });
-      onSaved({ slug: saved.slug || null, isPublic: saved.isPublic });
+      setResumes((rows) => rows.map((item) => (item.id === saved.id ? { ...item, ...saved } : item)));
+      if (targetId === resumeId) {
+        onSaved({ slug: saved.slug || null, isPublic: saved.isPublic });
+      }
     } catch (reason) {
       if (reason instanceof ApiError) setError(reason.message);
       else setError(reason instanceof Error ? reason.message : "Couldn't save that.");
@@ -217,7 +236,7 @@ export function ProfilePage({
     }
   };
 
-  const shareStatus = isPublic && publicPath ? "Live" : hosting ? "Ready to publish" : "Private";
+  const shareStatus = savedPublic && publicPath ? "Live" : hosting ? "Ready to publish" : "Private";
 
   return (
     <div className="prof">
@@ -422,6 +441,28 @@ export function ProfilePage({
             </header>
 
             <div className="prof-host-fields">
+              {resumes.length > 1 ? (
+                <label className="prof-user">
+                  <span>CV on this link</span>
+                  <select
+                    className="prof-select"
+                    value={hostCvId || ""}
+                    disabled={busy}
+                    onChange={(event) => selectHostCv(event.target.value)}
+                  >
+                    {resumes.map((item) => {
+                      const rowTitle = item.data.personal.fullName.trim() || "Untitled";
+                      const role = item.data.personal.title.trim() || "No job title";
+                      return (
+                        <option key={item.id} value={item.id}>
+                          {rowTitle} — {role}
+                          {item.id === resumeId ? " (active)" : ""}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </label>
+              ) : null}
               <label className="prof-user">
                 <span>Username</span>
                 <div className="prof-slug">
@@ -432,19 +473,21 @@ export function ProfilePage({
                     autoCapitalize="off"
                     autoCorrect="off"
                     placeholder={suggestSlug(name) || "your-name"}
-                    disabled={busy || !resumeId}
+                    disabled={busy || !(hostCvId || resumeId)}
                     onChange={(event) => setDraft(event.target.value.toLowerCase())}
                   />
                 </div>
               </label>
-              <p className="prof-preview">
-                Preview: {origin}/{previewSlug}
+              <p className="prof-url">
+                <a href={previewUrl} target="_blank" rel="noreferrer noopener">
+                  {previewUrl.replace(/^https?:\/\//, "")}
+                </a>
               </p>
               <CheckRow
                 className="prof-host-check"
                 label="Make this CV public — anyone with the link can view and rate it"
                 checked={hosting}
-                disabled={busy || !resumeId}
+                disabled={busy || !(hostCvId || resumeId)}
                 onChange={setHosting}
               />
             </div>
@@ -461,10 +504,15 @@ export function ProfilePage({
             ) : null}
 
             <div className="prof-host-acts">
-              <button type="button" className="prof-btn is-primary" disabled={busy || !resumeId} onClick={() => void saveHosting()}>
+              <button
+                type="button"
+                className="prof-btn is-primary"
+                disabled={busy || !(hostCvId || resumeId)}
+                onClick={() => void saveHosting()}
+              >
                 {busy ? "Saving…" : "Save link"}
               </button>
-              {isPublic && publicPath ? (
+              {savedPublic && publicPath ? (
                 <>
                   <button type="button" className="prof-btn" onClick={() => void copyLink()}>
                     {copied ? "Copied" : "Copy link"}

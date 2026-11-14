@@ -8,6 +8,7 @@ import { RichEditor } from "./RichEditor";
 import { StepCard } from "./StepCard";
 import { Pencil, Spark, Trash } from "./icons";
 import { INDUSTRY_SKILLS, OTHER_SKILLS, TOOL_SKILLS } from "@/lib/skills";
+import { flatSkills, skillTags } from "@/lib/sectionOrder";
 import { newId } from "@/lib/id";
 import { templateHasPhoto, type ResumeData, type TemplateId } from "@/lib/types";
 import type { Errors } from "@/lib/validate";
@@ -854,42 +855,6 @@ const SKILL_SUGGESTIONS = [
   ).values(),
 ];
 
-const TOOL_SKILL_SET = new Set(TOOL_SKILLS.map((item) => item.toLowerCase()));
-const INDUSTRY_SKILL_SET = new Set(INDUSTRY_SKILLS.map((item) => item.toLowerCase()));
-
-function skillBucket(skill: string): keyof ResumeData["skills"] {
-  const key = skill.toLowerCase();
-  if (TOOL_SKILL_SET.has(key)) return "tools";
-  if (INDUSTRY_SKILL_SET.has(key)) return "industry";
-  return "other";
-}
-
-function mergedSkillTags(skills: ResumeData["skills"]) {
-  const seen = new Set<string>();
-  const tags: string[] = [];
-  for (const list of [skills.industry, skills.tools, skills.other]) {
-    for (const item of list) {
-      const key = item.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      tags.push(item);
-    }
-  }
-  return tags;
-}
-
-function splitSkillTags(tags: string[]): ResumeData["skills"] {
-  const skills: ResumeData["skills"] = { industry: [], tools: [], other: [] };
-  const seen = new Set<string>();
-  for (const tag of tags) {
-    const key = tag.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    skills[skillBucket(tag)].push(tag);
-  }
-  return skills;
-}
-
 export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: ResumeData) => void }) {
   return (
     <StepCard title="What are you good at?" grid={false} plain>
@@ -897,9 +862,9 @@ export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: 
         label="Skills"
         lookup="skill"
         placeholder="Pick from the list or type your own"
-        values={mergedSkillTags(data.skills)}
+        values={skillTags(data.skills)}
         suggestions={SKILL_SUGGESTIONS}
-        onChange={(tags) => onData({ ...data, skills: splitSkillTags(tags) })}
+        onChange={(tags) => onData({ ...data, skills: flatSkills(tags) })}
       />
     </StepCard>
   );

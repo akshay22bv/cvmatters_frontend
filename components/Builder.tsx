@@ -27,7 +27,7 @@ import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRa
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
 import { checkpoints, completeness } from "@/lib/progress";
-import { isBodySectionId, moveSectionOrder, resolveSectionOrder, type BodySectionId } from "@/lib/sectionOrder";
+import { isBodySectionId, moveSectionOrder, resolveSectionOrder, sectionOnCv, toggleHiddenSection, type BodySectionId } from "@/lib/sectionOrder";
 import { stepErrors } from "@/lib/validate";
 import { useAccount } from "@/lib/useAccount";
 import { downloadResumePdf, printResume } from "@/lib/pdf";
@@ -678,7 +678,7 @@ export default function Builder() {
                 <div className="finish-panel">
                   <header className="finish-head">
                     <h1>Your PDF</h1>
-                    <p>Drag sections to place them, then download when the page looks right.</p>
+                    <p>Tick what belongs on the page, drag to place it, then download.</p>
                   </header>
 
                   <div className="finish-sheet">
@@ -695,6 +695,7 @@ export default function Builder() {
                     <ul className="finish-checks">
                       {checkpoints(snapshot.data).map((mark) => {
                         const sectionId = isBodySectionId(mark.id) ? mark.id : null;
+                        const onCv = sectionId ? sectionOnCv(snapshot.data, sectionId) : true;
                         const dragging = !!sectionId && dragSection === sectionId;
                         const over = !!sectionId && dropSection === sectionId && !!dragSection && dragSection !== sectionId;
                         return (
@@ -705,18 +706,19 @@ export default function Builder() {
                               dragging ? "is-dragging" : "",
                               over ? "is-over" : "",
                               sectionId ? "is-movable" : "",
+                              sectionId && !onCv ? "is-off" : "",
                             ]
                               .filter(Boolean)
                               .join(" ")}
-                            draggable={!!sectionId}
+                            draggable={!!sectionId && onCv}
                             onDragStart={(event) => {
-                              if (!sectionId) return;
+                              if (!sectionId || !onCv) return;
                               event.dataTransfer.effectAllowed = "move";
                               event.dataTransfer.setData("text/plain", sectionId);
                               setDragSection(sectionId);
                             }}
                             onDragOver={(event) => {
-                              if (!dragSection || !sectionId || dragSection === sectionId) return;
+                              if (!dragSection || !sectionId || !onCv || dragSection === sectionId) return;
                               event.preventDefault();
                               event.dataTransfer.dropEffect = "move";
                               if (dropSection !== sectionId) setDropSection(sectionId);
@@ -726,7 +728,7 @@ export default function Builder() {
                             }}
                             onDrop={(event) => {
                               event.preventDefault();
-                              if (!dragSection || !sectionId || dragSection === sectionId) {
+                              if (!dragSection || !sectionId || !onCv || dragSection === sectionId) {
                                 setDragSection(null);
                                 setDropSection(null);
                                 return;
@@ -759,13 +761,32 @@ export default function Builder() {
                                   </svg>
                                 ) : null}
                               </span>
-                              <button type="button" className="finish-check-main" onClick={() => goPanel(mark.id)}>
+                              {sectionId ? (
+                                <label className="finish-check-include" onClick={(event) => event.stopPropagation()}>
+                                  <input
+                                    type="checkbox"
+                                    checked={onCv}
+                                    aria-label={`Include ${mark.label} on CV`}
+                                    onChange={() =>
+                                      patch({
+                                        data: {
+                                          ...snapshot.data,
+                                          hiddenSections: toggleHiddenSection(snapshot.data, sectionId),
+                                        },
+                                      })
+                                    }
+                                  />
+                                  <span aria-hidden="true" />
+                                </label>
+                              ) : (
                                 <span className="finish-check-mark" aria-hidden="true">
                                   {mark.done ? "✓" : ""}
                                 </span>
+                              )}
+                              <button type="button" className="finish-check-main" onClick={() => goPanel(mark.id)}>
                                 <span className="finish-check-copy">
                                   <strong>{mark.label}</strong>
-                                  <em>{mark.tally}</em>
+                                  <em>{onCv ? mark.tally : "Off the page"}</em>
                                 </span>
                               </button>
                             </div>

@@ -25,6 +25,23 @@ export function resolveSectionOrder(data: { sectionOrder?: string[] | null }): B
   return [...saved, ...DEFAULT_SECTION_ORDER.filter((id) => !seen.has(id))];
 }
 
+/** Sections the writer turned off on the compare page. Details always stay on. */
+export function resolveHiddenSections(data: { hiddenSections?: string[] | null }): BodySectionId[] {
+  return (data.hiddenSections || []).filter(isBodySectionId);
+}
+
+export function sectionOnCv(data: { hiddenSections?: string[] | null }, id: BodySectionId) {
+  return !resolveHiddenSections(data).includes(id);
+}
+
+export function toggleHiddenSection(
+  data: { hiddenSections?: string[] | null },
+  id: BodySectionId,
+): BodySectionId[] {
+  const hidden = resolveHiddenSections(data);
+  return hidden.includes(id) ? hidden.filter((item) => item !== id) : [...hidden, id];
+}
+
 export function moveSectionOrder(
   order: BodySectionId[],
   fromId: BodySectionId,
@@ -40,6 +57,25 @@ export function moveSectionOrder(
   return next;
 }
 
+/** Flat skill tags — no industry / tools / other buckets on the page. */
+export function skillTags(skills: { industry?: string[]; tools?: string[]; other?: string[] } | null | undefined) {
+  const seen = new Set<string>();
+  const tags: string[] = [];
+  for (const list of [skills?.industry || [], skills?.tools || [], skills?.other || []]) {
+    for (const item of list) {
+      const key = item.trim().toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      tags.push(item.trim());
+    }
+  }
+  return tags;
+}
+
+export function flatSkills(tags: string[]) {
+  return { industry: [] as string[], tools: [] as string[], other: skillTags({ other: tags }) };
+}
+
 function pieceSection(node: ReactNode): string | undefined {
   if (!isValidElement(node)) return undefined;
   return (node.props as { section?: string }).section;
@@ -48,8 +84,14 @@ function pieceSection(node: ReactNode): string | undefined {
 /**
  * Keep header / non-body blocks in place, then emit body groups in the
  * writer's chosen order. Relative order inside a section (e.g. jobs) is kept.
+ * Hidden sections are dropped entirely.
  */
-export function orderPieces(pieces: ReactNode[], order: BodySectionId[]): ReactNode[] {
+export function orderPieces(
+  pieces: ReactNode[],
+  order: BodySectionId[],
+  hidden: BodySectionId[] = [],
+): ReactNode[] {
+  const skip = new Set(hidden);
   const prefix: ReactNode[] = [];
   const buckets: Partial<Record<BodySectionId, ReactNode[]>> = {};
   const suffix: ReactNode[] = [];
@@ -59,6 +101,7 @@ export function orderPieces(pieces: ReactNode[], order: BodySectionId[]): ReactN
     const section = pieceSection(piece);
     if (section && isBodySectionId(section)) {
       inBody = true;
+      if (skip.has(section)) continue;
       (buckets[section] ||= []).push(piece);
       continue;
     }
@@ -69,13 +112,14 @@ export function orderPieces(pieces: ReactNode[], order: BodySectionId[]): ReactN
   const used = new Set<BodySectionId>();
   const body: ReactNode[] = [];
   for (const id of order) {
+    if (skip.has(id)) continue;
     const group = buckets[id];
     if (!group?.length) continue;
     body.push(...group);
     used.add(id);
   }
   for (const id of DEFAULT_SECTION_ORDER) {
-    if (used.has(id)) continue;
+    if (skip.has(id) || used.has(id)) continue;
     const group = buckets[id];
     if (group?.length) body.push(...group);
   }
