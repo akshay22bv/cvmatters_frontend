@@ -2111,7 +2111,7 @@ body {
   height: 48px;
   padding: 0 8px 0 22px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   background: var(--cta);
   color: var(--cta-ink);
   font-size: 15px;
@@ -2161,7 +2161,7 @@ body {
   height: 44px;
   padding: 0 6px 0 12px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   background: var(--white);
   color: var(--ink);
   font-size: 13px;

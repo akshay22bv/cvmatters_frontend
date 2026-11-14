@@ -81,11 +81,11 @@
   --shadow: var(--shadow-2);
   --ring: 0 0 0 3px color-mix(in srgb, var(--lime) 35%, transparent);
 
-  /* Unified pill controls (filled primary + outline secondary) */
+  /* Unified controls (filled primary + outline secondary) */
   --pill-h: 48px;
   --pill-h-sm: 44px;
   --pill-h-xs: 40px;
-  --pill-radius: 999px;
+  --pill-radius: 10px;
   --pill-shadow: var(--shadow-1);
   --pill-shadow-hover: var(--shadow-2);
   --pill-shadow-primary: 0 10px 28px rgba(10, 10, 10, 0.12);
