@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Online resume">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#056b32"/>
+      <stop offset="100%" stop-color="#12a85f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <circle cx="180" cy="120" r="160" fill="white" opacity="0.08"/>
+  <circle cx="1040" cy="560" r="200" fill="white" opacity="0.1"/>
+  <text x="80" y="120" fill="white" fill-opacity="0.9" font-family="Georgia, serif" font-size="28" font-weight="700">CV Matters</text>
+  <text x="80" y="520" fill="white" font-family="Georgia, serif" font-size="54" font-weight="700">Online resume</text>
+  <text x="80" y="570" fill="white" fill-opacity="0.85" font-family="system-ui,sans-serif" font-size="22">Career guides for shareable resumes</text>
+  <rect x="420" y="180" width="280" height="160" rx="24" fill="white" opacity="0.92"/><rect x="450" y="220" width="180" height="18" rx="9" fill="#0b3d28"/><rect x="450" y="255" width="220" height="12" rx="6" fill="#c7e8d4"/><rect x="450" y="280" width="160" height="12" rx="6" fill="#c7e8d4"/><circle cx="680" cy="300" r="22" fill="#12a85f"/><path d="M672 300h16M680 292v16" stroke="white" stroke-width="3" stroke-linecap="round"/>
+</svg>

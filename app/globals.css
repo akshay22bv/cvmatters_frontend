@@ -204,7 +204,7 @@ textarea {
   height: 40px;
   margin-left: 8px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   padding: 0 18px;
   background: var(--cta);
   color: var(--cta-ink);
@@ -726,7 +726,7 @@ textarea.grow {
 
 .segmented button, .filter-chip {
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   border: 0;
   background: var(--soft);
   padding: 0 14px;
@@ -747,7 +747,7 @@ textarea.grow {
   border: 0;
   background: color-mix(in srgb, var(--accent) 12%, white);
   color: var(--accent-strong);
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   padding: 6px 10px;
   font-size: 13px;
   font-weight: 640;
@@ -963,7 +963,7 @@ textarea.grow {
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
 
 .chip {
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   padding: 5px 10px;
   font-size: 12.5px;
   background: white;
@@ -1231,7 +1231,7 @@ button.example {
 .pdf-btn {
   height: 36px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   padding: 0 16px;
   background: var(--header);
   color: white;
@@ -1516,7 +1516,7 @@ button.example {
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--pill-radius);
   background: #eaf0ff;
   color: var(--accent);
   font-style: normal;

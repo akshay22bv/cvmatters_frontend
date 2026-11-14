@@ -1,0 +1,114 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { blogAbsoluteUrl, blogPath, fetchBlogPost, fetchBlogPosts, formatBlogDate } from "@/lib/blog";
+import { SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
+
+type PageProps = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const posts = await fetchBlogPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await fetchBlogPost(slug);
+  if (!post) return { title: "Post not found" };
+  const url = blogAbsoluteUrl(post.slug);
+  const description = post.excerpt || post.title;
+  return {
+    title: post.title,
+    description,
+    keywords: [post.keyword, ...SITE_KEYWORDS].filter(Boolean),
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description,
+      url,
+      images: post.coverImage ? [{ url: siteUrl(post.coverImage) }] : undefined,
+      publishedTime: post.publishedAt || post.createdAt,
+      modifiedTime: post.updatedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: post.coverImage ? [siteUrl(post.coverImage)] : undefined,
+    },
+  };
+}
+
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params;
+  const post = await fetchBlogPost(slug);
+  if (!post) notFound();
+
+  const others = (await fetchBlogPosts()).filter((item) => item.slug !== post.slug).slice(0, 3);
+
+  return (
+    <main className="blog-main">
+      <article className="board-rail blog-article">
+        <header className="blog-article-head">
+          <p className="board-kicker">
+            <Link href="/blog">Blog</Link>
+            {post.keyword ? <> · {post.keyword}</> : null}
+          </p>
+          <h1 className="blog-article-title">{post.title}</h1>
+          <p className="blog-article-excerpt">{post.excerpt}</p>
+          <time className="blog-article-date" dateTime={post.publishedAt || post.createdAt}>
+            {formatBlogDate(post.publishedAt || post.createdAt)}
+          </time>
+        </header>
+
+        <div className="blog-article-cover">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={post.coverImage || "/blog/online-resume.svg"} alt="" width={1200} height={675} />
+        </div>
+
+        <div className="blog-prose" dangerouslySetInnerHTML={{ __html: post.html }} />
+
+        <aside className="blog-cta-box">
+          <h2>Build a shareable CV on {SITE_NAME}</h2>
+          <p>Create an online resume, publish a public link, and download a PDF when portals need a file.</p>
+          <Link href="/cv/details" className="board-pill board-pill-primary">
+            <span className="board-pill-label">Start your CV</span>
+          </Link>
+        </aside>
+      </article>
+
+      {others.length ? (
+        <section className="board-rail blog-more" aria-label="More guides">
+          <h2>More guides</h2>
+          <ul>
+            {others.map((item) => (
+              <li key={item.id}>
+                <Link href={blogPath(item.slug)}>{item.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt,
+            datePublished: post.publishedAt || post.createdAt,
+            dateModified: post.updatedAt,
+            mainEntityOfPage: blogAbsoluteUrl(post.slug),
+            image: post.coverImage ? siteUrl(post.coverImage) : undefined,
+            keywords: post.keyword,
+            author: { "@type": "Organization", name: SITE_NAME },
+            publisher: { "@type": "Organization", name: SITE_NAME, url: siteUrl("/") },
+          }),
+        }}
+      />
+    </main>
+  );
+}

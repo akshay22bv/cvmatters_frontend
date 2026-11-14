@@ -55,6 +55,7 @@ const RESERVED_ROOT = new Set([
   "support",
   "billing",
   "plans",
+  "blog",
   "icon.png",
   "icon-48.png",
   "icon-192.png",

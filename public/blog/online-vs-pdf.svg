@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Online vs PDF">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <circle cx="180" cy="120" r="160" fill="white" opacity="0.08"/>
+  <circle cx="1040" cy="560" r="200" fill="white" opacity="0.1"/>
+  <text x="80" y="120" fill="white" fill-opacity="0.9" font-family="Georgia, serif" font-size="28" font-weight="700">CV Matters</text>
+  <text x="80" y="520" fill="white" font-family="Georgia, serif" font-size="54" font-weight="700">Online vs PDF</text>
+  <text x="80" y="570" fill="white" fill-opacity="0.85" font-family="system-ui,sans-serif" font-size="22">Career guides for shareable resumes</text>
+  <rect x="180" y="140" width="220" height="280" rx="12" fill="white" opacity="0.9"/><rect x="210" y="180" width="160" height="12" rx="6" fill="#333"/><rect x="210" y="210" width="140" height="8" rx="4" fill="#bbb"/><rect x="210" y="230" width="150" height="8" rx="4" fill="#bbb"/><rect x="500" y="160" width="300" height="220" rx="16" fill="white" opacity="0.95"/><rect x="530" y="200" width="180" height="14" rx="7" fill="#056b32"/><rect x="530" y="235" width="240" height="10" rx="5" fill="#c7e8d4"/>
+</svg>

@@ -18,6 +18,12 @@ export const SITE_KEYWORDS = [
   "cover letter",
   "curriculum vitae",
   "PDF resume",
+  "online resume",
+  "shareable resume",
+  "online CV",
+  "digital resume",
+  "shareable CV link",
+  "personal resume website",
 ];
 
 function normalizeBase(url: string) {
