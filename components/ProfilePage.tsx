@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CheckRow } from "./Field";
 import { Monogram } from "./Monogram";
 import { useConfirm } from "./ConfirmProvider";
 import { IconCard, IconEye, IconPage, Trash } from "./icons";
 import { ApiError, createResume, deleteResume, listResumes, loadBilling, updateHosting } from "@/lib/api";
-import { publicResumePath } from "@/lib/paths";
+import { publicResumePath, startPath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
 import type { Category, RatingSummary, ResumeData, ResumeRecord } from "@/lib/types";
 
@@ -77,9 +78,9 @@ export function ProfilePage({
   const [copied, setCopied] = useState(false);
   const [orders, setOrders] = useState<{ id: string; plan: string; amount: number; status: string; createdAt: string }[]>([]);
   const [resumes, setResumes] = useState<ResumeRecord[]>([]);
-  const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const confirm = useConfirm();
+  const router = useRouter();
   const atCvLimit = !downloadsOn && resumes.length >= freeCvLimit;
 
   useEffect(() => {
@@ -169,27 +170,13 @@ export function ProfilePage({
     }
   };
 
-  const startNewCv = async () => {
-    if (!ownerKey) return;
+  const goStartPage = () => {
     if (!downloadsOn && resumes.length >= freeCvLimit) {
       setError(`Free plan includes ${freeCvLimit} CVs. Upgrade to create more.`);
       onPlans();
       return;
     }
-    setCreating(true);
-    setError("");
-    try {
-      const created = await createResume(ownerKey);
-      onUse(created);
-    } catch (reason) {
-      if (reason instanceof ApiError && reason.code === "upgrade") {
-        setError(reason.message);
-        onPlans();
-      } else {
-        setError(reason instanceof Error ? reason.message : "Couldn't create another CV.");
-      }
-      setCreating(false);
-    }
+    router.push(startPath("choose"));
   };
 
   const removeCv = async (id: string) => {
@@ -353,8 +340,8 @@ export function ProfilePage({
                 Upgrade for more
               </button>
             ) : (
-              <button type="button" className="prof-btn is-primary" disabled={creating} onClick={() => void startNewCv()}>
-                {creating ? "Creating…" : "New CV"}
+              <button type="button" className="prof-btn is-primary" onClick={goStartPage}>
+                New CV
               </button>
             )}
           </header>
@@ -365,12 +352,12 @@ export function ProfilePage({
           <ul className="prof-cvs">
             {!resumes.length ? (
               <li>
-                <button type="button" className="prof-start" disabled={creating} onClick={() => void startNewCv()}>
+                <button type="button" className="prof-start" onClick={goStartPage}>
                   <span className="prof-start-icon" aria-hidden="true">
                     +
                   </span>
                   <span className="prof-start-copy">
-                    <strong>{creating ? "Creating…" : "Start a blank CV"}</strong>
+                    <strong>Start a blank CV</strong>
                     <small>Fresh resume · saved to your account</small>
                   </span>
                 </button>

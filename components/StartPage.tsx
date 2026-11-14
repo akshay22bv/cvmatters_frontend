@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LoadScreen } from "./LoadScreen";
 import { IconChevronLeft, IconChevronRight, IconCreate, IconDrop, IconLinkedinBrand, IconUpload } from "./icons";
 import { Reveal } from "./motion";
+import { parseLinkedin } from "@/lib/linkedin";
 import { startPath, type StartIntent, type StartStep } from "@/lib/paths";
 import { templateName, type TemplateId } from "@/lib/types";
 
@@ -14,24 +15,6 @@ const ASK_TITLE: Record<StartIntent, string> = {
   job: "Match a job",
   field: "Resumes in your field",
 };
-
-function parseLinkedin(input: string) {
-  const trimmed = input.trim();
-  if (!trimmed) return { error: "Paste your LinkedIn profile link." };
-  let parsed: URL;
-  try {
-    parsed = new URL(trimmed.includes("://") ? trimmed : `https://${trimmed}`);
-  } catch {
-    return { error: "That doesn't look like a link." };
-  }
-  const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
-  if (host !== "linkedin.com") return { error: "Use a linkedin.com profile link." };
-  const match = parsed.pathname.match(/\/in\/([^/]+)/i);
-  if (!match?.[1]) return { error: "Use a profile link, like linkedin.com/in/your-name." };
-  const slug = decodeURIComponent(match[1]).replace(/-+/g, " ").replace(/\d+$/, "").trim();
-  const name = slug.replace(/\b\w/g, (letter) => letter.toUpperCase());
-  return { url: `https://www.linkedin.com/in/${match[1]}`, name };
-}
 
 /**
  * Dedicated start navigation page — blank, upload, or LinkedIn — with its own URL.

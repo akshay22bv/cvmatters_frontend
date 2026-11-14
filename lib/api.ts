@@ -62,10 +62,13 @@ export function listResumes(ownerKey: string) {
   return request<ResumeRecord[]>(`/api/resumes?ownerKey=${encodeURIComponent(ownerKey)}`);
 }
 
-export function createResume(ownerKey: string) {
+export function createResume(
+  ownerKey: string,
+  extra?: { templateId?: TemplateId; category?: Category; data?: ResumeData },
+) {
   return request<ResumeRecord>("/api/resumes", {
     method: "POST",
-    body: JSON.stringify({ ownerKey }),
+    body: JSON.stringify({ ownerKey, ...extra }),
   });
 }
 
