@@ -130,7 +130,7 @@ export function readJobLink(url: string) {
 }
 
 export function importResume(filename: string, data: string) {
-  return request<{ data: ResumeData }>("/api/import", {
+  return request<{ data: ResumeData; source?: string; warning?: string }>("/api/import", {
     method: "POST",
     body: JSON.stringify({ filename, data }),
   });

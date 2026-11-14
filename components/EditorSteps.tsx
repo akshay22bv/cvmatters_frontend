@@ -14,7 +14,11 @@ import type { Errors } from "@/lib/validate";
 
 type Improve = (key: string, kind: "summary" | "bullets" | "tailor", text: string) => Promise<string | null>;
 
-/** City stays free text. The country is always picked from the public list. */
+/**
+ * City stays free text; country is picked from the list (or typed on mobile).
+ * Local drafts avoid re-splitting "City, partial-country" on every keystroke,
+ * which was garbling both fields on mobile.
+ */
 function PlaceFields({
   location,
   onChange,
@@ -23,17 +27,39 @@ function PlaceFields({
   onChange: (location: string) => void;
 }) {
   const { countries } = useCountries();
-  const place = splitPlace(location, countries);
+  const initial = splitPlace(location, countries);
+  const [city, setCity] = useState(initial.city);
+  const [country, setCountry] = useState(initial.country);
+  const emitted = useRef(joinPlace(initial.city, initial.country));
+
+  useEffect(() => {
+    if (location === emitted.current) return;
+    const next = splitPlace(location, countries);
+    setCity(next.city);
+    setCountry(next.country);
+    emitted.current = joinPlace(next.city, next.country);
+  }, [location, countries]);
+
+  const push = (nextCity: string, nextCountry: string) => {
+    setCity(nextCity);
+    setCountry(nextCountry);
+    const joined = joinPlace(nextCity, nextCountry);
+    emitted.current = joined;
+    if (joined !== location) onChange(joined);
+  };
+
   return (
     <>
       <Field
         label="City"
         optional
-        value={place.city}
+        plain
+        autoComplete="address-level2"
+        value={city}
         placeholder="Bengaluru"
-        onChange={(city) => onChange(joinPlace(city, place.country))}
+        onChange={(value) => push(value, country)}
       />
-      <CountrySelect value={place.country} onChange={(country) => onChange(joinPlace(place.city, country))} />
+      <CountrySelect value={country} onChange={(value) => push(city, value)} />
     </>
   );
 }

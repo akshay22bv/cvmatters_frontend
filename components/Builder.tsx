@@ -469,12 +469,23 @@ export default function Builder() {
             return;
           }
           setBusy(true);
-          setBusyLabel("Reading your file…");
+          setBusyLabel("Reading your CV with AI…");
           setError("");
           try {
             const encoded = await fileToBase64(file);
             const parsed = await importResume(file.name, encoded);
-            await replaceRecord(parsed.data, intent, templateId);
+            const data = {
+              ...structuredClone(blank),
+              ...parsed.data,
+              personal: { ...blank.personal, ...parsed.data.personal },
+              skills: {
+                industry: parsed.data.skills?.industry || [],
+                tools: parsed.data.skills?.tools || [],
+                other: parsed.data.skills?.other || [],
+              },
+              extras: parsed.data.extras || [],
+            };
+            await replaceRecord(data, intent, templateId);
           } catch (reason) {
             setError(reason instanceof Error ? reason.message : "Couldn't read that file.");
           } finally {
@@ -513,12 +524,23 @@ export default function Builder() {
             return;
           }
           setBusy(true);
-          setBusyLabel("Reading your file…");
+          setBusyLabel("Reading your CV with AI…");
           setError("");
           try {
             const encoded = await fileToBase64(file);
             const parsed = await importResume(file.name, encoded);
-            await replaceRecord(parsed.data, intent, templateId);
+            const data = {
+              ...structuredClone(blank),
+              ...parsed.data,
+              personal: { ...blank.personal, ...parsed.data.personal },
+              skills: {
+                industry: parsed.data.skills?.industry || [],
+                tools: parsed.data.skills?.tools || [],
+                other: parsed.data.skills?.other || [],
+              },
+              extras: parsed.data.extras || [],
+            };
+            await replaceRecord(data, intent, templateId);
           } catch (reason) {
             setError(reason instanceof Error ? reason.message : "Couldn't read that file.");
           } finally {

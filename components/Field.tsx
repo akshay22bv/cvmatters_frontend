@@ -198,6 +198,8 @@ export function Field({
   autoFocus,
   inputMode,
   name,
+  /** Plain <input> — needed for city/country on mobile (contentEditable fights the keyboard). */
+  plain = false,
 }: {
   label: string;
   value: string;
@@ -218,10 +220,12 @@ export function Field({
   autoFocus?: boolean;
   inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
   name?: string;
+  plain?: boolean;
 }) {
   const id = useId();
   const [revealed, setRevealed] = useState(false);
   const isPassword = type === "password";
+  const useRich = type === "text" && !isPassword && !plain;
 
   return (
     <Shell
@@ -236,7 +240,7 @@ export function Field({
     >
       <div className={`fld-box${icon ? " has-lead" : ""}`}>
         {icon ? <span className="fld-lead">{icon}</span> : null}
-        {type === "text" && !isPassword ? (
+        {useRich ? (
           <RichLineInput
             id={id}
             value={value}
@@ -250,7 +254,7 @@ export function Field({
           <input
             id={id}
             name={name}
-            type={isPassword && revealed ? "text" : type}
+            type={isPassword && revealed ? "text" : type === "text" || plain ? "text" : type}
             value={value}
             placeholder={placeholder}
             autoComplete={autoComplete}
@@ -731,6 +735,8 @@ export function CountrySelect({
         className={className}
         value={value}
         placeholder={ready ? "India" : "Loading…"}
+        autoComplete="country-name"
+        plain
         onChange={onChange}
       />
     );
