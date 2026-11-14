@@ -1,4 +1,7 @@
 /** Brand mark (charcoal + green). Prefer square mark in chrome; wide lockup for dark surfaces. */
+/** Cache-bust when mark art is replaced (transparent crop / size). */
+const LOGO_MARK_V = "2";
+
 export function Logo({ variant = "mark" }: { variant?: "mark" | "wide" | "dark" } = {}) {
   if (variant === "wide") {
     return <img className="brand-logo" src="/logo.png" alt="" width={816} height={473} />;
@@ -6,7 +9,16 @@ export function Logo({ variant = "mark" }: { variant?: "mark" | "wide" | "dark" 
   if (variant === "dark") {
     return <img className="brand-logo" src="/logo-dark.png" alt="" width={1024} height={682} />;
   }
-  return <img className="brand-logo" src="/logo-mark.png" alt="" width={512} height={512} />;
+  return (
+    <img
+      className="brand-logo"
+      src={`/logo-mark.png?v=${LOGO_MARK_V}`}
+      alt=""
+      width={512}
+      height={512}
+      decoding="async"
+    />
+  );
 }
 
 export function Chevron() {
