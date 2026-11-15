@@ -4444,7 +4444,7 @@ input:focus, textarea:focus {
 
 .finish-check {
   display: grid;
-  grid-template-columns: 14px 22px minmax(0, 1fr);
+  grid-template-columns: 22px 22px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -4460,13 +4460,28 @@ input:focus, textarea:focus {
 .finish-check-grip {
   display: grid;
   place-items: center;
-  width: 14px;
-  color: rgba(0, 0, 0, 0.28);
-  pointer-events: none;
+  width: 22px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.34);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button.finish-check-grip:active {
+  cursor: grabbing;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 .finish-check-grip.is-locked {
   visibility: hidden;
+  pointer-events: none;
 }
 
 .finish-check-include {
@@ -6114,24 +6129,34 @@ input:focus, textarea:focus {
 
 .prof-slug input:focus { outline: none; box-shadow: none; }
 
-.prof-select {
+.prof-select,
+.prof-username {
   width: 100%;
   height: 46px;
   box-sizing: border-box;
-  padding: 0 12px;
+  padding: 0 14px;
   border: 1px solid var(--prof-line);
   border-radius: 12px;
   background: #fff;
   color: var(--prof-ink);
   font: inherit;
   font-size: 15px;
+}
+
+.prof-select {
   cursor: pointer;
 }
 
-.prof-select:focus {
+.prof-select:focus,
+.prof-username:focus {
   outline: none;
   border-color: var(--prof-green);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--prof-green) 18%, transparent);
+}
+
+.prof-username:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .prof-url {

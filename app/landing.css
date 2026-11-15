@@ -1785,11 +1785,19 @@
 }
 
 .board-foot-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 14px;
+  padding: 8px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
 .board-foot-logo .brand-logo {
-  height: 40px;
+  height: 36px;
+  width: auto;
   max-width: 120px;
 }
 

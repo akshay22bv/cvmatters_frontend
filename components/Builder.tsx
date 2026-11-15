@@ -92,6 +92,8 @@ export default function Builder() {
   const [aiNote, setAiNote] = useState("");
   const [dragSection, setDragSection] = useState<BodySectionId | null>(null);
   const [dropSection, setDropSection] = useState<BodySectionId | null>(null);
+  const dragSectionRef = useRef<BodySectionId | null>(null);
+  const dropSectionRef = useRef<BodySectionId | null>(null);
   const [picked, setPicked] = useState<{ section: PanelId; focusId?: string; tick: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
@@ -678,7 +680,6 @@ export default function Builder() {
                 <div className="finish-panel">
                   <header className="finish-head">
                     <h1>Your PDF</h1>
-                    <p>Tick what belongs on the page, drag to place it, then download.</p>
                   </header>
 
                   <div className="finish-sheet">
@@ -701,6 +702,7 @@ export default function Builder() {
                         return (
                           <li
                             key={mark.id}
+                            data-section-id={sectionId || undefined}
                             className={[
                               "finish-check-item",
                               dragging ? "is-dragging" : "",
@@ -710,48 +712,59 @@ export default function Builder() {
                             ]
                               .filter(Boolean)
                               .join(" ")}
-                            draggable={!!sectionId && onCv}
-                            onDragStart={(event) => {
-                              if (!sectionId || !onCv) return;
-                              event.dataTransfer.effectAllowed = "move";
-                              event.dataTransfer.setData("text/plain", sectionId);
-                              setDragSection(sectionId);
-                            }}
-                            onDragOver={(event) => {
-                              if (!dragSection || !sectionId || !onCv || dragSection === sectionId) return;
-                              event.preventDefault();
-                              event.dataTransfer.dropEffect = "move";
-                              if (dropSection !== sectionId) setDropSection(sectionId);
-                            }}
-                            onDragLeave={() => {
-                              if (sectionId && dropSection === sectionId) setDropSection(null);
-                            }}
-                            onDrop={(event) => {
-                              event.preventDefault();
-                              if (!dragSection || !sectionId || !onCv || dragSection === sectionId) {
-                                setDragSection(null);
-                                setDropSection(null);
-                                return;
-                              }
-                              const order = resolveSectionOrder(snapshot.data);
-                              patch({
-                                data: {
-                                  ...snapshot.data,
-                                  sectionOrder: moveSectionOrder(order, dragSection, sectionId),
-                                },
-                              });
-                              setDragSection(null);
-                              setDropSection(null);
-                            }}
-                            onDragEnd={() => {
-                              setDragSection(null);
-                              setDropSection(null);
-                            }}
                           >
                             <div className={mark.done ? "finish-check is-done" : "finish-check"}>
-                              <span className={sectionId ? "finish-check-grip" : "finish-check-grip is-locked"} aria-hidden="true">
-                                {sectionId ? (
-                                  <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor">
+                              {sectionId && onCv ? (
+                                <button
+                                  type="button"
+                                  className="finish-check-grip"
+                                  aria-label={`Drag to reorder ${mark.label}`}
+                                  onPointerDown={(event) => {
+                                    event.preventDefault();
+                                    event.currentTarget.setPointerCapture(event.pointerId);
+                                    dragSectionRef.current = sectionId;
+                                    dropSectionRef.current = null;
+                                    setDragSection(sectionId);
+                                    setDropSection(null);
+                                  }}
+                                  onPointerMove={(event) => {
+                                    const from = dragSectionRef.current;
+                                    if (!from) return;
+                                    const hit = document.elementFromPoint(event.clientX, event.clientY);
+                                    const row = hit?.closest("[data-section-id]");
+                                    const overId = row?.getAttribute("data-section-id");
+                                    if (overId && isBodySectionId(overId) && overId !== from && sectionOnCv(live.current.data, overId)) {
+                                      if (dropSectionRef.current !== overId) {
+                                        dropSectionRef.current = overId;
+                                        setDropSection(overId);
+                                      }
+                                    }
+                                  }}
+                                  onPointerUp={() => {
+                                    const from = dragSectionRef.current;
+                                    const to = dropSectionRef.current;
+                                    if (from && to && from !== to) {
+                                      const order = resolveSectionOrder(live.current.data);
+                                      patch({
+                                        data: {
+                                          ...live.current.data,
+                                          sectionOrder: moveSectionOrder(order, from, to),
+                                        },
+                                      });
+                                    }
+                                    dragSectionRef.current = null;
+                                    dropSectionRef.current = null;
+                                    setDragSection(null);
+                                    setDropSection(null);
+                                  }}
+                                  onPointerCancel={() => {
+                                    dragSectionRef.current = null;
+                                    dropSectionRef.current = null;
+                                    setDragSection(null);
+                                    setDropSection(null);
+                                  }}
+                                >
+                                  <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">
                                     <circle cx="2.5" cy="2.5" r="1.2" />
                                     <circle cx="7.5" cy="2.5" r="1.2" />
                                     <circle cx="2.5" cy="8" r="1.2" />
@@ -759,8 +772,10 @@ export default function Builder() {
                                     <circle cx="2.5" cy="13.5" r="1.2" />
                                     <circle cx="7.5" cy="13.5" r="1.2" />
                                   </svg>
-                                ) : null}
-                              </span>
+                                </button>
+                              ) : (
+                                <span className="finish-check-grip is-locked" aria-hidden="true" />
+                              )}
                               {sectionId ? (
                                 <label className="finish-check-include" onClick={(event) => event.stopPropagation()}>
                                   <input

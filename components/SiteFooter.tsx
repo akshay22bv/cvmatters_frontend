@@ -26,7 +26,7 @@ export function SiteFooter({
         <div className="board-rail board-foot-layout">
           <div className="board-foot-brand">
             <div className="board-foot-logo" aria-hidden="true">
-              <Logo variant="dark" />
+              <Logo />
             </div>
             <p className="board-foot-kicker">Resume builder</p>
             <strong className="board-foot-title">{SITE_NAME}</strong>

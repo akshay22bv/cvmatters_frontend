@@ -130,7 +130,6 @@ export function ProfilePage({
   const publicPath = liveSlug ? publicResumePath(liveSlug) : null;
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const publicUrl = publicPath ? `${origin}${publicPath}` : "";
-  const hostPrefix = origin ? `${origin.replace(/^https?:\/\//, "")}/` : "/";
 
   const previewSlug = useMemo(() => {
     return draft.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") || "your-name";
@@ -259,20 +258,6 @@ export function ProfilePage({
           </h1>
           <p className="prof-page-lead">Manage your CVs, public link, and plan in one place.</p>
         </div>
-        <div className="prof-pagehead-acts">
-          <Link href="/cv/details" className="prof-btn is-primary">
-            Edit CV
-          </Link>
-          {isPublic && publicPath ? (
-            <Link href={publicPath} className="prof-btn">
-              View live page
-            </Link>
-          ) : (
-            <a href="#prof-public" className="prof-btn">
-              Set up link
-            </a>
-          )}
-        </div>
       </div>
 
       <header className="prof-banner">
@@ -348,11 +333,7 @@ export function ProfilePage({
           <header className="prof-block-head">
             <div>
               <h2 className="prof-card-title">Your CVs</h2>
-              <p>
-                {downloadsOn
-                  ? "Open a resume to edit, or start a blank one for another role."
-                  : `Free plan includes ${freeCvLimit} CVs. Upgrade for unlimited resumes.`}
-              </p>
+              {!downloadsOn ? <p>Free plan includes {freeCvLimit} CVs. Upgrade for unlimited resumes.</p> : null}
             </div>
             {atCvLimit ? (
               <button type="button" className="prof-btn is-primary" onClick={onPlans}>
@@ -435,9 +416,8 @@ export function ProfilePage({
             <header className="prof-block-head">
               <div>
                 <h2 className="prof-card-title">Public link</h2>
-                <p>Choose a short username. Share one link so people can view and rate your CV.</p>
               </div>
-              <em className={isPublic && publicPath ? "prof-pill is-on" : "prof-pill"}>{shareStatus}</em>
+              <em className={savedPublic && publicPath ? "prof-pill is-on" : "prof-pill"}>{shareStatus}</em>
             </header>
 
             <div className="prof-host-fields">
@@ -465,18 +445,16 @@ export function ProfilePage({
               ) : null}
               <label className="prof-user">
                 <span>Username</span>
-                <div className="prof-slug">
-                  <span className="prof-slug-prefix">{hostPrefix}</span>
-                  <input
-                    value={draft}
-                    spellCheck={false}
-                    autoCapitalize="off"
-                    autoCorrect="off"
-                    placeholder={suggestSlug(name) || "your-name"}
-                    disabled={busy || !(hostCvId || resumeId)}
-                    onChange={(event) => setDraft(event.target.value.toLowerCase())}
-                  />
-                </div>
+                <input
+                  className="prof-username"
+                  value={draft}
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  placeholder="Enter unique id"
+                  disabled={busy || !(hostCvId || resumeId)}
+                  onChange={(event) => setDraft(event.target.value.toLowerCase())}
+                />
               </label>
               <p className="prof-url">
                 <a href={previewUrl} target="_blank" rel="noreferrer noopener">
