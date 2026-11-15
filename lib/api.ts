@@ -93,7 +93,7 @@ export function updateResume(id: string, body: SaveBody) {
   });
 }
 
-/** Set username / public flag without rewriting CV fields. */
+/** Set the account username on one CV; other CVs lose the slug / public flag. */
 export function updateHosting(id: string, body: { ownerKey: string; slug?: string | null; isPublic?: boolean }) {
   return request<ResumeRecord>(`/api/resumes/${encodeURIComponent(id)}/hosting`, {
     method: "PATCH",

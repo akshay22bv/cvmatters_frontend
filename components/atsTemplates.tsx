@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
 import { plainRange } from "@/lib/content";
-import { sectionOnCv, skillTags } from "@/lib/sectionOrder";
+import { sectionOnCv, sectionRenders, skillTags } from "@/lib/sectionOrder";
 import type { ResumeData } from "@/lib/types";
 
 function linkLabel(value: string) {
@@ -809,10 +809,10 @@ export function CobaltChrome({ data, hideContact }: { data: ResumeData; hideCont
         <p className="cobalt-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         <IconContacts personal={data.personal} hideContact={hideContact} className="cobalt-contacts" />
       </div>
-      {sectionOnCv(data, "bio") ? (
+      {sectionRenders(data, "bio") ? (
         <div data-section="bio">
           <h2 className="cobalt-side-label">About Me</h2>
-          {data.summary ? <FormattedText text={data.summary} className="cobalt-about" /> : <p className="placeholder-line">Your summary will show here.</p>}
+          <FormattedText text={data.summary} className="cobalt-about" />
         </div>
       ) : null}
       {sectionOnCv(data, "skills") ? (

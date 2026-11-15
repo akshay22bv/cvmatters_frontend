@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconDownload, IconLayers, IconMenu, IconOpenBook, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconCreate, IconDownload, IconLayers, IconMenu, IconOpenBook, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
 import { SECTIONS, sectionFilled } from "./SideNav";
 import type { PanelId, ResumeData } from "@/lib/types";
 
@@ -131,7 +131,9 @@ export function CvMobileChrome({
                   onPreview();
                 }}
               >
-                <IconOpenBook />
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  <IconOpenBook />
+                </span>
                 Preview
               </button>
               <button
@@ -144,8 +146,10 @@ export function CvMobileChrome({
                   onDownload();
                 }}
               >
-                {downloading ? <IconSpinner /> : <IconDownload />}
-                {downloading ? "Building…" : "Download"}
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  {downloading ? <IconSpinner /> : <IconDownload />}
+                </span>
+                {downloading ? "Wait…" : "Download"}
               </button>
               <button
                 type="button"
@@ -155,19 +159,33 @@ export function CvMobileChrome({
                   onOpenDesign();
                 }}
               >
-                <IconPalette />
-                Edit template
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  <IconPalette />
+                </span>
+                Template
               </button>
             </div>
             <p className="slice-sheet-label">Account</p>
-            <Link href="/profile" className="slice-sheet-link" onClick={() => setOpen(false)}>
-              <IconUser />
-              Profile
-            </Link>
-            <Link href="/examples" className="slice-sheet-link" onClick={() => setOpen(false)}>
-              <IconLayers />
-              CV examples
-            </Link>
+            <div className="slice-sheet-actions is-account">
+              <Link href="/profile" className="slice-sheet-action" onClick={() => setOpen(false)}>
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  <IconUser />
+                </span>
+                Profile
+              </Link>
+              <Link href="/examples" className="slice-sheet-action" onClick={() => setOpen(false)}>
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  <IconLayers />
+                </span>
+                Examples
+              </Link>
+              <Link href="/start" className="slice-sheet-action" onClick={() => setOpen(false)}>
+                <span className="slice-sheet-action-ico" aria-hidden="true">
+                  <IconCreate />
+                </span>
+                New CV
+              </Link>
+            </div>
           </nav>
         </div>
       </div>

@@ -25,7 +25,7 @@ import {
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
 import { plainRange } from "@/lib/content";
-import { orderPieces, resolveHiddenSections, resolveSectionOrder, sectionOnCv, skillTags } from "@/lib/sectionOrder";
+import { orderPieces, resolveSectionOrder, sectionOnCv, sectionsOmittedFromPage, skillTags } from "@/lib/sectionOrder";
 import { fontClass, paperStyle, readTemplateId, type PanelId, type ResumeData, type StepId, type TemplateId } from "@/lib/types";
 
 /** Horizontal inset for split job bullets when the template body uses section padding, not paper padding. */
@@ -665,7 +665,7 @@ function piecesFor(templateId: TemplateId, data: ResumeData, hideContact: boolea
     const kind: ExtraKind = templateId === "editorial" || templateId === "classic" ? "ed" : "sig";
     pieces = [...base, ...extraPieces(data, kind)];
   }
-  return orderPieces(pieces, resolveSectionOrder(data), resolveHiddenSections(data));
+  return orderPieces(pieces, resolveSectionOrder(data), sectionsOmittedFromPage(data));
 }
 
 function basePieces(templateId: TemplateId, data: ResumeData, hideContact: boolean) {

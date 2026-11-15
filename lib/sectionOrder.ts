@@ -34,6 +34,26 @@ export function sectionOnCv(data: { hiddenSections?: string[] | null }, id: Body
   return !resolveHiddenSections(data).includes(id);
 }
 
+/** What actually paints on the page — respects hide toggles and skips an empty summary. */
+export function sectionRenders(
+  data: { hiddenSections?: string[] | null; summary?: string | null },
+  id: BodySectionId,
+) {
+  if (!sectionOnCv(data, id)) return false;
+  if (id === "bio") return !!(data.summary || "").trim();
+  return true;
+}
+
+/** Hidden toggles plus sections with nothing to show (empty summary). */
+export function sectionsOmittedFromPage(data: {
+  hiddenSections?: string[] | null;
+  summary?: string | null;
+}): BodySectionId[] {
+  const hidden = resolveHiddenSections(data);
+  if (!(data.summary || "").trim() && !hidden.includes("bio")) return [...hidden, "bio"];
+  return hidden;
+}
+
 export function toggleHiddenSection(
   data: { hiddenSections?: string[] | null },
   id: BodySectionId,

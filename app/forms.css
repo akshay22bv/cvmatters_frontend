@@ -545,7 +545,7 @@ input:focus, textarea:focus {
   width: 19px;
   height: 19px;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: inherit;
   font-size: 14px;
@@ -651,10 +651,10 @@ input:focus, textarea:focus {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 32px;
-  height: 32px;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
   border: 1px solid var(--line);
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: white;
   color: var(--muted);
   font-size: 19px;
@@ -2321,10 +2321,10 @@ input:focus, textarea:focus {
 
 .picker-head .picker-x {
   position: static;
-  width: 36px;
-  height: 36px;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: rgba(255, 255, 255, 0.95);
   color: var(--ink);
   font-size: 21px;
@@ -2564,7 +2564,7 @@ input:focus, textarea:focus {
   background: color-mix(in srgb, var(--ink) 12%, transparent);
 }
 
-/* Circle buttons — same family as .swatch, a touch larger for spacing SVG */
+/* Tiny icon buttons — same radius as the rest of the controls */
 .design-pick-circ {
   flex: none;
   width: 30px;
@@ -2573,7 +2573,7 @@ input:focus, textarea:focus {
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: var(--white);
   color: var(--ink-soft);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
@@ -3204,7 +3204,7 @@ input:focus, textarea:focus {
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: transparent;
   color: var(--ink);
   line-height: 0;
@@ -3298,7 +3298,7 @@ input:focus, textarea:focus {
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: transparent;
   color: #3f3a36;
   font: inherit;
@@ -3600,10 +3600,10 @@ input:focus, textarea:focus {
   top: 16px;
   right: 16px;
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: white;
   color: var(--ink);
   font-size: 21px;
@@ -5580,9 +5580,9 @@ button.finish-check-grip:active {
 .prof-socials a {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
+  border-radius: var(--pill-radius);
   border: 1px solid var(--prof-line);
   background: var(--white);
   color: var(--prof-ink);
@@ -6039,8 +6039,8 @@ button.finish-check-grip:active {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
   padding: 0;
   border: 1px solid var(--line);
   border-radius: var(--pill-radius);
@@ -6492,6 +6492,11 @@ button.finish-check-grip:active {
 
 @media (max-width: 900px) {
   .flow-row { grid-template-columns: minmax(0, 1fr); }
+
+  /* Start flow on phone: no site chrome — just the choose / upload / LinkedIn steps. */
+  .app-frame:has(.board-start-page) .app-nav {
+    display: none;
+  }
 }
 
 @media (max-width: 720px) {

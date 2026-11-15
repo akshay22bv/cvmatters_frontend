@@ -85,25 +85,29 @@ export function ProfilePage({
   const atCvLimit = !downloadsOn && resumes.length >= freeCvLimit;
 
   useEffect(() => {
-    setHostCvId(resumeId);
-    setDraft(slug || "");
-    setHosting(isPublic);
-  }, [slug, isPublic, resumeId]);
-
-  useEffect(() => {
     if (!ownerKey) return;
     let cancelled = false;
     listResumes(ownerKey)
       .then((rows) => {
-        if (!cancelled) setResumes(rows);
+        if (cancelled) return;
+        setResumes(rows);
+        const linked = rows.find((item) => item.isPublic && item.slug) || rows.find((item) => item.slug) || rows.find((item) => item.id === resumeId);
+        setHostCvId(linked?.id || resumeId);
+        setDraft(linked?.slug || slug || "");
+        setHosting(Boolean(linked?.isPublic ?? isPublic));
       })
       .catch(() => {
-        if (!cancelled) setResumes([]);
+        if (!cancelled) {
+          setResumes([]);
+          setHostCvId(resumeId);
+          setDraft(slug || "");
+          setHosting(isPublic);
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, [ownerKey, resumeId]);
+  }, [ownerKey, resumeId, slug, isPublic]);
 
   useEffect(() => {
     if (!account.user) {
@@ -123,13 +127,18 @@ export function ProfilePage({
     };
   }, [account.user]);
 
-  const hostCv = resumes.find((item) => item.id === hostCvId);
-  const savedSlug = (hostCvId === resumeId ? slug : hostCv?.slug) || "";
-  const savedPublic = hostCvId === resumeId ? isPublic : Boolean(hostCv?.isPublic);
-  const liveSlug = savedSlug.trim();
+  const accountSlug =
+    resumes.find((item) => item.isPublic && item.slug)?.slug ||
+    resumes.find((item) => item.slug)?.slug ||
+    slug ||
+    "";
+  const liveSlug = accountSlug.trim();
   const publicPath = liveSlug ? publicResumePath(liveSlug) : null;
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const publicUrl = publicPath ? `${origin}${publicPath}` : "";
+  const savedPublic = Boolean(
+    resumes.find((item) => item.id === hostCvId)?.isPublic ?? (hostCvId === resumeId ? isPublic : false),
+  );
 
   const previewSlug = useMemo(() => {
     return draft.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") || "your-name";
@@ -150,11 +159,8 @@ export function ProfilePage({
   }, [data.personal]);
 
   const selectHostCv = (id: string) => {
-    const row = resumes.find((item) => item.id === id);
-    if (!row) return;
-    setHostCvId(row.id);
-    setDraft(row.slug || "");
-    setHosting(row.isPublic);
+    if (!resumes.some((item) => item.id === id)) return;
+    setHostCvId(id);
     setError("");
   };
 
@@ -176,10 +182,13 @@ export function ProfilePage({
         isPublic: hosting,
         slug: draft.trim() || null,
       });
-      setResumes((rows) => rows.map((item) => (item.id === saved.id ? { ...item, ...saved } : item)));
-      if (targetId === resumeId) {
-        onSaved({ slug: saved.slug || null, isPublic: saved.isPublic });
-      }
+      const rows = await listResumes(ownerKey);
+      setResumes(rows);
+      const active = rows.find((item) => item.id === resumeId);
+      onSaved({
+        slug: active?.slug || (saved.id === resumeId ? saved.slug : null) || null,
+        isPublic: active ? active.isPublic : saved.id === resumeId ? saved.isPublic : false,
+      });
     } catch (reason) {
       if (reason instanceof ApiError) setError(reason.message);
       else setError(reason instanceof Error ? reason.message : "Couldn't save that.");
@@ -376,7 +385,7 @@ export function ProfilePage({
                     </strong>
                     <span>
                       {role}
-                      {item.slug ? (
+                      {item.isPublic && item.slug ? (
                         <>
                           <span className="prof-cv-dot" aria-hidden="true">
                             ·
@@ -419,9 +428,27 @@ export function ProfilePage({
             </header>
 
             <div className="prof-host-fields">
+              <label className="prof-user">
+                <span>Username</span>
+                <input
+                  className="prof-username"
+                  value={draft}
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  placeholder="Enter unique id"
+                  disabled={busy || !(hostCvId || resumeId)}
+                  onChange={(event) => setDraft(event.target.value.toLowerCase())}
+                />
+              </label>
+              <p className="prof-url">
+                <a href={previewUrl} target="_blank" rel="noreferrer noopener">
+                  {previewUrl.replace(/^https?:\/\//, "")}
+                </a>
+              </p>
               {resumes.length > 1 ? (
                 <label className="prof-user">
-                  <span>CV on this link</span>
+                  <span>CV to show on this link</span>
                   <select
                     className="prof-select"
                     value={hostCvId || ""}
@@ -441,27 +468,9 @@ export function ProfilePage({
                   </select>
                 </label>
               ) : null}
-              <label className="prof-user">
-                <span>Username</span>
-                <input
-                  className="prof-username"
-                  value={draft}
-                  spellCheck={false}
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  placeholder="Enter unique id"
-                  disabled={busy || !(hostCvId || resumeId)}
-                  onChange={(event) => setDraft(event.target.value.toLowerCase())}
-                />
-              </label>
-              <p className="prof-url">
-                <a href={previewUrl} target="_blank" rel="noreferrer noopener">
-                  {previewUrl.replace(/^https?:\/\//, "")}
-                </a>
-              </p>
               <CheckRow
                 className="prof-host-check"
-                label="Make this CV public — anyone with the link can view and rate it"
+                label="Make this link public — anyone with it can view and rate the CV"
                 checked={hosting}
                 disabled={busy || !(hostCvId || resumeId)}
                 onChange={setHosting}

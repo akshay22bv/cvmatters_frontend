@@ -1271,7 +1271,7 @@
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--pill-radius);
   background: var(--black);
   color: var(--white);
 }
@@ -2485,6 +2485,8 @@
   .board-ask-body .board-drop,
   .board-ask-body .board-link-form { max-width: none; width: 100%; }
   .board-ask-hints ul { flex-direction: column; gap: 6px; }
+  .board-ask.is-page { min-height: 100dvh; }
+  .board-ask-back { display: none; }
 }
 
 @media (max-width: 520px) {
