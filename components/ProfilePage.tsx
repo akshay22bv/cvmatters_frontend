@@ -390,11 +390,9 @@ export function ProfilePage({
                     <button type="button" className="prof-btn is-primary" onClick={() => onPreviewCv(item)}>
                       Preview
                     </button>
-                    {!current ? (
-                      <button type="button" className="prof-btn" onClick={() => onUse(item)}>
-                        Open
-                      </button>
-                    ) : null}
+                    <button type="button" className="prof-btn" onClick={() => onUse(item)}>
+                      Open
+                    </button>
                     <button
                       type="button"
                       className="prof-cv-del"
