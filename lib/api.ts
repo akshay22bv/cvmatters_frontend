@@ -248,3 +248,10 @@ export type Country = { code: string; name: string };
 export function loadCountries() {
   return request<{ countries: Country[]; source: string }>("/api/countries");
 }
+
+export function sendContactMessage(input: { name: string; email: string; topic: string; message: string; website?: string }) {
+  return request<{ ok: boolean; id?: string }>("/api/contact", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}

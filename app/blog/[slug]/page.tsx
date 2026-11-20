@@ -45,7 +45,14 @@ export default async function BlogPostPage({ params }: PageProps) {
   const post = await fetchBlogPost(slug);
   if (!post) notFound();
 
-  const others = (await fetchBlogPosts()).filter((item) => item.slug !== post.slug).slice(0, 3);
+  const allPosts = await fetchBlogPosts();
+  const currentIndex = allPosts.findIndex((item) => item.slug === post.slug);
+  // Posts are ordered newest-first: previous = older (index + 1), next = newer (index - 1).
+  const prevPost = currentIndex >= 0 && currentIndex + 1 < allPosts.length ? allPosts[currentIndex + 1] : null;
+  const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+  const others = allPosts
+    .filter((item) => item.slug !== post.slug && item.slug !== prevPost?.slug && item.slug !== nextPost?.slug)
+    .slice(0, 3);
 
   return (
     <main className="blog-main">
@@ -76,6 +83,27 @@ export default async function BlogPostPage({ params }: PageProps) {
             <span className="board-pill-label">Start your CV</span>
           </Link>
         </aside>
+
+        {prevPost || nextPost ? (
+          <nav className="blog-pager" aria-label="Previous and next guides">
+            {prevPost ? (
+              <Link href={blogPath(prevPost.slug)} className="blog-pager-card">
+                <span className="blog-pager-label">← Previous guide</span>
+                <strong>{prevPost.title}</strong>
+              </Link>
+            ) : (
+              <span aria-hidden="true" />
+            )}
+            {nextPost ? (
+              <Link href={blogPath(nextPost.slug)} className="blog-pager-card is-next">
+                <span className="blog-pager-label">Next guide →</span>
+                <strong>{nextPost.title}</strong>
+              </Link>
+            ) : (
+              <span aria-hidden="true" />
+            )}
+          </nav>
+        ) : null}
       </article>
 
       {others.length ? (

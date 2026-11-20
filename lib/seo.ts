@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { pathToView, publicResumePath, SECTION_LABEL, type AppView } from "./paths";
-import { DEFAULT_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_TAGLINE, siteUrl } from "./site";
+import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_KEYWORDS, SITE_NAME, SITE_TAGLINE, siteUrl } from "./site";
 
 const NO_INDEX: Metadata["robots"] = { index: false, follow: false };
 
@@ -39,6 +39,7 @@ function openGraph(partial: NonNullable<Metadata["openGraph"]>): NonNullable<Met
 
 function baseMeta(input: { title: string; description: string; path: string; robots?: Metadata["robots"] }): Metadata {
   const url = siteUrl(input.path);
+  const ogImage = siteUrl(OG_IMAGE_PATH);
   return {
     title: input.title,
     description: input.description,
@@ -49,11 +50,13 @@ function baseMeta(input: { title: string; description: string; path: string; rob
       title: input.title,
       description: input.description,
       url,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: input.title }],
     }),
     twitter: {
       card: "summary_large_image",
       title: input.title,
       description: input.description,
+      images: [ogImage],
     },
   };
 }
@@ -111,8 +114,23 @@ async function metadataForView(view: AppView, pathname: string): Promise<Metadat
     });
   }
 
+  if (view.kind === "not-found") {
+    return {
+      title: titleTemplate("Page not found"),
+      description: `That page does not exist on ${SITE_NAME}.`,
+      robots: NO_INDEX,
+    };
+  }
+
   if (view.kind === "public") {
     const record = await fetchPublicResume(view.id);
+    if (!record) {
+      return {
+        title: titleTemplate("Page not found"),
+        description: `That resume is private or does not exist on ${SITE_NAME}.`,
+        robots: NO_INDEX,
+      };
+    }
     const name = record?.data?.personal?.fullName?.trim() || view.id;
     const role = record?.data?.personal?.title?.trim();
     const pageTitle = role ? `${name} — ${role}` : `${name}'s resume`;

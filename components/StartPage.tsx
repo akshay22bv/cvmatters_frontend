@@ -78,10 +78,12 @@ export function StartPage({
         <div className="board-rail board-ask-inner">
           <div className={step === "choose" ? "board-ask-stage is-wide" : "board-ask-stage is-form"}>
             <header className="board-ask-hero">
-              <button type="button" className="board-ask-back" onClick={() => (step === "choose" ? router.push("/") : openStep("choose"))}>
-                <IconChevronLeft />
-                Back
-              </button>
+              {step !== "choose" ? (
+                <button type="button" className="board-ask-back" onClick={() => openStep("choose")}>
+                  <IconChevronLeft />
+                  Back
+                </button>
+              ) : null}
               <p className="board-kicker">{ASK_TITLE[intent]}</p>
               <h1 id="board-ask-title">{title}</h1>
               <p className="board-lead board-ask-lead">{lead}</p>
@@ -101,6 +103,9 @@ export function StartPage({
                             <strong>Create a new CV</strong>
                             <span>Start from an empty page in {templateName(layout)}.</span>
                           </span>
+                          <span className="board-ask-go" aria-hidden="true">
+                            Start blank <IconChevronRight />
+                          </span>
                         </button>
                       </Reveal>
                       <Reveal className="board-ask-card-wrap" delay={90} blur={false}>
@@ -111,6 +116,9 @@ export function StartPage({
                           <span className="board-ask-copy">
                             <strong>Upload an existing CV</strong>
                             <span>PDF, DOCX, or TXT. We read the sections out of the file.</span>
+                          </span>
+                          <span className="board-ask-go" aria-hidden="true">
+                            Upload file <IconChevronRight />
                           </span>
                         </button>
                       </Reveal>
@@ -123,19 +131,12 @@ export function StartPage({
                             <strong>Import from LinkedIn</strong>
                             <span>Paste a linkedin.com/in/… link. Your name goes on the page.</span>
                           </span>
+                          <span className="board-ask-go" aria-hidden="true">
+                            Import link <IconChevronRight />
+                          </span>
                         </button>
                       </Reveal>
                     </div>
-                    <aside className="board-ask-hints" aria-label="Quick guide">
-                      <p>
-                        <strong>Not sure?</strong> Start blank for a fast draft, upload if you already have a résumé file, or paste a
-                        LinkedIn profile link to pre-fill your name.
-                      </p>
-                      <ul>
-                        <li>Your data stays in your browser until you sign in.</li>
-                        <li>Switch layout anytime from the editor.</li>
-                      </ul>
-                    </aside>
                   </>
                 )}
 

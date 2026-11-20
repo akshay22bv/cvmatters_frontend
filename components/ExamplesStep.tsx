@@ -6,6 +6,7 @@ import { IconSearch, IconStar } from "./icons";
 import { Monogram } from "./Monogram";
 import { StepCard } from "./StepCard";
 import { loadGallery } from "@/lib/api";
+import { SAMPLE_EXAMPLES } from "@/lib/examples";
 import type { AccountState } from "@/lib/useAccount";
 import { templateName, type Category, type RatingSummary, type ResumeRecord } from "@/lib/types";
 
@@ -31,8 +32,8 @@ export function ExamplesStep({
   /** Open the resume when the side preview is not on screen. */
   onOpen?: (resume: ResumeRecord) => void;
 }) {
-  const [items, setItems] = useState<ResumeRecord[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [items, setItems] = useState<ResumeRecord[]>(SAMPLE_EXAMPLES);
+  const [selected, setSelected] = useState<string | null>(SAMPLE_EXAMPLES[0]?.id || null);
   const [query, setQuery] = useState("");
   const [loaded, setLoaded] = useState(false);
 
@@ -42,17 +43,19 @@ export function ExamplesStep({
     loadGallery()
       .then((next) => {
         if (cancelled) return;
-        setItems(next);
-        const pick = next.find((item) => item.id === selected) || next[0] || null;
+        const list = next.length > 0 ? next : SAMPLE_EXAMPLES;
+        setItems(list);
+        const pick = list.find((item) => item.id === selected) || list[0] || null;
         setSelected(pick?.id || null);
         onView(pick);
         setLoaded(true);
       })
       .catch(() => {
         if (cancelled) return;
-        setItems([]);
-        setSelected(null);
-        onView(null);
+        setItems(SAMPLE_EXAMPLES);
+        const pick = SAMPLE_EXAMPLES[0] || null;
+        setSelected(pick?.id || null);
+        onView(pick);
         setLoaded(true);
       });
     return () => {

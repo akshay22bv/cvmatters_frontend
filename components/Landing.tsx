@@ -1,14 +1,17 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoadScreen } from "./LoadScreen";
 import { SiteFooter } from "./SiteFooter";
+import { HOME_FAQS } from "./HomeJsonLd";
 import { IconChevronRight } from "./icons";
 import { Reveal, Tilt } from "./motion";
 import { ResumeSheet } from "./ResumeSheet";
 import { offeredCatalog } from "@/lib/catalog";
 import { sampleForTemplate } from "@/lib/content";
+import { SAMPLE_EXAMPLES } from "@/lib/examples";
 import { startPath, type StartIntent } from "@/lib/paths";
 import { templateName, type ResumeData, type TemplateId } from "@/lib/types";
 
@@ -29,8 +32,35 @@ const ABOUT = [
   },
 ] as const;
 
+const STORIES = [
+  {
+    quote:
+      "Uploaded my old two-column Word doc and had a clean ATS version ready in ten minutes. I keep one cvmatters.net link on my LinkedIn now.",
+    name: "Priya S.",
+    role: "Product Designer · Bengaluru",
+  },
+  {
+    quote:
+      "Pasting the job description right beside my bullets made tailoring for backend roles painless instead of rewriting from scratch every night.",
+    name: "Karthik M.",
+    role: "Senior Software Engineer · Pune",
+  },
+  {
+    quote:
+      "Recruiters kept asking for a quick link on WhatsApp and LinkedIn. Sending one clean URL that always matches my PDF saved so much back-and-forth.",
+    name: "Neha R.",
+    role: "Product Manager · Mumbai",
+  },
+  {
+    quote:
+      "No bloated wizard or surprise watermarks halfway through. What you see in the live preview is genuinely what exports to PDF.",
+    name: "Daniel K.",
+    role: "Growth Lead · Remote",
+  },
+] as const;
+
 /**
- * Home: product story, three ways in, templates, and a footer.
+ * Home: product story, three ways in, templates, social proof, FAQ, and a footer.
  * Starting a CV goes to /start — a dedicated navigation page.
  */
 export function Landing({
@@ -82,7 +112,7 @@ export function Landing({
               <p className="board-kicker">Resume builder</p>
               <h1 className="board-brand">CV Matters</h1>
               <p className="board-lead">
-                Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts.
+                Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts, and a shareable link.
               </p>
               <div className="board-cta">
                 <button type="button" className="board-pill board-pill-primary" disabled={busy} onClick={() => pickIntent("build")}>
@@ -142,7 +172,7 @@ export function Landing({
               <p className="board-kicker">Why CV Matters</p>
               <h2 className="board-heading">Write once. See the page as hiring software and people will.</h2>
               <p className="board-lead is-narrow">
-                No cluttered chrome. Fill in your details, watch the page update, then download a PDF when you are ready.
+                No cluttered chrome. Fill in your details, watch the page update, then share a link or download a PDF when you are ready.
               </p>
             </Reveal>
             <div className="board-points">
@@ -191,6 +221,70 @@ export function Landing({
                 </button>
               </Tilt>
             ))}
+          </div>
+        </article>
+
+        <article className="board-section" aria-labelledby="proof-title">
+          <div className="board-rail">
+            <Reveal className="board-intro" blur={false}>
+              <p className="board-kicker">Real layouts · Real feedback</p>
+              <h2 id="proof-title" className="board-heading">
+                Built for job seekers who care how their resume reads
+              </h2>
+              <p className="board-lead is-narrow">
+                Anonymized example resumes built in the same editor, plus notes from people using CV Matters during their job search.
+              </p>
+            </Reveal>
+
+            <div className="board-proof-samples" role="list" aria-label="Anonymized resume previews">
+              {SAMPLE_EXAMPLES.slice(0, 3).map((sample) => (
+                <Link key={sample.id} href="/examples" className="board-proof-sample" role="listitem">
+                  <span className="board-proof-paper" aria-hidden="true">
+                    <ResumeSheet templateId={sample.templateId} data={sample.data} preview fill />
+                  </span>
+                  <span className="board-proof-meta">
+                    <strong>{sample.data.personal.title}</strong>
+                    <span>
+                      {sample.category} · {templateName(sample.templateId)}
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="board-quotes">
+              {STORIES.map((item) => (
+                <figure key={item.name} className="board-quote">
+                  <blockquote>“{item.quote}”</blockquote>
+                  <figcaption>
+                    <strong>{item.name}</strong>
+                    <span>{item.role}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </article>
+
+        <article className="board-section is-soft" id="faq" aria-labelledby="faq-title">
+          <div className="board-rail">
+            <Reveal className="board-intro" blur={false}>
+              <p className="board-kicker">FAQ</p>
+              <h2 id="faq-title" className="board-heading">
+                Common questions
+              </h2>
+              <p className="board-lead is-narrow">
+                Straight answers on pricing, PDF exports, ATS compatibility, and public links.
+              </p>
+            </Reveal>
+            <div className="board-faq-list">
+              {HOME_FAQS.map((item) => (
+                <details key={item.q} className="board-faq-item">
+                  <summary>{item.q}</summary>
+                  <p>{item.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </article>
 

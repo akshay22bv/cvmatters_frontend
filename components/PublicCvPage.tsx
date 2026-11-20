@@ -13,14 +13,16 @@ import type { RatingSummary, ResumeRecord } from "@/lib/types";
  */
 export function PublicCvPage({
   id,
+  initialRecord = null,
   signedIn,
   onSignIn,
 }: {
   id: string;
+  initialRecord?: (ResumeRecord & { isMine?: boolean }) | null;
   signedIn: boolean;
   onSignIn: () => void;
 }) {
-  const [record, setRecord] = useState<(ResumeRecord & { isMine?: boolean }) | null>(null);
+  const [record, setRecord] = useState<(ResumeRecord & { isMine?: boolean }) | null>(initialRecord);
   const [notes, setNotes] = useState<{ stars: number; note: string; name: string; at: string }[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -29,7 +31,9 @@ export function PublicCvPage({
   useEffect(() => {
     let cancelled = false;
     setError("");
-    setRecord(null);
+    if (!initialRecord || initialRecord.id !== id) {
+      setRecord(initialRecord || null);
+    }
     loadPublicResume(id)
       .then(async (row) => {
         if (cancelled) return;
@@ -43,12 +47,14 @@ export function PublicCvPage({
       })
       .catch((reason: unknown) => {
         if (cancelled) return;
-        setError(reason instanceof Error ? reason.message : "Couldn't open that resume.");
+        if (!initialRecord) {
+          setError(reason instanceof Error ? reason.message : "Couldn't open that resume.");
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, initialRecord]);
 
   const onRate = async (stars: number) => {
     if (!signedIn) {

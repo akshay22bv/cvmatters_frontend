@@ -1,20 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Logo } from "./icons";
-import { crumbsFor, type AppView } from "@/lib/paths";
+import { IconUser, Logo } from "./icons";
+import type { AppView } from "@/lib/paths";
 
-const LINKS: { href: string; label: string; on: (view: AppView) => boolean }[] = [
-  { href: "/", label: "Home", on: (view) => view.kind === "start" || view.kind === "begin" },
-  { href: "/cv/details", label: "My CV", on: (view) => view.kind === "cv" && view.section !== "job" },
-  { href: "/profile", label: "Profile", on: (view) => view.kind === "profile" },
-  { href: "/cv/job", label: "Job post", on: (view) => view.kind === "cv" && view.section === "job" },
-  { href: "/examples", label: "Your field", on: (view) => view.kind === "examples" },
-];
-
-export function AppNav({ view }: { view: AppView }) {
-  const crumbs = crumbsFor(view);
-
+export function AppNav({
+  view,
+  signedIn = false,
+  onSignIn,
+}: {
+  view: AppView;
+  signedIn?: boolean;
+  onSignIn?: () => void;
+}) {
   return (
     <header className="app-nav">
       <div className="app-nav-bar">
@@ -26,22 +24,19 @@ export function AppNav({ view }: { view: AppView }) {
             <b>CV</b> Matters
           </span>
         </Link>
-        <nav className="app-nav-links" aria-label="Site">
-          {LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className={link.on(view) ? "is-on" : undefined}>
-              {link.label}
+        <nav className="app-nav-links" aria-label="Account">
+          {signedIn ? (
+            <Link href="/profile" className={view.kind === "profile" ? "app-nav-profile is-on" : "app-nav-profile"}>
+              <IconUser />
+              <span>Profile</span>
             </Link>
-          ))}
+          ) : (
+            <button type="button" className="app-nav-sign" onClick={onSignIn}>
+              Sign in
+            </button>
+          )}
         </nav>
       </div>
-      <nav className="app-nav-path" aria-label="You are here">
-        {crumbs.map((crumb, index) => (
-          <span key={`${crumb.href}-${index}`}>
-            {index > 0 ? <i>/</i> : null}
-            {index === crumbs.length - 1 ? <strong>{crumb.label}</strong> : <Link href={crumb.href}>{crumb.label}</Link>}
-          </span>
-        ))}
-      </nav>
     </header>
   );
 }

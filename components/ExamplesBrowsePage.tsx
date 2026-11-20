@@ -8,6 +8,7 @@ import { ResumeView } from "./ResumeSheet";
 import { IconChevronLeft, Pencil } from "./icons";
 import { Stars } from "./Stars";
 import { ApiError, rateResume } from "@/lib/api";
+import { SAMPLE_EXAMPLES } from "@/lib/examples";
 import {
   templateName,
   type Category,
@@ -46,7 +47,7 @@ export function ExamplesBrowsePage({
   onTemplate?: () => void;
 }) {
   const router = useRouter();
-  const [viewing, setViewing] = useState<ResumeRecord | null>(null);
+  const [viewing, setViewing] = useState<ResumeRecord | null>(SAMPLE_EXAMPLES[0] || null);
   const [rated, setRated] = useState<{ id: string; summary: RatingSummary } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [rateBusy, setRateBusy] = useState(false);
@@ -54,7 +55,8 @@ export function ExamplesBrowsePage({
 
   const stageRecord = viewing;
   const sharedPreview = previewOpen && stageRecord ? stageRecord : null;
-  const sharedOwn = Boolean(stageRecord && (stageRecord.isMine || stageRecord.id === mineId));
+  const isSample = Boolean(stageRecord?.id.startsWith("sample-"));
+  const sharedOwn = Boolean(stageRecord && (isSample || stageRecord.isMine || stageRecord.id === mineId));
 
   const rateShared = async (resume: ResumeRecord, stars: number) => {
     if (!account.user) {

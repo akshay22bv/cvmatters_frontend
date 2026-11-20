@@ -126,7 +126,7 @@ export function PlanDialog({
   const title = step === "plans" ? "Choose a plan" : step === "pay" ? "Payment details" : "You're all set";
   const subtitle =
     step === "plans"
-      ? reason || "Downloads are part of a subscription. Cancel whenever you like."
+      ? reason || undefined
       : step === "pay"
         ? `${plan?.name} · ${plan?.price} ${plan?.cadence}`
         : "The PDF is ready whenever you are.";
@@ -199,7 +199,9 @@ export function PlanDialog({
             <IconLock />
             <span>
               {provider === "cashfree" ? (
-                <>You&apos;ll complete payment securely on Cashfree (UPI, cards, net banking).</>
+                <>
+                  Billed in INR (₹) via Cashfree. Supports UPI, domestic &amp; international cards, and net banking.
+                </>
               ) : (
                 <>
                   Test gateway — no money moves. Card <b>4242 4242 4242 4242</b> succeeds, <b>4000 0000 0000 0002</b> is

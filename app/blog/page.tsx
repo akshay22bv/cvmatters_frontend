@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { blogAbsoluteUrl, blogPath, fetchBlogPosts, formatBlogDate } from "@/lib/blog";
-import { DEFAULT_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
+import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Resume & online CV guides",
@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     description: "Guides for shareable resumes, online CVs, and recruiter-ready links.",
     url: blogAbsoluteUrl(),
     type: "website",
+    images: [{ url: siteUrl(OG_IMAGE_PATH), width: 1200, height: 630, alt: `${SITE_NAME} Blog` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Resume & online CV guides · ${SITE_NAME}`,
+    description: "Guides for shareable resumes, online CVs, and recruiter-ready links.",
+    images: [siteUrl(OG_IMAGE_PATH)],
   },
 };
 

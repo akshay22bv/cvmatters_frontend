@@ -1,24 +1,22 @@
 "use client";
 
-import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Builder from "./Builder";
 import { ConfirmProvider } from "./ConfirmProvider";
-import { LoadScreen } from "./LoadScreen";
 import { MobileFormStable } from "./MobileFormStable";
+import { isBuilderPath } from "@/lib/paths";
 
 /** Keeps the builder mounted across /cv/* routes so section changes do not remount. */
 export function AppShell() {
-  const pathname = usePathname() || "";
-  // Blog routes are server-rendered for SEO — skip the SPA shell.
-  if (pathname === "/blog" || pathname.startsWith("/blog/")) return null;
+  const pathname = usePathname() || "/";
+  // Standalone SSR pages (/blog, /privacy, /terms, /about, /contact, /:username, /billing, 404)
+  // render through their own page components without mounting the SPA shell.
+  if (!isBuilderPath(pathname)) return null;
 
   return (
     <ConfirmProvider>
       <MobileFormStable />
-      <Suspense fallback={<LoadScreen message="Opening CV Matters…" />}>
-        <Builder />
-      </Suspense>
+      <Builder />
     </ConfirmProvider>
   );
 }

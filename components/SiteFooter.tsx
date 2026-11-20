@@ -110,10 +110,10 @@ export function SiteFooter({
                   <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
                 </li>
                 <li>
-                  <Link href="/about#privacy">Privacy</Link>
+                  <Link href="/privacy">Privacy</Link>
                 </li>
                 <li>
-                  <Link href="/about#terms">Terms</Link>
+                  <Link href="/terms">Terms</Link>
                 </li>
                 <li>
                   <a href={`mailto:${SUPPORT_EMAIL}?subject=Billing%20help`}>Billing help</a>
@@ -126,17 +126,15 @@ export function SiteFooter({
 
       <div className="board-foot-bar">
         <div className="board-rail board-foot-bar-inner">
-          <p className="board-foot-copyline">
-            © {year} {SITE_NAME}. All rights reserved.
-          </p>
+          <p className="board-foot-copyline">{`© ${year} ${SITE_NAME}. All rights reserved.`}</p>
           <p className="board-foot-trust">
             <IconLock />
-            <span>Secure checkout · UPI · Cards · Net banking via Cashfree</span>
+            <span>Checkout in INR (₹) · UPI, international &amp; domestic cards, net banking via Cashfree</span>
           </p>
           <div className="board-foot-bar-links">
             <Link href="/contact">Contact</Link>
-            <Link href="/about#privacy">Privacy</Link>
-            <Link href="/about#terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
           </div>
         </div>
       </div>

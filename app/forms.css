@@ -4738,23 +4738,72 @@ button.finish-check-grip:active {
 }
 .app-nav-brand b { font-weight: 760; }
 
-.app-nav-links { display: flex; align-items: center; gap: 4px; }
+.app-nav-links { display: flex; align-items: center; gap: 8px; }
 
-.app-nav-links a {
-  height: 34px;
-  padding: 0 12px;
-  border-radius: var(--pill-radius);
-  color: var(--ink-soft);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
+.app-nav-profile {
   display: inline-flex;
   align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--pill-radius);
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  text-decoration: none;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.app-nav-links a.is-on,
-.app-nav-links a:hover { background: var(--soft); color: var(--ink); }
+.app-nav-profile svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.app-nav-profile.is-on,
+.app-nav-profile:hover {
+  background: var(--soft);
+  border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
+  transform: translateY(-1px);
+  box-shadow: var(--pill-shadow);
+}
+
+.app-nav-sign {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid var(--black);
+  border-radius: var(--pill-radius);
+  background: var(--black);
+  color: var(--white);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(10, 10, 10, 0.12);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.app-nav-sign:hover {
+  background: color-mix(in srgb, var(--black) 88%, var(--accent));
+  border-color: color-mix(in srgb, var(--black) 88%, var(--accent));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(10, 10, 10, 0.18);
+}
+
+.app-nav-sign:active {
+  transform: translateY(0);
+}
 
 .app-nav-path {
   display: flex;
@@ -6475,28 +6524,19 @@ button.finish-check-grip:active {
   .prof-slug input { height: 36px; padding: 0; }
   .public-stage { padding: 52px 10px 32px; }
   .public-sheet { border-radius: 0; }
-  .app-nav-bar { gap: 8px; padding: 0 12px; }
+  .app-nav-bar { gap: 8px; padding: 0 14px; }
   .app-nav-brand { flex: none; }
-  .app-nav-brand span:last-child { display: none; }
   .app-nav-links {
-    flex: 1;
-    min-width: 0;
-    justify-content: flex-start;
-    gap: 2px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex: none;
+    justify-content: flex-end;
+    gap: 6px;
   }
-  .app-nav-links::-webkit-scrollbar { display: none; }
-  .app-nav-links a { flex: none; padding: 0 8px; font-size: 13px; }
+  .app-nav-profile,
+  .app-nav-sign { flex: none; padding: 0 14px; font-size: 13px; }
 }
 
 @media (max-width: 900px) {
   .flow-row { grid-template-columns: minmax(0, 1fr); }
-
-  /* Start flow on phone: no site chrome — just the choose / upload / LinkedIn steps. */
-  .app-frame:has(.board-start-page) .app-nav {
-    display: none;
-  }
 }
 
 @media (max-width: 720px) {
@@ -6702,31 +6742,125 @@ button.finish-check-grip:active {
 
 .billing-return {
   display: grid;
-  min-height: 60vh;
+  min-height: 100dvh;
   place-items: center;
-  padding: 48px 20px;
+  padding: 48px 20px calc(48px + env(safe-area-inset-bottom, 0px));
+  background:
+    radial-gradient(120% 70% at 50% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--wash-lime) 70%, var(--white)) 0%, var(--white) 48%, var(--white) 100%);
 }
 
 .billing-return-card {
   display: grid;
-  gap: 16px;
-  width: min(420px, 100%);
-  padding: 28px 24px;
+  gap: 14px;
+  justify-items: center;
+  width: min(440px, 100%);
+  padding: 32px 28px 28px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: white;
+  border-radius: 20px;
+  background: var(--white);
   text-align: center;
+  box-shadow: var(--shadow-1);
+}
+
+.billing-return-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.billing-return-brand .brand-logo {
+  height: 28px;
+  width: auto;
+  max-width: 72px;
+  object-fit: contain;
+}
+
+.billing-return-brand b { font-weight: 760; }
+
+.billing-return-kicker {
+  margin: 4px 0 0;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.billing-return-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 
 .billing-return-lead {
   margin: 0;
-  font-size: 16px;
+  max-width: 34ch;
+  font-size: 15.5px;
   line-height: 1.45;
-  color: var(--ink);
+  color: var(--ink-soft);
 }
 
-.billing-return-card .btn-cta { justify-self: center; }
-.billing-return-card .modal-fine { justify-content: center; text-align: left; }
+.billing-return-card .receipt {
+  width: 100%;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.billing-return-order {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.billing-return-pulse {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-top-color: var(--accent);
+  animation: billing-spin 0.85s linear infinite;
+}
+
+@keyframes billing-spin {
+  to { transform: rotate(360deg); }
+}
+
+.paid-mark.is-soft {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--ink);
+  animation: none;
+}
+
+.billing-return-card .btn-cta,
+.billing-return-card .btn-quiet {
+  justify-self: center;
+  width: min(100%, 280px);
+  text-decoration: none;
+}
+
+.billing-return-card .btn-quiet {
+  margin-top: -2px;
+}
+
+.billing-return-card .modal-fine {
+  justify-content: center;
+  text-align: left;
+  max-width: 36ch;
+}
+
+.billing-return-card .form-alert {
+  width: 100%;
+  text-align: left;
+}
 
 /* ------------------------------------------------------- experience / education entry cards */
 

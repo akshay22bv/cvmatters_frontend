@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DEFAULT_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
+import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
 import {
   DM_Sans,
   Inter,
@@ -80,11 +80,13 @@ export const metadata: Metadata = {
     title: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     url: "/",
+    images: [{ url: OG_IMAGE_PATH, width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
+    images: [OG_IMAGE_PATH],
   },
   robots: {
     index: true,

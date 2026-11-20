@@ -80,8 +80,8 @@ export function AboutPage() {
           </h2>
           <p className="board-lead is-narrow">
             We store your account email, CV content you save, and subscription status so the product works. We do not sell your
-            data. Payment details are handled by Cashfree; we never store card numbers on our servers.{" "}
-            <Link href="/contact">Contact us</Link> or email{" "}
+            data. Payment details are handled by Cashfree; we never store card numbers on our servers. Read the full{" "}
+            <Link href="/privacy">Privacy Policy</Link>, <Link href="/contact">contact us</Link>, or email{" "}
             <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> to request account deletion.
           </p>
         </div>
@@ -93,8 +93,9 @@ export function AboutPage() {
             Terms
           </h2>
           <p className="board-lead is-narrow">
-            CV Matters is offered as-is for personal resume building. You own the content you write. Paid plans unlock PDF downloads
-            for the subscription period shown at checkout. Refunds follow our payment partner&apos;s rules and applicable law in India.
+            CV Matters is offered for personal resume building. You own the content you write. Paid plans are billed in INR (₹) via
+            Cashfree (UPI, domestic and international cards, net banking) and unlock unlimited PDF downloads for the subscription
+            period shown at checkout. Read the full <Link href="/terms">Terms of Use</Link>.
           </p>
         </div>
       </section>

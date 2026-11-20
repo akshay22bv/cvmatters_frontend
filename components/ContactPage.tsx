@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SUPPORT_EMAIL, SITE_NAME } from "@/lib/site";
+import { ContactForm } from "./ContactForm";
 import { IconMail } from "./icons";
 import { SiteFooter } from "./SiteFooter";
 
@@ -18,7 +19,7 @@ const CHANNELS = [
   },
   {
     title: "Billing & subscriptions",
-    body: "Receipts, plan changes, or checkout with Cashfree (UPI, cards, net banking).",
+    body: "Receipts, plan changes, or INR checkout with Cashfree (UPI, cards, net banking).",
     subject: "CV Matters — billing",
   },
   {
@@ -37,8 +38,8 @@ const SELF_SERVE = [
   { href: "/about#how-it-works", label: "How CV Matters works" },
   { href: "/cv/details", label: "Open the CV editor" },
   { href: "/examples", label: "Browse examples in your field" },
-  { href: "/about#privacy", label: "Privacy policy" },
-  { href: "/about#terms", label: "Terms of use" },
+  { href: "/privacy", label: "Privacy policy" },
+  { href: "/terms", label: "Terms of use" },
   { href: "/billing/return", label: "After payment — billing return page" },
 ] as const;
 
@@ -52,24 +53,24 @@ export function ContactPage() {
             We&apos;re here to help
           </h1>
           <p className="board-lead is-narrow">
-            Questions about your CV, billing, or your account? Email us and include the details below so we can jump in
-            quickly. We read every message — no call centre, no ticket maze.
+            Questions about your CV, billing, or your account? Send a note below or email us directly — no call centre, no ticket maze.
           </p>
 
-          <a className="board-contact-email" href={`mailto:${SUPPORT_EMAIL}`}>
-            <IconMail />
-            <span>{SUPPORT_EMAIL}</span>
-          </a>
+          <ContactForm />
 
-          <p className="board-contact-note">
-            Typical reply time: <strong>1–2 business days</strong> (India time). Urgent billing issues? Put{" "}
-            <strong>“Urgent billing”</strong> in the subject line.
-          </p>
+          <div className="board-contact-direct">
+            <a className="board-contact-email" href={`mailto:${SUPPORT_EMAIL}`}>
+              <IconMail />
+              <span>{SUPPORT_EMAIL}</span>
+            </a>
+
+            <p className="board-contact-note">
+              Typical reply time: <strong>1–2 business days</strong> (IST). Urgent billing issues? Select{" "}
+              <strong>Billing &amp; subscriptions</strong> or put <strong>“Urgent billing”</strong> in your subject line.
+            </p>
+          </div>
 
           <div className="board-about-acts">
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="board-pill board-pill-primary">
-              <span className="board-pill-label">Email us</span>
-            </a>
             <Link href="/" className="board-pill board-pill-outline">
               <span className="board-pill-label">Back to home</span>
             </Link>
@@ -79,7 +80,7 @@ export function ContactPage() {
 
       <section className="board-section is-soft" aria-label="What to contact us about">
         <div className="board-rail">
-          <h2 className="board-heading">Pick a topic</h2>
+          <h2 className="board-heading">Prefer email? Pick a topic</h2>
           <p className="board-lead is-narrow">Use a pre-filled subject so your message lands in the right place.</p>
           <div className="board-contact-channels">
             {CHANNELS.map((item) => (
@@ -118,10 +119,10 @@ export function ContactPage() {
             <li>What you tried (e.g. “PDF download on Compare”, “Cashfree checkout”)</li>
             <li>Device and browser (e.g. Android Chrome, iPhone Safari, desktop Firefox)</li>
             <li>Screenshots if something looks broken — they help a lot</li>
-            <li>For billing: date of payment and last four digits of UPI / card if you have them (never send full card numbers)</li>
+            <li>For billing: date of payment and order ID or last four digits of UPI / card (never send full card numbers)</li>
           </ul>
           <aside className="board-contact-aside">
-            We don&apos;t offer phone support yet. Email is the fastest way to reach the team building {SITE_NAME}.
+            We don&apos;t offer phone support yet. Using the form above or emailing {SUPPORT_EMAIL} is the fastest way to reach the team building {SITE_NAME}.
           </aside>
         </div>
       </section>

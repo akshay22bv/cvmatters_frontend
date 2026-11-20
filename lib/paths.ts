@@ -11,7 +11,8 @@ export type AppView =
   | { kind: "profile" }
   | { kind: "examples" }
   | { kind: "public"; id: string }
-  | { kind: "cv"; section: PanelId };
+  | { kind: "cv"; section: PanelId }
+  | { kind: "not-found" };
 
 const SLUG_TO_PANEL: Record<string, PanelId> = {
   details: "details",
@@ -55,12 +56,18 @@ const RESERVED_ROOT = new Set([
   "auth",
   "about",
   "contact",
+  "privacy",
+  "terms",
   "help",
   "support",
   "billing",
   "plans",
   "blog",
   "start",
+  "sitemap.xml",
+  "robots.txt",
+  "opengraph-image",
+  "twitter-image",
   "icon.png",
   "icon-48.png",
   "icon-192.png",
@@ -115,36 +122,67 @@ export function viewToPath(view: AppView) {
   if (view.kind === "profile") return "/profile";
   if (view.kind === "examples") return "/examples";
   if (view.kind === "public") return publicResumePath(view.id);
+  if (view.kind === "not-found") return "/404";
   return `/cv/${PANEL_TO_SLUG[view.section] || "details"}`;
 }
 
 export function pathToView(pathname: string, search = ""): AppView {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
-  if (parts.length === 0 || parts[0] === "home") return { kind: "start" };
+  if (parts.length === 0 || (parts.length === 1 && parts[0] === "home")) return { kind: "start" };
   if (parts[0] === "start") {
-    return {
-      kind: "begin",
-      step: parseStartStep(parts[1]),
-      intent: parseStartIntent(params.get("intent")),
-    };
+    if (parts.length === 1) {
+      return { kind: "begin", step: "choose", intent: parseStartIntent(params.get("intent")) };
+    }
+    if (parts.length === 2 && (parts[1] === "upload" || parts[1] === "linkedin")) {
+      return { kind: "begin", step: parts[1], intent: parseStartIntent(params.get("intent")) };
+    }
+    return { kind: "not-found" };
   }
-  if (parts[0] === "profile") return { kind: "profile" };
-  if (parts[0] === "about") return { kind: "about" };
-  if (parts[0] === "contact") return { kind: "contact" };
-  if (parts[0] === "examples") return { kind: "examples" };
+  if (parts.length === 1 && parts[0] === "profile") return { kind: "profile" };
+  if (parts.length === 1 && parts[0] === "about") return { kind: "about" };
+  if (parts.length === 1 && parts[0] === "contact") return { kind: "contact" };
+  if (parts.length === 1 && parts[0] === "examples") return { kind: "examples" };
   // Legacy `/r/name` still works; prefer bare `/name`.
-  if (parts[0] === "r" && parts[1]) {
+  if (parts[0] === "r" && parts.length === 2 && parts[1]) {
     return { kind: "public", id: parts[1] };
   }
   if (parts[0] === "cv") {
-    const section = SLUG_TO_PANEL[parts[1] || "details"] || "details";
-    return { kind: "cv", section };
+    if (parts.length === 1) return { kind: "cv", section: "details" };
+    if (parts.length === 2 && parts[1] in SLUG_TO_PANEL) {
+      return { kind: "cv", section: SLUG_TO_PANEL[parts[1]] };
+    }
+    return { kind: "not-found" };
   }
   if (parts.length === 1 && !RESERVED_ROOT.has(parts[0].toLowerCase())) {
     return { kind: "public", id: parts[0] };
   }
-  return { kind: "start" };
+  return { kind: "not-found" };
+}
+
+/** True for interactive SPA builder routes managed by AppShell. */
+export function isBuilderPath(pathname: string) {
+  if (
+    pathname === "/blog" ||
+    pathname.startsWith("/blog/") ||
+    pathname === "/privacy" ||
+    pathname.startsWith("/privacy/") ||
+    pathname === "/terms" ||
+    pathname.startsWith("/terms/") ||
+    pathname === "/billing" ||
+    pathname.startsWith("/billing/") ||
+    pathname.startsWith("/auth/")
+  ) {
+    return false;
+  }
+  const view = pathToView(pathname);
+  return (
+    view.kind === "start" ||
+    view.kind === "begin" ||
+    view.kind === "cv" ||
+    view.kind === "examples" ||
+    view.kind === "profile"
+  );
 }
 
 /** Shareable public resume URL — `domain.com/username`. */
@@ -159,24 +197,20 @@ export function panelPath(panel: PanelId) {
 export function crumbsFor(view: AppView) {
   if (view.kind === "start") return [{ href: "/", label: "Home" }];
   if (view.kind === "begin") {
-    const crumbs = [
-      { href: "/", label: "Home" },
-      { href: startPath("choose", view.intent), label: "Start" },
-    ];
+    const crumbs = [{ href: "/", label: "Home" }, { href: "/start", label: "Start" }];
     if (view.step === "upload") crumbs.push({ href: startPath("upload", view.intent), label: "Upload" });
-    if (view.step === "linkedin") crumbs.push({ href: startPath("linkedin", view.intent), label: "LinkedIn" });
+    else if (view.step === "linkedin") crumbs.push({ href: startPath("linkedin", view.intent), label: "LinkedIn" });
     return crumbs;
   }
   if (view.kind === "about") return [{ href: "/", label: "Home" }, { href: "/about", label: "About" }];
   if (view.kind === "contact") return [{ href: "/", label: "Home" }, { href: "/contact", label: "Contact" }];
   if (view.kind === "profile") return [{ href: "/", label: "Home" }, { href: "/profile", label: "Profile" }];
   if (view.kind === "examples") return [{ href: "/", label: "Home" }, { href: "/examples", label: "Your field" }];
-  if (view.kind === "public") return [{ href: "/", label: "Home" }, { href: publicResumePath(view.id), label: "Resume" }];
-  const section = viewToPath(view);
-  const crumbs = [
+  if (view.kind === "public") return [{ href: "/", label: "Home" }, { href: publicResumePath(view.id), label: "Shared resume" }];
+  if (view.kind === "not-found") return [{ href: "/", label: "Home" }];
+  return [
     { href: "/", label: "Home" },
     { href: "/cv/details", label: "My CV" },
+    { href: panelPath(view.section), label: SECTION_LABEL[view.section] || "Section" },
   ];
-  if (section !== "/cv/details") crumbs.push({ href: section, label: SECTION_LABEL[view.section] || "Details" });
-  return crumbs;
 }

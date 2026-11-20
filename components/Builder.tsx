@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AuthDialog } from "./AuthDialog";
 import { AppNav } from "./AppNav";
 import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
@@ -70,9 +70,12 @@ function fileToBase64(file: File) {
 
 export default function Builder() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const view = pathToView(pathname, searchParams.toString());
+  const [search, setSearch] = useState("");
+  useEffect(() => {
+    setSearch(window.location.search || "");
+  }, [pathname]);
+  const view = pathToView(pathname, search);
   const [mode, setMode] = useState<"loading" | "start" | "ready">("loading");
   const [panel, setPanel] = useState<PanelId | null>(null);
 
@@ -403,7 +406,7 @@ export default function Builder() {
     }
     if (!account.entitlement.canDownload) {
       afterGate.current = how;
-      setGateReason("Downloads come with a subscription. Pick a plan to carry on.");
+      setGateReason("");
       setGate("plan");
       return;
     }
@@ -414,7 +417,15 @@ export default function Builder() {
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
 
-  if (mode === "loading" && view.kind !== "public" && view.kind !== "about" && view.kind !== "contact" && view.kind !== "begin") {
+  if (
+    mode === "loading" &&
+    view.kind !== "start" &&
+    view.kind !== "examples" &&
+    view.kind !== "public" &&
+    view.kind !== "about" &&
+    view.kind !== "contact" &&
+    view.kind !== "begin"
+  ) {
     return <LoadScreen message="Opening CV Matters…" />;
   }
 
@@ -499,7 +510,14 @@ export default function Builder() {
   if (view.kind === "begin") {
     return (
       <div className="app-frame">
-        <AppNav view={view} />
+        <AppNav
+          view={view}
+          signedIn={!!account.user}
+          onSignIn={() => {
+            setGateReason("");
+            setGate("auth");
+          }}
+        />
         <StartPage
           intent={view.intent}
           step={view.step}
@@ -511,6 +529,15 @@ export default function Builder() {
           onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
           onUpload={(file, intent, templateId) => void beginFromUpload(file, intent, templateId)}
           onLinkedin={beginFromLinkedin}
+        />
+        <AuthDialog
+          open={gate === "auth"}
+          ownerKey={owner.current}
+          reason={gateReason}
+          onRegister={account.register}
+          onLogin={account.login}
+          onAuthenticated={() => setGate(null)}
+          onClose={() => setGate(null)}
         />
       </div>
     );
@@ -528,23 +555,28 @@ export default function Builder() {
   }
 
   if (view.kind === "start") {
+    const ready = mode === "ready";
     return (
       <Landing
-        data={snapshot.data}
-        templateId={snapshot.templateId}
+        data={ready ? snapshot.data : undefined}
+        templateId={ready ? snapshot.templateId : undefined}
         busy={busy}
         busyLabel={busyLabel}
         error={error}
-        onOpen={(intent) => {
-          if (intent === "field") {
-            setPanel("details");
-            router.push("/examples");
-            return;
-          }
-          const next = destination(intent);
-          setPanel(next);
-          router.push(panelPath(next));
-        }}
+        onOpen={
+          ready
+            ? (intent) => {
+                if (intent === "field") {
+                  setPanel("details");
+                  router.push("/examples");
+                  return;
+                }
+                const next = destination(intent);
+                setPanel(next);
+                router.push(panelPath(next));
+              }
+            : undefined
+        }
         onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
       />
     );
@@ -552,7 +584,16 @@ export default function Builder() {
 
   return (
     <div className="app-frame">
-      {view.kind !== "cv" && view.kind !== "examples" && view.kind !== "profile" && <AppNav view={view} />}
+      {view.kind !== "cv" && view.kind !== "examples" && view.kind !== "profile" && (
+        <AppNav
+          view={view}
+          signedIn={!!account.user}
+          onSignIn={() => {
+            setGateReason("");
+            setGate("auth");
+          }}
+        />
+      )}
 
       {view.kind === "profile" && (
         <ProfilePage
@@ -589,7 +630,7 @@ export default function Builder() {
         />
       )}
 
-      {view.kind === "examples" && mode === "ready" && (
+      {view.kind === "examples" && (
         <ExamplesBrowsePage
           panel={panel}
           data={snapshot.data}
