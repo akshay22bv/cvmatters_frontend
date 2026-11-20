@@ -118,6 +118,22 @@ export function improveText(input: { kind: "summary" | "bullets" | "tailor"; tex
   });
 }
 
+export function runAiCommand(input: {
+  prompt: string;
+  section: string;
+  templateId: TemplateId;
+  data: ResumeData;
+  jobDescription?: string;
+}) {
+  return request<{ templateId: TemplateId; data: ResumeData; reply: string; changed: boolean; source: string }>(
+    "/api/ai/command",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
+}
+
 export function adjustResume(input: { summary: string; experience: ResumeData["experience"]; role: string; jobDescription: string }) {
   return request<{ summary: string; experience: ResumeData["experience"]; source: string }>("/api/ai/adjust", {
     method: "POST",
@@ -161,6 +177,27 @@ export function loadAccount() {
 
 export function loadAuthConfig() {
   return request<{ google: boolean }>("/api/auth/config");
+}
+
+export function requestPasswordResetOtp(email: string) {
+  return request<{ ok: boolean; message: string; devPreviewUrl?: string }>("/api/auth/password/request", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function verifyPasswordResetOtp(email: string, code: string) {
+  return request<{ ok: boolean; resetToken: string }>("/api/auth/password/verify", {
+    method: "POST",
+    body: JSON.stringify({ email, code }),
+  });
+}
+
+export function resetPasswordWithOtp(input: { email: string; resetToken: string; password: string }) {
+  return request<{ ok: boolean }>("/api/auth/password/reset", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 /* ------------------------------------------------------------ billing -- */

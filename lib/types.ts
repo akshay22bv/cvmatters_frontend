@@ -302,17 +302,21 @@ export const ACCENTS = [
 ] as const;
 
 export function isAccent(value: string | undefined): value is string {
-  return !!value && (ACCENTS as readonly string[]).includes(value);
+  return !!value && ((ACCENTS as readonly string[]).includes(value) || /^#[0-9a-fA-F]{6}$/.test(value));
 }
 
 export type ResumeData = {
   fontId?: FontId;
-  /** Hex from ACCENTS, or undefined to keep the template's own colour. */
+  /** Hex color, or undefined to keep the template's own colour. */
   accent?: string;
   /** Absent means the template's own size (10pt), spacing (10pt) and line height (1). */
   typeSize?: number;
   spacing?: number;
   leading?: number;
+  /** Optional header alignment override (`left` or `center`). */
+  align?: "left" | "center";
+  /** Optional body text alignment override (`left` or `justify`). */
+  bodyAlign?: "left" | "justify";
   personal: {
     fullName: string;
     title: string;

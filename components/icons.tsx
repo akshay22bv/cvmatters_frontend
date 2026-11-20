@@ -412,3 +412,19 @@ export function IconLayers2() {
     </svg>
   );
 }
+
+export function IconArrowUp() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 12.5V3.5M4.2 7.2 8 3.4l3.8 3.8" />
+    </svg>
+  );
+}
+
+export function IconArrowDown() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3.5v9M4.2 8.8 8 12.6l3.8-3.8" />
+    </svg>
+  );
+}

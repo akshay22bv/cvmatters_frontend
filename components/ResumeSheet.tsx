@@ -759,7 +759,9 @@ function Frame({
       : isSidebar(templateId) || isRightbar(templateId)
         ? `split ${templateId}`
         : templateId
-  } ${fontClass(data.fontId)}${data.accent ? " has-accent" : ""}`;
+  } ${fontClass(data.fontId)}${data.accent ? " has-accent" : ""}${
+    data.align ? ` is-align-${data.align}` : ""
+  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`;
   // accent, type size, spacing and line height, read by the template rules
   const tint = paperStyle(data) as CSSProperties;
   if (templateId === "apex") {
@@ -943,7 +945,7 @@ export function ResumeView({
 
   return (
     <>
-      <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
+      <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
         {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
         {measurePieces}
       </div>
@@ -1025,7 +1027,7 @@ export function ResumeSheet({
   const total = preview && !fill && firstPage ? firstPage.total : 1;
   const measure = preview && !fill && typeof document !== "undefined"
     ? createPortal(
-        <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
+        <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
           {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
           {measurePieces}
         </div>,

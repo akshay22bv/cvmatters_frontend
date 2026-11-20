@@ -6,7 +6,7 @@ import { joinPlace, splitPlace, useCountries } from "@/lib/countries";
 import { Monogram } from "./Monogram";
 import { RichEditor } from "./RichEditor";
 import { StepCard } from "./StepCard";
-import { Pencil, Spark, Trash } from "./icons";
+import { IconArrowDown, IconArrowUp, Pencil, Spark, Trash } from "./icons";
 import { INDUSTRY_SKILLS, OTHER_SKILLS, TOOL_SKILLS } from "@/lib/skills";
 import { flatSkills, skillTags } from "@/lib/sectionOrder";
 import { newId } from "@/lib/id";
@@ -637,51 +637,78 @@ export function ExperienceStep({
           {data.experience.map((job, index) => {
             const range = [job.start, job.current ? "Present" : job.end].filter(Boolean).join(" – ");
             const heading = [job.role, job.company].filter(Boolean).join(", ");
-            const bullets = job.bullets.filter(Boolean);
+            const bullets = job.bullets.map((b) => b.trim()).filter(Boolean);
+            const snippet = bullets.join(" • ");
             return (
               <article className="entry-card" key={job.id} data-entry={job.id}>
                 <div className="entry-card-split">
                   <div className="entry-card-meta">
                     <p className="entry-card-eyebrow">Role &amp; company</p>
-                    <h3 className="entry-card-title">{heading}</h3>
+                    <h3 className="entry-card-title">{heading || "Untitled role"}</h3>
                     {job.location ? <p className="entry-card-line">{job.location}</p> : null}
                     {range ? <p className="entry-card-line entry-card-dates">{range}</p> : null}
                   </div>
                   <div className="entry-card-detail">
                     <p className="entry-card-eyebrow">What you did</p>
-                    {bullets.length ? (
-                      <ul className="entry-card-list">
-                        {bullets.map((bullet, i) => (
-                          <li key={i}>{bullet}</li>
-                        ))}
-                      </ul>
-                    ) : null}
+                    {snippet ? (
+                      <p className="entry-card-snippet">{snippet}</p>
+                    ) : (
+                      <p className="entry-card-placeholder">No highlights added yet.</p>
+                    )}
                   </div>
                 </div>
                 <div className="entry-card-foot">
-                  <button type="button" className="entry-card-act" onClick={() => setEditing(job.id)}>
-                    <Pencil />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="entry-card-act"
-                    onClick={() => onData({ ...data, experience: data.experience.filter((item) => item.id !== job.id) })}
-                  >
-                    <Trash />
-                    <span>Delete</span>
-                  </button>
-                  <button type="button" className="entry-card-act" disabled={index === 0} onClick={() => move(job.id, -1)}>
-                    <span>Move up</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="entry-card-act"
-                    disabled={index === data.experience.length - 1}
-                    onClick={() => move(job.id, 1)}
-                  >
-                    <span>Move down</span>
-                  </button>
+                  <span className="entry-card-count">
+                    {bullets.length ? `${bullets.length} ${bullets.length === 1 ? "point" : "points"}` : ""}
+                  </span>
+                  <div className="entry-card-actions">
+                    {data.experience.length > 1 ? (
+                      <div className="entry-card-group">
+                        <button
+                          type="button"
+                          className="entry-icon-btn"
+                          aria-label="Move up"
+                          title="Move up"
+                          disabled={index === 0}
+                          onClick={() => move(job.id, -1)}
+                        >
+                          <IconArrowUp />
+                        </button>
+                        <button
+                          type="button"
+                          className="entry-icon-btn"
+                          aria-label="Move down"
+                          title="Move down"
+                          disabled={index === data.experience.length - 1}
+                          onClick={() => move(job.id, 1)}
+                        >
+                          <IconArrowDown />
+                        </button>
+                      </div>
+                    ) : null}
+                    <div className="entry-card-group">
+                      <button
+                        type="button"
+                        className="entry-icon-btn"
+                        aria-label="Edit experience"
+                        title="Edit"
+                        onClick={() => setEditing(job.id)}
+                      >
+                        <Pencil />
+                      </button>
+                      <button
+                        type="button"
+                        className="entry-icon-btn is-danger"
+                        aria-label="Delete experience"
+                        title="Delete"
+                        onClick={() =>
+                          onData({ ...data, experience: data.experience.filter((item) => item.id !== job.id) })
+                        }
+                      >
+                        <Trash />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </article>
             );
@@ -813,33 +840,55 @@ export function EducationStep({
                 ) : null}
               </div>
               <div className="entry-card-foot">
-                <button type="button" className="entry-card-act" onClick={() => setEditing(item.id)}>
-                  <Pencil />
-                  <span>Edit</span>
-                </button>
-                <button
-                  type="button"
-                  className="entry-card-act"
-                  onClick={() => onData({ ...data, education: data.education.filter((entry) => entry.id !== item.id) })}
-                >
-                  <Trash />
-                  <span>Delete</span>
-                </button>
-                {data.education.length > 1 ? (
-                  <>
-                    <button type="button" className="entry-card-act" disabled={index === 0} onClick={() => moveEd(item.id, -1)}>
-                      <span>Move up</span>
+                <span className="entry-card-count" />
+                <div className="entry-card-actions">
+                  {data.education.length > 1 ? (
+                    <div className="entry-card-group">
+                      <button
+                        type="button"
+                        className="entry-icon-btn"
+                        aria-label="Move up"
+                        title="Move up"
+                        disabled={index === 0}
+                        onClick={() => moveEd(item.id, -1)}
+                      >
+                        <IconArrowUp />
+                      </button>
+                      <button
+                        type="button"
+                        className="entry-icon-btn"
+                        aria-label="Move down"
+                        title="Move down"
+                        disabled={index === data.education.length - 1}
+                        onClick={() => moveEd(item.id, 1)}
+                      >
+                        <IconArrowDown />
+                      </button>
+                    </div>
+                  ) : null}
+                  <div className="entry-card-group">
+                    <button
+                      type="button"
+                      className="entry-icon-btn"
+                      aria-label="Edit education"
+                      title="Edit"
+                      onClick={() => setEditing(item.id)}
+                    >
+                      <Pencil />
                     </button>
                     <button
                       type="button"
-                      className="entry-card-act"
-                      disabled={index === data.education.length - 1}
-                      onClick={() => moveEd(item.id, 1)}
+                      className="entry-icon-btn is-danger"
+                      aria-label="Delete education"
+                      title="Delete"
+                      onClick={() =>
+                        onData({ ...data, education: data.education.filter((entry) => entry.id !== item.id) })
+                      }
                     >
-                      <span>Move down</span>
+                      <Trash />
                     </button>
-                  </>
-                ) : null}
+                  </div>
+                </div>
               </div>
             </article>
           ))}

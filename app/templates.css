@@ -2590,3 +2590,43 @@
 .paper.has-accent.plaza .plaza-head {
   background: color-mix(in srgb, var(--theme) 10%, #eceff1);
 }
+
+/* AI alignment overrides */
+.paper.is-align-center header,
+.paper.is-align-center .mint-head,
+.paper.is-align-center .banner-head,
+.paper.is-align-center .formal-head,
+.paper.is-align-center .studio-head,
+.paper.is-align-center .plaza-head {
+  text-align: center;
+  justify-items: center;
+}
+
+.paper.is-align-center .mint-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.paper.is-align-center .mint-contact {
+  text-align: center;
+}
+
+.paper.is-align-left header,
+.paper.is-align-left .formal-head,
+.paper.is-align-left .plaza-head {
+  text-align: left;
+  justify-items: start;
+}
+
+.paper.is-body-justify p,
+.paper.is-body-justify li {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.paper.is-body-left p,
+.paper.is-body-left li {
+  text-align: left;
+}
