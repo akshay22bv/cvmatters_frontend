@@ -107,7 +107,7 @@ export function ProfilePage({
     return () => {
       cancelled = true;
     };
-  }, [ownerKey, resumeId, slug, isPublic]);
+  }, [ownerKey, resumeId, slug, isPublic, account.user?.id]);
 
   useEffect(() => {
     if (!account.user) {
@@ -249,8 +249,8 @@ export function ProfilePage({
   return (
     <div className="prof">
       <div className="prof-top">
-        <Link href="/cv/details" className="prof-back">
-          ← Back to CV
+        <Link href={resumeId ? "/cv/details" : startPath("choose")} className="prof-back">
+          {resumeId ? "← Back to CV" : "← Start a CV"}
         </Link>
         {!downloadsOn ? (
           <button type="button" className="prof-linkish" onClick={onPlans}>

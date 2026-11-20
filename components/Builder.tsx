@@ -182,6 +182,8 @@ export default function Builder() {
     }
   };
 
+  const signedInUserId = account.user?.id || null;
+
   useEffect(() => {
     let cancelled = false;
     owner.current = ownerKey();
@@ -205,7 +207,7 @@ export default function Builder() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [signedInUserId]);
 
   useEffect(() => {
     if (mode !== "ready" || !snapshot.id) return;
@@ -278,11 +280,6 @@ export default function Builder() {
     if (view.kind === "start") return;
     if (view.kind === "cv" && view.section !== panel) setPanel(view.section);
   }, [mode, pathname]);
-
-  useEffect(() => {
-    if (mode !== "start" || (view.kind !== "examples" && view.kind !== "profile")) return;
-    router.replace("/");
-  }, [mode, view.kind, router]);
 
   useEffect(() => {
     if (!snapshot.id) return;

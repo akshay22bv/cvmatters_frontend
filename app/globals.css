@@ -790,6 +790,7 @@ textarea.grow {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
   box-shadow: var(--pill-shadow-hover);
+  text-decoration: none;
 }
 
 .btn:disabled { opacity: 0.45; }
@@ -798,6 +799,7 @@ textarea.grow {
   border-color: transparent;
   background: var(--cta);
   color: var(--cta-ink);
+  text-decoration: none;
   box-shadow: var(--pill-shadow-primary);
 }
 
@@ -805,6 +807,29 @@ textarea.grow {
   transform: translateY(-2px);
   background: var(--cta-hover);
   box-shadow: var(--pill-shadow-primary-hover);
+  text-decoration: none;
+}
+
+/* Guarantee link-buttons across all pages never inherit browser underline */
+a.board-pill,
+a.board-pill:hover,
+a.btn,
+a.btn:hover,
+a.btn-primary,
+a.btn-primary:hover,
+a.btn-cta,
+a.btn-cta:hover,
+a.btn-quiet,
+a.btn-quiet:hover,
+a.prof-btn,
+a.prof-btn:hover,
+a.prof-back,
+a.prof-back:hover,
+a.app-nav-profile,
+a.app-nav-profile:hover,
+a.blog-top-cta,
+a.blog-top-cta:hover {
+  text-decoration: none;
 }
 
 .save-state {

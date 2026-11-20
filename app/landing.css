@@ -1174,31 +1174,40 @@
   justify-items: start;
 }
 
-/* Pill CTAs: outline or brand-green fill, trailing circle + chevron (matches editor Continue). */
+/* Pill CTAs: outline or solid fill; symmetric padding by default, asymmetric only when a trailing icon circle is present. */
 .board-pill {
   flex: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  height: 52px;
-  padding: 0 10px 0 24px;
+  height: var(--pill-h);
+  padding: 0 22px;
   border: 1px solid var(--line);
   border-radius: var(--pill-radius);
   background: var(--white);
   color: var(--ink);
   font: inherit;
-  font-size: 15.5px;
+  font-size: 15px;
   font-weight: 650;
   letter-spacing: -0.02em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: var(--pill-shadow);
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.28s var(--ease-out), background 0.2s var(--ease), opacity 0.2s var(--ease);
+}
+
+.board-pill:has(.board-pill-icon) {
+  padding: 0 10px 0 22px;
 }
 
 .board-pill:hover:not(:disabled) {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
   box-shadow: var(--pill-shadow-hover);
+  text-decoration: none;
 }
 
 .board-pill:disabled {
@@ -1246,9 +1255,13 @@
 }
 
 .board-pill-compact {
-  height: 44px;
-  padding: 0 8px 0 16px;
+  height: var(--pill-h-sm);
+  padding: 0 18px;
   font-size: 14px;
+}
+
+.board-pill-compact:has(.board-pill-icon) {
+  padding: 0 8px 0 16px;
 }
 
 .board-pill-compact .board-pill-icon {

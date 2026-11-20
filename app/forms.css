@@ -701,6 +701,9 @@ input:focus, textarea:focus {
   font-size: 15px;
   font-weight: 650;
   letter-spacing: -0.02em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
   box-shadow: var(--pill-shadow-primary);
   transition: transform 0.26s var(--ease-spring), background 0.2s var(--ease), box-shadow 0.26s var(--ease);
 }
@@ -709,6 +712,7 @@ input:focus, textarea:focus {
   transform: translateY(-2px);
   background: var(--cta-hover);
   box-shadow: var(--pill-shadow-primary-hover);
+  text-decoration: none;
 }
 
 .btn-cta:disabled { opacity: 0.6; }
@@ -749,15 +753,18 @@ input:focus, textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: var(--pill-h-sm);
-  padding: 0 20px;
+  height: var(--pill-h);
+  padding: 0 22px;
   border: 1px solid var(--line);
   border-radius: var(--pill-radius);
   background: var(--white);
   color: var(--ink);
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 650;
   letter-spacing: -0.02em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
   box-shadow: var(--pill-shadow);
   transition: transform 0.22s var(--ease), background 0.16s var(--ease), border-color 0.16s var(--ease), box-shadow 0.22s var(--ease);
 }
@@ -766,6 +773,7 @@ input:focus, textarea:focus {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
   box-shadow: var(--pill-shadow-hover);
+  text-decoration: none;
 }
 .btn-quiet:disabled { opacity: 0.5; }
 
@@ -836,34 +844,36 @@ input:focus, textarea:focus {
 /* ------------------------------------------------------- account gate ---- */
 /* Same order as Wix, Canva, and Notion: a provider, or email. */
 
-.auth-modal { padding: 32px 28px 0; }
+.auth-modal { padding: 32px 28px 26px; }
 
 .auth-modal .modal-head {
-  margin-bottom: 4px;
-  padding-right: 0;
+  margin-bottom: 18px;
+  padding: 0 36px;
   text-align: center;
 }
 
 .auth-modal .modal-head h2 {
-  font-size: 26px;
+  font-size: 25px;
   font-weight: 750;
   letter-spacing: -0.035em;
   line-height: 1.2;
 }
 
 .auth-modal .modal-head p {
-  margin-top: 8px;
+  margin: 8px 0 0;
   font-size: 14.5px;
   line-height: 1.45;
+  color: var(--muted);
 }
 
-.auth-body { gap: 12px; }
+.auth-body { gap: 14px; }
 
 .auth-switch {
-  margin: 0 0 6px;
+  margin: 4px 0 0;
   text-align: center;
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.4;
 }
 
 .auth-switch button {
@@ -1002,8 +1012,9 @@ input:focus, textarea:focus {
   font-size: 24px;
   font-weight: 720;
   letter-spacing: 0.34em;
+  text-indent: 0.34em;
   font-variant-numeric: tabular-nums;
-  padding-left: 22px;
+  padding: 0 16px;
 }
 
 .auth-resend-row {
@@ -1011,18 +1022,20 @@ input:focus, textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 2px;
+  margin-top: 4px;
+  padding: 2px 2px 0;
 }
 
 .auth-notice {
   margin: 0;
-  padding: 11px 13px;
+  padding: 11px 14px;
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   border-radius: 12px;
   background: color-mix(in srgb, var(--accent) 8%, white);
   color: var(--ink);
   font-size: 13.5px;
   line-height: 1.45;
+  text-align: center;
 }
 
 .auth-notice a {
@@ -1083,6 +1096,7 @@ input:focus, textarea:focus {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .auth-pass-wrap .auth-input {
@@ -1151,8 +1165,8 @@ input:focus, textarea:focus {
 }
 
 .auth-legal {
-  margin: 8px -28px 0;
-  padding: 16px 28px 22px;
+  margin: 6px -28px -26px;
+  padding: 15px 28px 20px;
   border-top: 1px solid #eceef4;
   color: var(--muted);
   font-size: 12.5px;

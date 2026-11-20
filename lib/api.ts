@@ -34,6 +34,7 @@ export class ApiError extends Error {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = readToken();
   const response = await fetch(`/backend${path}`, {
+    cache: "no-store",
     ...init,
     headers: {
       "Content-Type": "application/json",

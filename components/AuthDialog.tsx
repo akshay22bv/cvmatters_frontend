@@ -448,6 +448,11 @@ export function AuthDialog({
             <button type="submit" className="btn-cta" disabled={busy || !password || !confirmPassword}>
               {busy ? "Updating…" : "Update password"}
             </button>
+            <p className="auth-switch">
+              <button type="button" onClick={() => switchMode("login")}>
+                Back to sign in
+              </button>
+            </p>
           </form>
         ) : null}
 
