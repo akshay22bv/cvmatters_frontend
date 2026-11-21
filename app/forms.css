@@ -614,11 +614,14 @@ input:focus, textarea:focus {
 .modal {
   position: fixed;
   inset: 0;
+  height: 100vh;
+  height: var(--app-height, 100dvh);
   /* Above .preview-sheet (80) and .picker (90) so sign-in / plans open on top. */
   z-index: 100;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
 }
 
 .modal-scrim {
@@ -640,8 +643,10 @@ input:focus, textarea:focus {
 .modal-panel {
   position: relative;
   max-width: 100%;
-  max-height: calc(100vh - 40px);
+  max-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 26px;
   border-radius: 24px;
   background: white;
@@ -657,6 +662,7 @@ input:focus, textarea:focus {
   position: absolute;
   top: 16px;
   right: 16px;
+  z-index: 3;
   width: var(--icon-btn);
   height: var(--icon-btn);
   border: 1px solid var(--line);
@@ -666,6 +672,36 @@ input:focus, textarea:focus {
   font-size: 19px;
   line-height: 1;
   transition: transform 0.3s var(--ease-spring), color 0.16s var(--ease);
+}
+
+@media (max-width: 640px) {
+  .modal {
+    top: var(--vv-top, 0px);
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: var(--app-height, 100dvh);
+    padding: max(12px, env(safe-area-inset-top, 0px)) 12px max(12px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .modal-panel {
+    padding: 20px 18px 22px;
+    border-radius: 20px;
+  }
+
+  .modal-x {
+    top: 14px;
+    right: 14px;
+  }
+
+  .plan-modal .modal-x {
+    position: sticky;
+    top: 0;
+    float: right;
+    z-index: 4;
+    margin-bottom: -36px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.12);
+  }
 }
 
 .modal-x:hover { transform: rotate(90deg); color: var(--ink); }
@@ -7423,15 +7459,28 @@ button.finish-check-grip:active {
   text-decoration: none;
 }
 
-.public-join-link {
-  color: rgba(255, 255, 255, 0.72);
-  text-decoration: none;
+.public-download-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--pill-radius);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
 }
 
-.public-join-link:hover {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.public-download-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.36);
+}
+
+.public-download-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Standalone /login and /signup pages */

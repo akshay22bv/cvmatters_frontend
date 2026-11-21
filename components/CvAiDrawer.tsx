@@ -196,10 +196,12 @@ export function CvAiDrawer({
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-    const timer = window.setTimeout(() => inputRef.current?.focus(), 160);
+    // Only auto-focus on pointer-fine desktops; mobile opens cleanly without slamming the keyboard up.
+    const isDesktop = typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
+    const timer = isDesktop ? window.setTimeout(() => inputRef.current?.focus(), 160) : null;
     return () => {
       window.removeEventListener("keydown", onKey);
-      window.clearTimeout(timer);
+      if (timer != null) window.clearTimeout(timer);
     };
   }, [open, onClose]);
 

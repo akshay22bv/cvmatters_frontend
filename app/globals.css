@@ -1778,8 +1778,8 @@ button.example {
 
 @media print {
   @page { size: A4; margin: 0; }
-  .topbar, .curve-rail, .drawer, .page-stack, .measure-col, .pdf-btn, .nav-cta, .preview-caption { display: none !important; }
-  .app-frame, .shell, .stage-row, .stage, .page-stage { display: block !important; height: auto !important; overflow: visible !important; background: white !important; }
+  .topbar, .curve-rail, .drawer, .page-stack, .measure-col, .pdf-btn, .nav-cta, .preview-caption, .public-float-close, .public-rate-bar, .public-join-bar, .public-notes { display: none !important; }
+  .app-frame, .shell, .stage-row, .stage, .page-stage, .public-stage, .public-sheet { display: block !important; height: auto !important; padding: 0 !important; overflow: visible !important; background: white !important; width: auto !important; }
   .print-root { display: block !important; position: static !important; transform: none !important; width: auto !important; }
   .print-root,
   .print-root > div,

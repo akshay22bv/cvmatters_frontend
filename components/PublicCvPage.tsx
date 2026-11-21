@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ResumeView } from "./ResumeSheet";
 import { LoadScreen } from "./LoadScreen";
 import { Stars } from "./Stars";
+import { IconDownload } from "./icons";
 import { ApiError, loadPublicResume, loadRatings, rateResume } from "@/lib/api";
 import { hasPublicResumeContent } from "@/lib/publicResume";
 import type { RatingSummary, ResumeRecord } from "@/lib/types";
@@ -189,13 +190,18 @@ export function PublicCvPage({
       </div>
 
       <div className="public-join-bar">
-        <span>Built with CV Matters</span>
         <Link href="/start" className="public-join-cta">
           Create your free CV →
         </Link>
-        <Link href="/pricing" className="public-join-link">
-          Pricing
-        </Link>
+        <button
+          type="button"
+          className="public-download-btn"
+          aria-label={`Download ${name}'s resume`}
+          title="Download / Print PDF"
+          onClick={() => window.print()}
+        >
+          <IconDownload />
+        </button>
       </div>
 
       {notes.length > 0 ? (
