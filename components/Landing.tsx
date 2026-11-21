@@ -122,7 +122,7 @@ export function Landing({
                   </span>
                 </button>
                 <p className="board-cta-meta">
-                  Free to start · <Link href="/pricing">Pricing</Link> · <Link href="/login">Sign in</Link>
+                  <Link href="/login">Sign in</Link>
                 </p>
               </div>
             </div>
