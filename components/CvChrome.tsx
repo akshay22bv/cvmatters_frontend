@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconCreate, IconDownload, IconLayers, IconMenu, IconOpenBook, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
+import { IconAiDots, IconChevronLeft, IconChevronRight, IconCreate, IconDownload, IconLayers, IconMenu, IconOpenBook, IconPalette, IconSpinner, IconUser, Logo } from "./icons";
 import { SECTIONS, sectionFilled } from "./SideNav";
 import type { PanelId, ResumeData } from "@/lib/types";
 
@@ -80,12 +80,14 @@ export function CvMobileChrome({
   onDownload,
   /** Opens design / template picker (palette icon). Pass from CV builder and examples. */
   onOpenDesign,
+  onAskAi,
 }: {
   panel: PanelId | null;
   downloading?: boolean;
   onPreview: () => void;
   onDownload: () => void;
   onOpenDesign: () => void;
+  onAskAi?: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -114,6 +116,12 @@ export function CvMobileChrome({
           <Logo />
         </Link>
         <span className="slice-mobile-title">{current?.title ?? "My CV"}</span>
+        {onAskAi ? (
+          <button type="button" className="slice-mobile-ai" onClick={onAskAi} aria-label="Ask AI">
+            <IconAiDots size={15} />
+            <span>Ask AI</span>
+          </button>
+        ) : null}
       </header>
 
       <div className={`slice-sheet${open ? " is-open" : ""}`} role="presentation">

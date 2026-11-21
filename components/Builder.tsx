@@ -18,11 +18,12 @@ import { ContactPage } from "./ContactPage";
 import { Landing, type DashIntent } from "./Landing";
 import { StartPage } from "./StartPage";
 import { LoadScreen } from "./LoadScreen";
+import { CvAiDrawer } from "./CvAiDrawer";
 import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } from "./CvChrome";
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
-import { IconChevronLeft, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
+import { IconAiDots, IconArrowUp, IconChevronLeft, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { panelPath, pathToView } from "@/lib/paths";
@@ -100,6 +101,7 @@ export default function Builder() {
   const [picked, setPicked] = useState<{ section: PanelId; focusId?: string; tick: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
   const [lookIntent, setLookIntent] = useState<"layout" | "look">("layout");
   const [profileOpen, setProfileOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -664,6 +666,7 @@ export default function Builder() {
               setLookIntent("look");
               setTemplatesOpen(true);
             }}
+            onAskAi={() => setAiOpen(true)}
           />
           <div
             className="work-scroll"
@@ -879,6 +882,20 @@ export default function Builder() {
                   if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
                 }}
               />
+              <button
+                type="button"
+                className={`work-ai-pill${aiOpen ? " is-active" : ""}`}
+                aria-expanded={aiOpen}
+                onClick={() => setAiOpen((v) => !v)}
+              >
+                <span className="work-ai-pill-mark" aria-hidden="true">
+                  <IconAiDots size={15} />
+                </span>
+                <span className="work-ai-pill-text">Ask AI anything…</span>
+                <span className="work-ai-pill-go" aria-hidden="true">
+                  <IconArrowUp />
+                </span>
+              </button>
               <SliceViewCv
                 onPreview={() => setPreviewOpen(true)}
                 onDesign={() => {
@@ -1027,6 +1044,17 @@ export default function Builder() {
         onFont={(fontId) => patch({ data: { ...snapshot.data, fontId } })}
         onAccent={(accent) => patch({ data: { ...snapshot.data, accent } })}
         onStyle={(look) => setSnapshot((current) => ({ ...current, data: { ...current.data, ...look } }))}
+      />
+
+      <CvAiDrawer
+        open={aiOpen && view.kind === "cv"}
+        onClose={() => setAiOpen(false)}
+        userName={account.user?.name}
+        section={panel || "details"}
+        templateId={snapshot.templateId}
+        data={snapshot.data}
+        jobDescription={snapshot.jobDescription}
+        onApply={({ templateId, data }) => patch({ templateId, data })}
       />
 
       <AuthDialog

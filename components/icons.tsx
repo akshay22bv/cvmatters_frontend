@@ -428,3 +428,14 @@ export function IconArrowDown() {
     </svg>
   );
 }
+
+export function IconAiDots({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+      <rect x="8.2" y="2.2" width="3.6" height="3.6" rx="1.1" />
+      <rect x="8.2" y="14.2" width="3.6" height="3.6" rx="1.1" />
+      <rect x="2.2" y="8.2" width="3.6" height="3.6" rx="1.1" />
+      <rect x="14.2" y="8.2" width="3.6" height="3.6" rx="1.1" />
+    </svg>
+  );
+}
