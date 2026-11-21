@@ -7473,14 +7473,39 @@ button.finish-check-grip:active {
   transition: background 140ms ease, border-color 140ms ease;
 }
 
-.public-download-btn:hover {
+.public-download-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.36);
+}
+
+.public-download-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
 }
 
 .public-download-btn svg {
   width: 16px;
   height: 16px;
+}
+
+.public-download-spin {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 999px;
+  animation: public-dl-spin 0.7s linear infinite;
+}
+
+@keyframes public-dl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.public-download-err {
+  margin: 0;
+  color: #ffb4a8;
+  font-size: 13px;
+  text-align: center;
 }
 
 /* Standalone /login and /signup pages */

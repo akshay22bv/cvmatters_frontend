@@ -442,10 +442,13 @@ export default function Builder() {
         <PublicCvPage
           id={view.id}
           signedIn={!!account.user}
+          downloading={downloading}
+          downloadError={pdfError}
           onSignIn={() => {
             setGateReason("Sign in to rate this resume.");
             setGate("auth");
           }}
+          onDownload={() => requestPdf("download")}
         />
         <AuthDialog
           open={gate === "auth"}
@@ -455,6 +458,21 @@ export default function Builder() {
           onLogin={account.login}
           onAuthenticated={() => setGate(null)}
           onClose={() => setGate(null)}
+        />
+        <PlanDialog
+          open={gate === "plan"}
+          account={account}
+          reason={gateReason}
+          onClose={() => setGate(null)}
+          onSignIn={() => {
+            setGateReason("Sign in to subscribe and download.");
+            setGate("auth");
+          }}
+          onPaid={() => {
+            const wanted = afterGate.current;
+            afterGate.current = null;
+            if (wanted === "download") void download();
+          }}
         />
       </div>
     );

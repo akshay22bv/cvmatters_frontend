@@ -17,12 +17,18 @@ export function PublicCvPage({
   id,
   initialRecord = null,
   signedIn,
+  downloading = false,
+  downloadError = "",
   onSignIn,
+  onDownload,
 }: {
   id: string;
   initialRecord?: (ResumeRecord & { isMine?: boolean }) | null;
   signedIn: boolean;
+  downloading?: boolean;
+  downloadError?: string;
   onSignIn: () => void;
+  onDownload?: (name: string) => void;
 }) {
   const [record, setRecord] = useState<(ResumeRecord & { isMine?: boolean }) | null>(initialRecord);
   const [notes, setNotes] = useState<{ stars: number; note: string; name: string; at: string }[]>([]);
@@ -193,16 +199,20 @@ export function PublicCvPage({
         <Link href="/start" className="public-join-cta">
           Create your free CV →
         </Link>
-        <button
-          type="button"
-          className="public-download-btn"
-          aria-label={`Download ${name}'s resume`}
-          title="Download / Print PDF"
-          onClick={() => window.print()}
-        >
-          <IconDownload />
-        </button>
+        {onDownload ? (
+          <button
+            type="button"
+            className="public-download-btn"
+            aria-label={downloading ? "Building PDF…" : `Download ${name}'s resume as PDF`}
+            title={downloading ? "Building PDF…" : "Download PDF"}
+            disabled={downloading}
+            onClick={() => onDownload(name)}
+          >
+            {downloading ? <span className="public-download-spin" aria-hidden="true" /> : <IconDownload />}
+          </button>
+        ) : null}
       </div>
+      {downloadError ? <p className="public-download-err" role="alert">{downloadError}</p> : null}
 
       {notes.length > 0 ? (
         <section className="public-notes">
