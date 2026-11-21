@@ -1,8 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { SITE_NAME, SITE_TAGLINE, SUPPORT_EMAIL } from "@/lib/site";
-import { IconChevronRight, IconLock, Logo } from "./icons";
+import { SITE_NAME, SUPPORT_EMAIL } from "@/lib/site";
+import { Logo } from "./icons";
+
+type FootLink =
+  | { type: "link"; href: string; label: string }
+  | { type: "action"; label: string; onClick: () => void; disabled?: boolean };
+
+function FootPanel({
+  title,
+  links,
+  defaultOpen = false,
+}: {
+  title: string;
+  links: FootLink[];
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details className="board-foot-panel" open={defaultOpen}>
+      <summary className="board-foot-panel-summary">{title}</summary>
+      <ul className="board-foot-link-grid">
+        {links.map((item) => (
+          <li key={item.label}>
+            {item.type === "link" ? (
+              item.href.startsWith("#") ? (
+                <a href={item.href}>{item.label}</a>
+              ) : (
+                <Link href={item.href}>{item.label}</Link>
+              )
+            ) : (
+              <button type="button" className="board-foot-action-link" disabled={item.disabled} onClick={item.onClick}>
+                {item.label}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
 
 export function SiteFooter({
   busy = false,
@@ -19,130 +56,68 @@ export function SiteFooter({
   const templatesHref = showActions ? "#templates" : "/#templates";
   const year = new Date().getFullYear();
 
+  const productLinks: FootLink[] = [
+    { type: "link", href: "/cv/details", label: "CV editor" },
+    { type: "link", href: "/cv/job", label: "Job matching" },
+    { type: "link", href: "/cv/compare", label: "PDF download" },
+    { type: "link", href: templatesHref, label: "Templates" },
+    { type: "link", href: "/pricing", label: "Pricing" },
+    { type: "link", href: "/login", label: "Sign in" },
+  ];
+
+  if (showActions) {
+    productLinks.push(
+      { type: "action", label: "Build your CV", onClick: onBuild!, disabled: busy },
+      { type: "action", label: "Match a job", onClick: onJob!, disabled: busy },
+      { type: "action", label: "Your field", onClick: onField!, disabled: busy },
+    );
+  }
+
+  const siteLinks: FootLink[] = [
+    { type: "link", href: "/examples", label: "Examples by field" },
+    { type: "link", href: "/blog", label: "Blog" },
+    { type: "link", href: "/help", label: "Help" },
+    { type: "link", href: "/about", label: "About us" },
+    { type: "link", href: "/contact", label: "Contact us" },
+    { type: "link", href: "/about#how-it-works", label: "How it works" },
+    { type: "link", href: `mailto:${SUPPORT_EMAIL}?subject=Billing%20help`, label: "Billing help" },
+    { type: "link", href: "/privacy", label: "Privacy" },
+    { type: "link", href: "/terms", label: "Terms" },
+  ];
+
   return (
     <footer className="board-foot">
       <div className="board-foot-surface">
-        <div className="board-foot-glow" aria-hidden="true" />
-        <div className="board-rail board-foot-layout">
-          <div className="board-foot-brand">
-            <div className="board-foot-logo" aria-hidden="true">
+        <div className="board-rail board-foot-inner">
+          <div className="board-foot-head">
+            <Link href="/" className="board-foot-logo" aria-label={`${SITE_NAME} home`}>
               <Logo />
+            </Link>
+            <div className="board-foot-connect">
+              <p className="board-foot-connect-label">Connect with us</p>
+              <a className="board-foot-connect-link" href={`mailto:${SUPPORT_EMAIL}`}>
+                {SUPPORT_EMAIL}
+              </a>
             </div>
-            <p className="board-foot-kicker">Resume builder</p>
-            <strong className="board-foot-title">{SITE_NAME}</strong>
-            <p className="board-foot-tagline">{SITE_TAGLINE}</p>
-
-            {showActions ? (
-              <div className="board-foot-cta">
-                <button type="button" className="board-pill board-pill-primary board-pill-compact" disabled={busy} onClick={onBuild}>
-                  <span className="board-pill-label">Build your CV</span>
-                  <span className="board-pill-icon" aria-hidden="true">
-                    <IconChevronRight />
-                  </span>
-                </button>
-                <button type="button" className="board-pill board-pill-outline board-pill-compact board-foot-pill" disabled={busy} onClick={onJob}>
-                  <span className="board-pill-label">Match a job</span>
-                  <span className="board-pill-icon" aria-hidden="true">
-                    <IconChevronRight />
-                  </span>
-                </button>
-                <button type="button" className="board-pill board-pill-outline board-pill-compact board-foot-pill" disabled={busy} onClick={onField}>
-                  <span className="board-pill-label">Your field</span>
-                  <span className="board-pill-icon" aria-hidden="true">
-                    <IconChevronRight />
-                  </span>
-                </button>
-              </div>
-            ) : (
-              <Link href="/cv/details" className="board-pill board-pill-primary board-pill-compact board-foot-start">
-                <span className="board-pill-label">Start your CV</span>
-                <span className="board-pill-icon" aria-hidden="true">
-                  <IconChevronRight />
-                </span>
-              </Link>
-            )}
           </div>
 
-          <div className="board-foot-columns">
-            <nav className="board-foot-col" aria-label="Product">
-              <h3 className="board-foot-col-title">Product</h3>
-              <ul className="board-foot-list">
-                <li>
-                  <Link href="/cv/details">CV editor</Link>
-                </li>
-                <li>
-                  <Link href="/cv/job">Job matching</Link>
-                </li>
-                <li>
-                  <Link href="/cv/compare">PDF download</Link>
-                </li>
-                <li>
-                  <a href={templatesHref}>Templates</a>
-                </li>
-                <li>
-                  <Link href="/pricing">Pricing</Link>
-                </li>
-              </ul>
-            </nav>
-
-            <nav className="board-foot-col" aria-label="Explore">
-              <h3 className="board-foot-col-title">Explore</h3>
-              <ul className="board-foot-list">
-                <li>
-                  <Link href="/examples">Examples by field</Link>
-                </li>
-                <li>
-                  <Link href="/blog">Blog</Link>
-                </li>
-                <li>
-                  <Link href="/about">About</Link>
-                </li>
-                <li>
-                  <Link href="/about#how-it-works">How it works</Link>
-                </li>
-              </ul>
-            </nav>
-
-            <nav className="board-foot-col" aria-label="Support and legal">
-              <h3 className="board-foot-col-title">Support</h3>
-              <ul className="board-foot-list">
-                <li>
-                  <Link href="/login">Sign in</Link>
-                </li>
-                <li>
-                  <Link href="/contact">Contact us</Link>
-                </li>
-                <li>
-                  <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-                </li>
-                <li>
-                  <Link href="/privacy">Privacy</Link>
-                </li>
-                <li>
-                  <Link href="/terms">Terms</Link>
-                </li>
-                <li>
-                  <a href={`mailto:${SUPPORT_EMAIL}?subject=Billing%20help`}>Billing help</a>
-                </li>
-              </ul>
-            </nav>
+          <div className="board-foot-panels">
+            <FootPanel title="Product" links={productLinks} defaultOpen />
+            <FootPanel title={SITE_NAME} links={siteLinks} defaultOpen />
           </div>
         </div>
       </div>
 
-      <div className="board-foot-bar">
-        <div className="board-rail board-foot-bar-inner">
-          <p className="board-foot-copyline">{`© ${year} ${SITE_NAME}. All rights reserved.`}</p>
-          <p className="board-foot-trust">
-            <IconLock />
-            <span>Checkout in INR (₹) · UPI, international &amp; domestic cards, net banking via Cashfree</span>
-          </p>
-          <div className="board-foot-bar-links">
-            <Link href="/contact">Contact</Link>
-            <Link href="/privacy">Privacy</Link>
-            <Link href="/terms">Terms</Link>
-          </div>
-        </div>
+      <div className="board-foot-legal">
+        <p className="board-foot-legal-line">
+          {`© ${year} ${SITE_NAME}. All rights reserved. `}
+          <Link href="/terms">Terms of Use</Link>
+          {" and "}
+          <Link href="/privacy">Privacy Policy</Link>
+        </p>
+        <p className="board-foot-legal-trust">
+          Checkout in INR (₹) · UPI, international &amp; domestic cards, net banking via Cashfree
+        </p>
       </div>
     </footer>
   );
