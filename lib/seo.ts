@@ -5,7 +5,7 @@ import {
   hasPublicResumeContent,
   type PublicResumeDataLike,
 } from "./publicResume";
-import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_KEYWORDS, SITE_NAME, SITE_TAGLINE, siteUrl } from "./site";
+import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_NAME, SITE_TAGLINE, siteUrl } from "./site";
 
 const NO_INDEX: Metadata["robots"] = {
   index: false,
@@ -61,7 +61,6 @@ function baseMeta(input: {
     // Use `absolute` so RootLayout's `title.template` (`%s · CV Matters`) never doubles the suffix.
     title: { absolute: input.title },
     description: input.description,
-    keywords: SITE_KEYWORDS,
     alternates: { canonical: url },
     robots: input.robots ?? { index: true, follow: true },
     openGraph: openGraph({

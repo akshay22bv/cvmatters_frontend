@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_KEYWORDS, SITE_NAME, siteUrl } from "@/lib/site";
+import { DEFAULT_DESCRIPTION, OG_IMAGE_PATH, SITE_NAME, siteUrl } from "@/lib/site";
 import {
   DM_Sans,
   Inter,
@@ -42,7 +42,12 @@ const outfit = Outfit({
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap", preload: false });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
 const roboto = Roboto({ weight: ["400", "500", "700"], subsets: ["latin"], variable: "--font-roboto", display: "swap", preload: false });
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", display: "swap", preload: false });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 const poppins = Poppins({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins", display: "swap", preload: false });
 const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-source-serif", display: "swap", preload: false });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap", preload: false });
@@ -57,7 +62,6 @@ export const metadata: Metadata = {
     template: `%s · ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
-  keywords: SITE_KEYWORDS,
   applicationName: SITE_NAME,
   category: "business",
   creator: SITE_NAME,
@@ -123,7 +127,7 @@ const fontVars = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fontVars}>
-      <body className={outfit.className}>
+      <body className={montserrat.className}>
         <AppShell />
         {children}
       </body>

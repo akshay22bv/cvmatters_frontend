@@ -76,7 +76,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         <div className="blog-article-cover">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.coverImage || "/blog/online-resume.svg"} alt="" width={1200} height={675} />
+          <img src={post.coverImage || "/blog/online-resume.svg"} alt={post.title} width={1200} height={675} />
         </div>
 
         <div className="blog-prose" dangerouslySetInnerHTML={{ __html: post.html }} />

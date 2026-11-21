@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
+import { ResumeSectionLabel } from "./ResumeSectionLabel";
 import { plainRange } from "@/lib/content";
 import { sectionOnCv, sectionRenders, skillTags } from "@/lib/sectionOrder";
 import type { ResumeData } from "@/lib/types";
@@ -174,7 +175,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="mint-section">
-        <h2 className="mint-label">Professional Summary</h2>
+        <ResumeSectionLabel className="mint-label">Professional Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="mint-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -195,7 +196,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         {index === 0 ? (
           <section className="mint-section">
-            <h2 className="mint-label">Work Experience</h2>
+            <ResumeSectionLabel className="mint-label">Work Experience</ResumeSectionLabel>
             {jobCard}
           </section>
         ) : (
@@ -208,7 +209,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="mint-section">
-        <h2 className="mint-label">Education</h2>
+        <ResumeSectionLabel className="mint-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="mint-job" key={item.id} data-focus={item.id}>
             <div className="mint-job-top">
@@ -223,7 +224,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="skills" section="skills">
       <section className="mint-section">
-        <h2 className="mint-label">Skills</h2>
+        <ResumeSectionLabel className="mint-label">Skills</ResumeSectionLabel>
         {skillList(data.skills).length ? (
           <p className="mint-skills">{skillList(data.skills).join(", ")}</p>
         ) : (
@@ -247,7 +248,7 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="banner-section">
-        <h2 className="banner-label">Summary</h2>
+        <ResumeSectionLabel className="banner-label">Summary</ResumeSectionLabel>
         {data.summary ? (
           <FormattedText text={data.summary} className="banner-summary" />
         ) : (
@@ -257,7 +258,7 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="skills" section="skills">
       <section className="banner-section">
-        <h2 className="banner-label">Skills</h2>
+        <ResumeSectionLabel className="banner-label">Skills</ResumeSectionLabel>
         <div className="banner-skills">
           {skillList(data.skills).map((item, index) => (
             <p key={`${item}-${index}`}><RichLine text={item} /></p>
@@ -271,7 +272,7 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="banner-section">
-          {index === 0 && <h2 className="banner-label">Professional Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="banner-label">Professional Experience</ResumeSectionLabel>}
           <div className={`banner-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <strong>
               {[job.role, job.company].filter(Boolean).join(" | ") || "Role"}
@@ -286,7 +287,7 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="banner-section">
-        <h2 className="banner-label">Education</h2>
+        <ResumeSectionLabel className="banner-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="banner-job" key={item.id} data-focus={item.id}>
             <strong>{[item.degree, item.school].filter(Boolean).join(" | ") || "Education"}</strong>
@@ -314,7 +315,7 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
     pieces.push(
       <Block key="about" section="bio">
         <section className="formal-section">
-          <h2 className="formal-label">Summary</h2>
+          <ResumeSectionLabel className="formal-label">Summary</ResumeSectionLabel>
           <FormattedText text={data.summary} className="formal-summary" />
         </section>
       </Block>,
@@ -337,7 +338,7 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         {index === 0 ? (
           <section className="formal-section">
-            <h2 className="formal-label">Experience</h2>
+            <ResumeSectionLabel className="formal-label">Experience</ResumeSectionLabel>
             {jobCard}
           </section>
         ) : (
@@ -350,7 +351,7 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="formal-section">
-        <h2 className="formal-label">Education</h2>
+        <ResumeSectionLabel className="formal-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="formal-job" key={item.id} data-focus={item.id}>
             <div className="formal-row">
@@ -367,7 +368,7 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="skills" section="skills">
       <section className="formal-section">
-        <h2 className="formal-label">Skills</h2>
+        <ResumeSectionLabel className="formal-label">Skills</ResumeSectionLabel>
         <div className="formal-other">
           {skillList(data.skills).length ? <p>{skillList(data.skills).join(", ")}</p> : null}
         </div>
@@ -382,7 +383,7 @@ export function apexMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
       <section className="apex-section">
-        <h2 className="apex-label">Summary</h2>
+        <ResumeSectionLabel className="apex-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="apex-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -391,7 +392,7 @@ export function apexMainPieces(data: ResumeData) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="apex-section">
-          {index === 0 && <h2 className="apex-label">Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="apex-label">Experience</ResumeSectionLabel>}
           <div className={`apex-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <strong>{job.role || "Role"}</strong>
             <div className="apex-company"><RichLine text={job.company || "Company"} /></div>
@@ -422,7 +423,7 @@ export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContac
       <aside className="apex-side">
         {sectionOnCv(data, "skills") ? (
           <div data-section="skills">
-            <h2 className="apex-label">Skills</h2>
+            <ResumeSectionLabel className="apex-label">Skills</ResumeSectionLabel>
             <div className="apex-pills">
               {skills.map((item, index) => (
                 <span key={`${item}-${index}`}>{item}</span>
@@ -433,7 +434,7 @@ export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContac
         ) : null}
         {sectionOnCv(data, "extras") && strengths ? (
           <div data-section="extras" data-focus={strengths.id}>
-            <h2 className="apex-label"><RichLine text={strengths.title} /></h2>
+            <ResumeSectionLabel className="apex-label"><RichLine text={strengths.title} /></ResumeSectionLabel>
             <div className={strengths.bullets === true ? "apex-side-list" : "apex-side-plain"}>
               {strengths.items.filter(Boolean).map((item, index) =>
                 strengths.bullets === true ? (
@@ -447,7 +448,7 @@ export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContac
         ) : null}
         {sectionOnCv(data, "extras") && languages ? (
           <div data-section="extras" data-focus={languages.id}>
-            <h2 className="apex-label"><RichLine text={languages.title} /></h2>
+            <ResumeSectionLabel className="apex-label"><RichLine text={languages.title} /></ResumeSectionLabel>
             <div className={languages.bullets === true ? "apex-side-list" : "apex-side-plain"}>
               {languages.items.filter(Boolean).map((item, index) =>
                 languages.bullets === true ? (
@@ -461,7 +462,7 @@ export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContac
         ) : null}
         {sectionOnCv(data, "education") ? (
           <div data-section="education">
-            <h2 className="apex-label">Education</h2>
+            <ResumeSectionLabel className="apex-label">Education</ResumeSectionLabel>
             {data.education.map((item) => (
               <div className="apex-edu" key={item.id} data-focus={item.id}>
                 <strong><RichLine text={item.degree || "Degree"} /></strong>
@@ -480,13 +481,13 @@ export function cabinetMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
       <section className="cab-section">
-        <h2 className="cab-label">Summary</h2>
+        <ResumeSectionLabel className="cab-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="cab-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     <Block key="edu" section="education">
       <section className="cab-section">
-        <h2 className="cab-label">Education</h2>
+        <ResumeSectionLabel className="cab-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="cab-job" key={item.id} data-focus={item.id}>
             <div className="cab-job-top">
@@ -503,7 +504,7 @@ export function cabinetMainPieces(data: ResumeData) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="cab-section">
-          {index === 0 && <h2 className="cab-label">Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="cab-label">Experience</ResumeSectionLabel>}
           <div className={`cab-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="cab-job-top">
               <strong>{job.role || "Role"}</strong>
@@ -536,7 +537,7 @@ export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideCon
       </header>
       {sectionOnCv(data, "skills") ? (
         <aside className="cab-side" data-section="skills">
-          <h2 className="cab-label">Skills</h2>
+          <ResumeSectionLabel className="cab-label">Skills</ResumeSectionLabel>
           <div className="cab-bars">
             {skills.map((item, index) => {
               const level = Math.max(45, 100 - index * 8);
@@ -572,7 +573,7 @@ function SideExtra({
 }) {
   return (
     <div data-section="extras" data-focus={extra.id}>
-      <h2 className={labelClass}><RichLine text={extra.title} /></h2>
+      <ResumeSectionLabel className={labelClass}><RichLine text={extra.title} /></ResumeSectionLabel>
       <div className={extra.bullets === true ? listClass : plainClass}>
         {extra.items.filter(Boolean).map((item, index) =>
           extra.bullets === true ? (
@@ -591,7 +592,7 @@ export function manorMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
       <section className="manor-section">
-        <h2 className="manor-label">Profile</h2>
+        <ResumeSectionLabel className="manor-label">Profile</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="manor-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -600,7 +601,7 @@ export function manorMainPieces(data: ResumeData) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="manor-section">
-          {index === 0 && <h2 className="manor-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="manor-label">Work Experience</ResumeSectionLabel>}
           <div className={`manor-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="manor-job-mark" aria-hidden="true" />
             <div className="manor-job-body">
@@ -629,12 +630,12 @@ export function ManorChrome({ data, hideContact }: { data: ResumeData; hideConta
           <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={118} />
         </div>
         <div data-section="details">
-          <h2 className="manor-label">Contact</h2>
+          <ResumeSectionLabel className="manor-label">Contact</ResumeSectionLabel>
           <IconContacts personal={data.personal} hideContact={hideContact} className="manor-contacts" />
         </div>
         {sectionOnCv(data, "education") ? (
           <div data-section="education">
-            <h2 className="manor-label">Education</h2>
+            <ResumeSectionLabel className="manor-label">Education</ResumeSectionLabel>
             {data.education.map((item) => (
               <div className="manor-edu" key={item.id} data-focus={item.id}>
                 <span className="manor-edu-year">{item.year}</span>
@@ -647,7 +648,7 @@ export function ManorChrome({ data, hideContact }: { data: ResumeData; hideConta
         ) : null}
         {sectionOnCv(data, "skills") ? (
           <div data-section="skills">
-            <h2 className="manor-label">Skills</h2>
+            <ResumeSectionLabel className="manor-label">Skills</ResumeSectionLabel>
             <ul className="manor-skill-list">
               {skills.map((item, index) => (
                 <li key={`${item}-${index}`}><RichLine text={item} /></li>
@@ -673,7 +674,7 @@ export function canvasMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
       <section className="canvas-section is-marked">
-        <h2 className="canvas-label">Profile</h2>
+        <ResumeSectionLabel className="canvas-label">Profile</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="canvas-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -682,7 +683,7 @@ export function canvasMainPieces(data: ResumeData) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className={`canvas-section${index === 0 ? " is-marked" : ""}`}>
-          {index === 0 && <h2 className="canvas-label">Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="canvas-label">Experience</ResumeSectionLabel>}
           <div className={`canvas-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="canvas-job-top">
               <strong>{job.role || "Role"}</strong>
@@ -714,7 +715,7 @@ export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideCont
       <aside className="canvas-side">
         {sectionOnCv(data, "education") ? (
           <div data-section="education">
-            <h2 className="canvas-label">Education</h2>
+            <ResumeSectionLabel className="canvas-label">Education</ResumeSectionLabel>
             {data.education.map((item) => (
               <div className="canvas-edu" key={item.id} data-focus={item.id}>
                 <strong><RichLine text={item.degree || "Degree"} /></strong>
@@ -726,7 +727,7 @@ export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideCont
         ) : null}
         {sectionOnCv(data, "skills") ? (
           <div data-section="skills">
-            <h2 className="canvas-label">Skills</h2>
+            <ResumeSectionLabel className="canvas-label">Skills</ResumeSectionLabel>
             <ul className="canvas-list">
               {skills.map((item, index) => (
                 <li key={`${item}-${index}`}><RichLine text={item} /></li>
@@ -746,12 +747,12 @@ export function cobaltMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="edu" section="education">
       <section className="cobalt-section">
-        <h2 className="cobalt-label">
+        <ResumeSectionLabel className="cobalt-label">
           <span className="cobalt-ico" aria-hidden="true">
             <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 2.2 1.5 5.4 8 8.6l6.5-3.2L8 2.2Zm-5.2 5v3.3L8 13.8l5.2-3.3V7.2L8 10.4 2.8 7.2Z" /></svg>
           </span>
           Education
-        </h2>
+        </ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="cobalt-job" key={item.id} data-focus={item.id}>
             <div className="cobalt-dot" aria-hidden="true" />
@@ -773,12 +774,12 @@ export function cobaltMainPieces(data: ResumeData) {
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="cobalt-section">
           {index === 0 && (
-            <h2 className="cobalt-label">
+            <ResumeSectionLabel className="cobalt-label">
               <span className="cobalt-ico" aria-hidden="true">
                 <svg viewBox="0 0 16 16"><path fill="currentColor" d="M5.2 4.2V3.4A1.4 1.4 0 0 1 6.6 2h2.8a1.4 1.4 0 0 1 1.4 1.4v.8h2.4A1.4 1.4 0 0 1 14.6 5.6v6.8a1.4 1.4 0 0 1-1.4 1.4H2.8a1.4 1.4 0 0 1-1.4-1.4V5.6A1.4 1.4 0 0 1 2.8 4.2h2.4Zm1.2 0h3.2V3.4H6.4v.8Z" /></svg>
               </span>
               Experience
-            </h2>
+            </ResumeSectionLabel>
           )}
           <div className={`cobalt-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="cobalt-dot" aria-hidden="true" />
@@ -811,13 +812,13 @@ export function CobaltChrome({ data, hideContact }: { data: ResumeData; hideCont
       </div>
       {sectionRenders(data, "bio") ? (
         <div data-section="bio">
-          <h2 className="cobalt-side-label">About Me</h2>
+          <ResumeSectionLabel className="cobalt-side-label">About Me</ResumeSectionLabel>
           <FormattedText text={data.summary} className="cobalt-about" />
         </div>
       ) : null}
       {sectionOnCv(data, "skills") ? (
         <div data-section="skills">
-          <h2 className="cobalt-side-label">Skills</h2>
+          <ResumeSectionLabel className="cobalt-side-label">Skills</ResumeSectionLabel>
           <ul className="cobalt-skill-list">
             {skills.map((item, index) => (
               <li key={`${item}-${index}`}><RichLine text={item} /></li>
@@ -844,13 +845,13 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="studio-section">
-        <h2 className="studio-label">Summary</h2>
+        <ResumeSectionLabel className="studio-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="studio-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="studio-section">
-        <h2 className="studio-label">Skills</h2>
+        <ResumeSectionLabel className="studio-label">Skills</ResumeSectionLabel>
         {skillList(data.skills).length ? (
           <p className="studio-skills">{skillList(data.skills).join(" · ")}</p>
         ) : (
@@ -863,7 +864,7 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="studio-section">
-          {index === 0 && <h2 className="studio-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="studio-label">Work Experience</ResumeSectionLabel>}
           <div className={`studio-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="studio-job-top">
               <strong>{[job.role, job.company].filter(Boolean).join(" | ") || "Role"}</strong>
@@ -878,7 +879,7 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="studio-section">
-        <h2 className="studio-label">Education</h2>
+        <ResumeSectionLabel className="studio-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="studio-job" key={item.id} data-focus={item.id}>
             <div className="studio-job-top">
@@ -900,7 +901,7 @@ export function vaultMainPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
       <section className="vault-section">
-        <h2 className="vault-label">Professional Summary</h2>
+        <ResumeSectionLabel className="vault-label">Professional Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="vault-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -909,7 +910,7 @@ export function vaultMainPieces(data: ResumeData) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="vault-section">
-          {index === 0 && <h2 className="vault-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="vault-label">Work Experience</ResumeSectionLabel>}
           <div className={`vault-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="vault-job-top">
               <strong>{job.role || "Role"}</strong>
@@ -939,12 +940,12 @@ export function VaultChrome({ data, hideContact }: { data: ResumeData; hideConta
           <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={120} />
         </div>
         <div data-section="details">
-          <h2 className="vault-side-label">Contact</h2>
+          <ResumeSectionLabel className="vault-side-label">Contact</ResumeSectionLabel>
           <IconContacts personal={data.personal} hideContact={hideContact} className="vault-contacts" />
         </div>
         {sectionOnCv(data, "education") ? (
           <div data-section="education">
-            <h2 className="vault-side-label">Education</h2>
+            <ResumeSectionLabel className="vault-side-label">Education</ResumeSectionLabel>
             {data.education.map((item) => (
               <div className="vault-edu" key={item.id} data-focus={item.id}>
                 <strong><RichLine text={item.school || "School"} /></strong>
@@ -956,7 +957,7 @@ export function VaultChrome({ data, hideContact }: { data: ResumeData; hideConta
         ) : null}
         {sectionOnCv(data, "skills") ? (
           <div data-section="skills">
-            <h2 className="vault-side-label">Skills</h2>
+            <ResumeSectionLabel className="vault-side-label">Skills</ResumeSectionLabel>
             {skillList(data.skills).length ? (
               <div className="vault-skill-block">
                 <p>{skillList(data.skills).join(", ")}</p>
@@ -989,7 +990,7 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="plaza-section">
-        <h2 className="plaza-label">Summary</h2>
+        <ResumeSectionLabel className="plaza-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="plaza-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -998,7 +999,7 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="plaza-section">
-          {index === 0 && <h2 className="plaza-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="plaza-label">Work Experience</ResumeSectionLabel>}
           <div className={`plaza-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="plaza-job-top">
               <strong>{[job.role, job.company].filter(Boolean).join(", ") || "Role"}</strong>
@@ -1013,7 +1014,7 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="plaza-section">
-        <h2 className="plaza-label">Education</h2>
+        <ResumeSectionLabel className="plaza-label">Education</ResumeSectionLabel>
         {data.education.map((item) => (
           <div className="plaza-job" key={item.id} data-focus={item.id}>
             <div className="plaza-job-top">
@@ -1027,7 +1028,7 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="skills" section="skills">
       <section className="plaza-section">
-        <h2 className="plaza-label">Key Skills</h2>
+        <ResumeSectionLabel className="plaza-label">Key Skills</ResumeSectionLabel>
         <ul className="plaza-skills">
           {skills.map((item, index) => (
             <li key={`${item}-${index}`}><RichLine text={item} /></li>

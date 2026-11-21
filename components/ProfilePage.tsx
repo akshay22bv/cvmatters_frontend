@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { CheckRow } from "./Field";
 import { Monogram } from "./Monogram";
 import { useConfirm } from "./ConfirmProvider";
-import { IconCard, IconEye, IconPage, Trash } from "./icons";
+import { Trash } from "./icons";
 import { ApiError, createResume, deleteResume, listResumes, loadBilling, updateHosting } from "@/lib/api";
 import { publicResumePath, startPath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
@@ -32,11 +32,6 @@ function linkHref(raw: string) {
   const trimmed = raw.trim();
   if (!trimmed) return "";
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
-
-function planLabel(plan: string | null) {
-  if (!plan) return "Free";
-  return plan.replace(/^\w/, (c) => c.toUpperCase());
 }
 
 export function ProfilePage({
@@ -72,9 +67,6 @@ export function ProfilePage({
 }) {
   const name = data.personal.fullName.trim() || account.user?.name || "Your name";
   const title = data.personal.title.trim() || "Add a job title on your CV";
-  const likes = rating?.count || 0;
-  const average = rating?.average || 0;
-  const planName = account.entitlement.subscription?.plan || null;
   const downloadsOn = account.entitlement.canDownload;
   const freeCvLimit = 2;
 
@@ -324,57 +316,29 @@ export function ProfilePage({
               </a>
             ) : null}
             {data.personal.location ? <p className="prof-banner-meta">{data.personal.location}</p> : null}
-            <div className="prof-hero-actions">
-              {account.user ? (
-                <button type="button" className="prof-btn is-soft" onClick={onShare}>
-                  Sharing settings
-                </button>
-              ) : (
-                <button type="button" className="prof-btn is-soft" onClick={onSignIn}>
-                  Sign in
-                </button>
-              )}
-              {websites.map((item) => (
-                <a
-                  key={item.label}
-                  className="prof-btn is-soft"
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
           </div>
-        </div>
-
-        <div className="prof-banner-cards" aria-label="Quick facts">
-          <article className="prof-glass">
-            <span className="prof-glass-icon" aria-hidden="true">
-              <IconCard />
-            </span>
-            <strong>{planLabel(planName)}</strong>
-            <small>{downloadsOn ? "PDF downloads included" : "Upgrade for PDF downloads"}</small>
-          </article>
-          <article className="prof-glass">
-            <span className="prof-glass-icon" aria-hidden="true">
-              <IconPage />
-            </span>
-            <strong>
-              {resumes.length} CV{resumes.length === 1 ? "" : "s"}
-            </strong>
-            <small>{category} focus</small>
-          </article>
-          <article className="prof-glass">
-            <span className="prof-glass-icon" aria-hidden="true">
-              <IconEye />
-            </span>
-            <strong>{shareStatus}</strong>
-            <small>
-              {average ? `${average.toFixed(1)} ★ · ${likes} rating${likes === 1 ? "" : "s"}` : "No ratings yet"}
-            </small>
-          </article>
+          <div className="prof-hero-actions prof-banner-actions">
+            {account.user ? (
+              <button type="button" className="prof-btn is-soft" onClick={onShare}>
+                Sharing settings
+              </button>
+            ) : (
+              <button type="button" className="prof-btn is-soft" onClick={onSignIn}>
+                Sign in
+              </button>
+            )}
+            {websites.map((item) => (
+              <a
+                key={item.label}
+                className="prof-btn is-soft"
+                href={item.href}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
         </div>
       </header>
 

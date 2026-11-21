@@ -24,6 +24,7 @@ import {
 } from "./atsTemplates";
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
+import { ResumeDecorProvider, ResumeSectionLabel } from "./ResumeSectionLabel";
 import { plainRange } from "@/lib/content";
 import { orderPieces, resolveSectionOrder, sectionOnCv, sectionsOmittedFromPage, skillTags } from "@/lib/sectionOrder";
 import { fontClass, paperStyle, readTemplateId, type PanelId, type ResumeData, type StepId, type TemplateId } from "@/lib/types";
@@ -194,7 +195,7 @@ function editorialPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="ed-section">
-        <h2 className="ed-label">Summary</h2>
+        <ResumeSectionLabel className="ed-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="ed-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -203,7 +204,7 @@ function editorialPieces(data: ResumeData, hideContact: boolean) {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="ed-section">
-          {index === 0 && <h2 className="ed-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="ed-label">Work Experience</ResumeSectionLabel>}
           <div className={`ed-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div>
               <strong>{job.role ? <RichLine text={job.role} /> : "Role"}</strong>
@@ -219,13 +220,13 @@ function editorialPieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="ed-section">
-        <h2 className="ed-label">Education</h2>
+        <ResumeSectionLabel className="ed-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="ed-section">
-        <h2 className="ed-label">Skills</h2>
+        <ResumeSectionLabel className="ed-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -247,7 +248,7 @@ function signalPieces(data: ResumeData, hideContact: boolean, templateId: Templa
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -256,7 +257,7 @@ function signalPieces(data: ResumeData, hideContact: boolean, templateId: Templa
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
         <section className="sig-section">
-          {index === 0 && <h2 className="sig-label">Work Experience</h2>}
+          {index === 0 && <ResumeSectionLabel className="sig-label">Work Experience</ResumeSectionLabel>}
           <div className={`sig-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
             <div className="sig-job-top">
               <div>
@@ -274,13 +275,13 @@ function signalPieces(data: ResumeData, hideContact: boolean, templateId: Templa
   pieces.push(
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -299,7 +300,7 @@ function shownRange(job: ResumeData["experience"][number]) {
 function splitPieces(data: ResumeData) {
   const pieces: ReactNode[] = [
     <Block key="about" section="bio">
-      <h2 className="sig-label">Summary</h2>
+      <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
       {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
     </Block>,
   ];
@@ -308,7 +309,7 @@ function splitPieces(data: ResumeData) {
     const where = [job.company, job.location].filter(Boolean).join(" · ");
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        {index === 0 && <h2 className="sig-label" style={{ marginTop: 22 }}>Experience</h2>}
+        {index === 0 && <ResumeSectionLabel className="sig-label" style={{ marginTop: 22 }}>Experience</ResumeSectionLabel>}
         <div className={`sig-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
           <div className="sig-job-top">
             <div>
@@ -330,7 +331,7 @@ function jobBlocks(data: ResumeData, jobClass = "sig-job") {
   data.experience.forEach((job, index) => {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        {index === 0 && <h2 className="sig-label">Experience</h2>}
+        {index === 0 && <ResumeSectionLabel className="sig-label">Experience</ResumeSectionLabel>}
         <div className={`${jobClass}${job.bullets.some(Boolean) ? " is-split" : ""}`}>
           <div className="sig-job-top">
             <div>
@@ -360,7 +361,7 @@ function primePieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -368,7 +369,7 @@ function primePieces(data: ResumeData, hideContact: boolean) {
   data.experience.forEach((job, index) => {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        {index === 0 && <h2 className="sig-label">Experience</h2>}
+        {index === 0 && <ResumeSectionLabel className="sig-label">Experience</ResumeSectionLabel>}
         <div className={`prime-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
           <div className="prime-date">{plainRange(job)}</div>
           <div>
@@ -383,13 +384,13 @@ function primePieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -411,20 +412,20 @@ function folioPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     ...jobBlocks(data),
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -445,7 +446,7 @@ function timelinePieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
@@ -453,7 +454,7 @@ function timelinePieces(data: ResumeData, hideContact: boolean) {
   data.experience.forEach((job, index) => {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        {index === 0 && <h2 className="sig-label">Experience</h2>}
+        {index === 0 && <ResumeSectionLabel className="sig-label">Experience</ResumeSectionLabel>}
         <div className={`tl-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
           <strong>{job.role ? <RichLine text={job.role} /> : "Role"}</strong>
           <div className="company"><RichLine text={[job.company, job.location, plainRange(job)].filter(Boolean).join(" · ")} /></div>
@@ -465,13 +466,13 @@ function timelinePieces(data: ResumeData, hideContact: boolean) {
   pieces.push(
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -497,20 +498,20 @@ function densPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <div className="skill-grid"><SkillBlocks skills={data.skills} /></div>
       </section>
     </Block>,
     ...jobBlocks(data),
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
@@ -529,20 +530,20 @@ function helloPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">About</h2>
+        <ResumeSectionLabel className="sig-label">About</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     ...jobBlocks(data),
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <SkillBlocks skills={data.skills} />
       </section>
     </Block>,
@@ -562,20 +563,20 @@ function gridPieces(data: ResumeData, hideContact: boolean) {
     </Block>,
     <Block key="about" section="bio">
       <section className="sig-section">
-        <h2 className="sig-label">Summary</h2>
+        <ResumeSectionLabel className="sig-label">Summary</ResumeSectionLabel>
         {data.summary ? <FormattedText text={data.summary} className="sig-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
       </section>
     </Block>,
     <Block key="skills" section="skills">
       <section className="sig-section">
-        <h2 className="sig-label">Skills</h2>
+        <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
         <div className="skill-grid"><SkillBlocks skills={data.skills} /></div>
       </section>
     </Block>,
     ...jobBlocks(data),
     <Block key="edu" section="education">
       <section className="sig-section">
-        <h2 className="sig-label">Education</h2>
+        <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
         <EduList data={data} />
       </section>
     </Block>,
@@ -637,7 +638,7 @@ function extraPieces(data: ResumeData, kind: ExtraKind, skip?: RegExp) {
       return (
         <Block key={extra.id} section="extras" focus={extra.id}>
           <section className={look.section}>
-            <h2 className={look.label}><RichLine text={extra.title} /></h2>
+            <ResumeSectionLabel className={look.label}><RichLine text={extra.title} /></ResumeSectionLabel>
             {lines}
           </section>
         </Block>
@@ -716,13 +717,13 @@ function SplitSide({ data, hideContact, plain = false, identity = true }: { data
       )}
       {sectionOnCv(data, "skills") ? (
         <div data-section="skills">
-          <h2 className="sig-label">Skills</h2>
+          <ResumeSectionLabel className="sig-label">Skills</ResumeSectionLabel>
           <SkillBlocks skills={data.skills} />
         </div>
       ) : null}
       {sectionOnCv(data, "education") ? (
         <div data-section="education">
-          <h2 className="sig-label">Education</h2>
+          <ResumeSectionLabel className="sig-label">Education</ResumeSectionLabel>
           {data.education.map((item) => (
             <div className="side-edu" key={item.id} data-section="education" data-focus={item.id}>
               <strong><RichLine text={item.degree} /></strong>
@@ -1035,7 +1036,7 @@ export function ResumeSheet({
       )
     : null;
 
-  return (
+  const sheet = (
     <>
       {measure}
       <Frame templateId={templateId} data={data} hideContact={hideContact} pageIndex={0} total={total} paperRef={preview ? paperRef : undefined}>
@@ -1043,4 +1044,8 @@ export function ResumeSheet({
       </Frame>
     </>
   );
+
+  if (!preview) return sheet;
+
+  return <ResumeDecorProvider decorative>{sheet}</ResumeDecorProvider>;
 }

@@ -18,7 +18,7 @@ export function Monogram({ name, photoUrl, size = 40 }: { name: string; photoUrl
       <img
         className="mono-photo"
         src={photoUrl}
-        alt=""
+        alt={name.trim() ? `${name.trim()} headshot` : "Profile photo"}
         width={size}
         height={size}
         style={{ width: size, height: size }}

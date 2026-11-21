@@ -10,7 +10,7 @@ export const SUPPORT_EMAIL = "developer28tester@gmail.com";
 export const OG_IMAGE_PATH = "/opengraph-image";
 
 export const DEFAULT_DESCRIPTION =
-  "Free resume builder with live preview and ATS-friendly templates. Paste a job description to tailor your CV, browse resumes in your field, and export a PDF.";
+  "Free resume builder with live preview and ATS templates. Tailor your CV to a job post, browse field examples, and share a link or PDF.";
 
 export const SITE_KEYWORDS = [
   "resume builder",

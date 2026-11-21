@@ -114,6 +114,11 @@ export function Landing({
               <p className="board-lead">
                 Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts, and a shareable link.
               </p>
+              <p className="board-seo-blurb">
+                CV Matters is an online resume builder for students and professionals in India and worldwide. Create a
+                single-column, ATS-friendly curriculum vitae, match bullets to a job description, publish a public page
+                at cvmatters.net/your-name, and export a sharp PDF when recruiters ask for a file.
+              </p>
               <div className="board-cta">
                 <button type="button" className="board-pill board-pill-primary" disabled={busy} onClick={() => pickIntent("build")}>
                   <span className="board-pill-label">{owned ? "Open your CV" : "Create my resume"}</span>

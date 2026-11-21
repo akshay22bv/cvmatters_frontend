@@ -1777,7 +1777,32 @@ button.example {
 .start-gate > .start-note { margin: auto; }
 
 @media print {
-  @page { size: A4; margin: 0; }
+  @page { size: A4; margin: 12mm; }
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .app-nav,
+  .board-foot,
+  .board-cta,
+  .land-bar,
+  .blog-chrome,
+  .preview-sheet,
+  .board-hero-visual,
+  .board-gallery,
+  .board-proof-samples { display: none !important; }
+  .board,
+  .land,
+  .blog-page {
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+  .board a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #444;
+  }
   .topbar, .curve-rail, .drawer, .page-stack, .measure-col, .pdf-btn, .nav-cta, .preview-caption, .public-float-close, .public-rate-bar, .public-join-bar, .public-notes { display: none !important; }
   .app-frame, .shell, .stage-row, .stage, .page-stage, .public-stage, .public-sheet { display: block !important; height: auto !important; padding: 0 !important; overflow: visible !important; background: white !important; width: auto !important; }
   .print-root { display: block !important; position: static !important; transform: none !important; width: auto !important; }

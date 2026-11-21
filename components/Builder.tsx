@@ -666,7 +666,7 @@ export default function Builder() {
       )}
 
       {view.kind === "cv" && (
-      <div className="cv-editor-shell">
+      <div className={`cv-editor-shell${aiOpen ? " is-ai-open" : ""}`}>
         <CvSectionRail
           panel={panel}
           data={snapshot.data}
@@ -983,6 +983,17 @@ export default function Builder() {
           </div>
         </aside>
       </div>
+
+        <CvAiDrawer
+          open={aiOpen}
+          onClose={() => setAiOpen(false)}
+          userName={account.user?.name}
+          section={panel || "details"}
+          templateId={snapshot.templateId}
+          data={snapshot.data}
+          jobDescription={snapshot.jobDescription}
+          onApply={({ templateId, data }) => patch({ templateId, data })}
+        />
       </div>
       )}
 
@@ -1062,17 +1073,6 @@ export default function Builder() {
         onFont={(fontId) => patch({ data: { ...snapshot.data, fontId } })}
         onAccent={(accent) => patch({ data: { ...snapshot.data, accent } })}
         onStyle={(look) => setSnapshot((current) => ({ ...current, data: { ...current.data, ...look } }))}
-      />
-
-      <CvAiDrawer
-        open={aiOpen && view.kind === "cv"}
-        onClose={() => setAiOpen(false)}
-        userName={account.user?.name}
-        section={panel || "details"}
-        templateId={snapshot.templateId}
-        data={snapshot.data}
-        jobDescription={snapshot.jobDescription}
-        onApply={({ templateId, data }) => patch({ templateId, data })}
       />
 
       <AuthDialog

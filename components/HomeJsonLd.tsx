@@ -44,6 +44,12 @@ export function HomeJsonLd() {
           height: 192,
         },
         image: og,
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "IN",
+          addressRegion: "Karnataka",
+          addressLocality: "Bengaluru",
+        },
       },
       {
         "@type": "WebSite",

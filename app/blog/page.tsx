@@ -56,7 +56,7 @@ export default async function BlogIndexPage() {
             <article key={post.id} className="blog-card">
               <Link href={blogPath(post.slug)} className="blog-card-media">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={post.coverImage || "/blog/online-resume.svg"} alt="" width={640} height={360} />
+                <img src={post.coverImage || "/blog/online-resume.svg"} alt={post.title} width={640} height={360} />
               </Link>
               <div className="blog-card-body">
                 {post.keyword ? <p className="blog-card-keyword">{post.keyword}</p> : null}
