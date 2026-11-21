@@ -60,7 +60,7 @@ export function ExamplesBrowsePage({
 
   const rateShared = async (resume: ResumeRecord, stars: number) => {
     if (!account.user) {
-      setRateHint("Download a PDF to sign in, then you can rate.");
+      setRateHint("Sign in to rate this resume.");
       return;
     }
     setRateBusy(true);
@@ -72,7 +72,7 @@ export function ExamplesBrowsePage({
       const payload = { id: resume.id, summary };
       setRated(payload);
     } catch (error) {
-      if (error instanceof ApiError && error.needsSignIn) setRateHint("Download a PDF to sign in, then you can rate.");
+      if (error instanceof ApiError && error.needsSignIn) setRateHint("Sign in to rate this resume.");
       else setRateHint(error instanceof Error ? error.message : "Couldn't save that rating.");
     } finally {
       setRateBusy(false);

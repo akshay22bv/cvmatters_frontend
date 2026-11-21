@@ -6137,9 +6137,17 @@ button.finish-check-grip:active {
   margin: 0;
 }
 
-.prof-user span {
+.prof-user span:first-child {
   font-size: 13px;
   font-weight: 650;
+}
+
+.prof-field-hint {
+  margin: -2px 0 0;
+  font-size: 12px;
+  font-weight: 450;
+  color: var(--prof-muted, #6b7280);
+  line-height: 1.35;
 }
 
 .prof-user input {

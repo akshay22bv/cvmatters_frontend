@@ -12,13 +12,20 @@ import { publicResumePath, startPath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
 import type { Category, RatingSummary, ResumeData, ResumeRecord } from "@/lib/types";
 
-function suggestSlug(name: string) {
-  return name
+const SLUG_MIN_LEN = 5;
+const SLUG_MAX_LEN = 24;
+
+function normalizeSlugDraft(value: string) {
+  return value
+    .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/[^a-z0-9-]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .replace(/-{2,}/g, "-")
-    .slice(0, 24);
+    .replace(/-{2,}/g, "-");
+}
+
+function suggestSlug(name: string) {
+  return normalizeSlugDraft(name).slice(0, SLUG_MAX_LEN);
 }
 
 function linkHref(raw: string) {
@@ -191,13 +198,18 @@ export function ProfilePage({
       setError("Sign in to host a public page.");
       return;
     }
+    const slugDraft = normalizeSlugDraft(draft);
+    if (slugDraft && slugDraft.length < SLUG_MIN_LEN) {
+      setError("Unique id must be at least 5 characters.");
+      return;
+    }
     setBusy(true);
     setError("");
     try {
       const saved = await updateHosting(targetId, {
         ownerKey,
         isPublic: hosting,
-        slug: draft.trim() || null,
+        slug: slugDraft || null,
       });
       const rows = await listResumes(ownerKey);
       setResumes(rows);
@@ -465,10 +477,13 @@ export function ProfilePage({
                   spellCheck={false}
                   autoCapitalize="off"
                   autoCorrect="off"
+                  minLength={SLUG_MIN_LEN}
+                  maxLength={SLUG_MAX_LEN}
                   placeholder="Enter unique id"
                   disabled={busy || !(hostCvId || resumeId)}
                   onChange={(event) => setDraft(event.target.value.toLowerCase())}
                 />
+                <span className="prof-field-hint">5–24 characters, letters and numbers</span>
               </label>
               <p className="prof-url">
                 <a href={previewUrl} target="_blank" rel="noreferrer noopener">

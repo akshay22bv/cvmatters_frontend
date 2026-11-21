@@ -1093,12 +1093,14 @@ body {
 .preview-rate {
   flex: none;
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 8px;
   align-self: center;
+  max-width: min(100% - 32px, 420px);
   margin: 6px 16px 0;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: var(--pill-radius);
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
@@ -1116,6 +1118,16 @@ body {
   color: rgba(255, 255, 255, 0.45);
 }
 .preview-rate .stars.is-live button.is-on { color: #fff; }
+
+.preview-rate .look-rate-hint {
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 560;
+  text-align: center;
+  line-height: 1.35;
+}
 
 .look-rate {
   display: flex;
