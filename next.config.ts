@@ -52,6 +52,9 @@ const nextConfig: NextConfig = {
       { source: "/blog/:slug", headers: swrPage },
       // Keep immutable static asset rules after page rules so /blog/*.svg wins over /blog/:slug.
       { source: "/blog/:file(.+\\.svg)", headers: immutableAsset },
+      { source: "/blog/:file(.+\\.jpg)", headers: immutableAsset },
+      { source: "/blog/:file(.+\\.png)", headers: immutableAsset },
+      { source: "/blog/:file(.+\\.webp)", headers: immutableAsset },
       { source: "/:file(icon[^/]*\\.png|apple-icon\\.png|logo[^/]*|favicon\\.ico)", headers: immutableAsset },
     ];
   },

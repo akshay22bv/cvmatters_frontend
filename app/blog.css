@@ -23,11 +23,13 @@
 .blog-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--ink);
   text-decoration: none;
   font-weight: 700;
   letter-spacing: -0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .blog-brand .brand-logo {
@@ -39,8 +41,8 @@
 .blog-top-nav {
   display: flex;
   align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
+  gap: 16px;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
@@ -49,6 +51,7 @@
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .blog-top-nav a:hover {
@@ -429,5 +432,25 @@
 
   .blog-hero-title {
     max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .blog-top-inner {
+    gap: 10px;
+  }
+
+  .blog-top-nav {
+    gap: 12px;
+  }
+
+  /* Keep the mobile blog bar to one crisp row with zero overflow. */
+  .blog-top-nav a:first-child {
+    display: none;
+  }
+
+  .blog-top-cta {
+    padding: 0 14px;
+    font-size: 13.5px;
   }
 }
