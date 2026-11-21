@@ -80,9 +80,26 @@ export function ProfilePage({
   const [orders, setOrders] = useState<{ id: string; plan: string; amount: number; status: string; createdAt: string }[]>([]);
   const [resumes, setResumes] = useState<ResumeRecord[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
   const confirm = useConfirm();
   const router = useRouter();
   const atCvLimit = !downloadsOn && resumes.length >= freeCvLimit;
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await account.logout();
+      try {
+        sessionStorage.removeItem("cv-matters-active");
+      } catch {
+        /* ignore storage errors */
+      }
+      router.push("/");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     if (!ownerKey) return;
@@ -252,11 +269,23 @@ export function ProfilePage({
         <Link href={resumeId ? "/cv/details" : startPath("choose")} className="prof-back">
           {resumeId ? "← Back to CV" : "← Start a CV"}
         </Link>
-        {!downloadsOn ? (
-          <button type="button" className="prof-linkish" onClick={onPlans}>
-            Upgrade plan
-          </button>
-        ) : null}
+        <div className="prof-top-acts">
+          {!downloadsOn ? (
+            <button type="button" className="prof-linkish" onClick={onPlans}>
+              Upgrade plan
+            </button>
+          ) : null}
+          {account.user ? (
+            <button
+              type="button"
+              className="prof-linkish is-danger"
+              disabled={loggingOut}
+              onClick={() => void handleLogout()}
+            >
+              {loggingOut ? "Logging out…" : "Log out"}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <div className="prof-pagehead">

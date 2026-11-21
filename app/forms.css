@@ -5619,16 +5619,25 @@ button.finish-check-grip:active {
 
 .prof-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px 12px;
   margin-bottom: 28px;
+}
+
+.prof-top-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .prof-back,
 .prof-linkish {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: var(--pill-h-xs);
   padding: 0 16px;
   border: 1px solid var(--line);
@@ -5639,17 +5648,29 @@ button.finish-check-grip:active {
   font-size: 14px;
   font-weight: 650;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: var(--pill-shadow);
-  transition: transform 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .prof-back:hover,
-.prof-linkish:hover {
+.prof-linkish:hover:not(:disabled) {
   transform: translateY(-1px);
   color: var(--accent-strong);
   border-color: color-mix(in srgb, var(--prof-ink) 12%, var(--line));
   box-shadow: var(--pill-shadow-hover);
+}
+
+.prof-linkish.is-danger:hover:not(:disabled) {
+  color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.prof-linkish:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .prof-hero-email {
