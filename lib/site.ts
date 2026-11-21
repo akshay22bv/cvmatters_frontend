@@ -4,7 +4,7 @@ export const SITE_NAME = "CV Matters";
 export const SITE_TAGLINE = "Build a resume, match a job post, and learn from people in your field.";
 
 /** Primary support inbox — shown on Contact and in the footer. */
-export const SUPPORT_EMAIL = "hello@cvmatters.net";
+export const SUPPORT_EMAIL = "developer28tester@gmail.com";
 
 /** Default Open Graph / Twitter share image route. */
 export const OG_IMAGE_PATH = "/opengraph-image";
