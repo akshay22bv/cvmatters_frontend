@@ -7459,33 +7459,21 @@ button.finish-check-grip:active {
   text-decoration: none;
 }
 
-.public-download-btn {
-  display: inline-grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border-radius: var(--pill-radius);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
+.public-download-cta {
+  gap: 7px;
   cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease;
+  font: inherit;
 }
 
-.public-download-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.36);
-}
-
-.public-download-btn:disabled {
+.public-download-cta:disabled {
   opacity: 0.65;
   cursor: default;
 }
 
-.public-download-btn svg {
-  width: 16px;
-  height: 16px;
+.public-download-cta svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 .public-download-spin {

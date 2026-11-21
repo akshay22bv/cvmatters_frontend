@@ -3,6 +3,10 @@
     "app/api/resumes/pdf/route.ts": {
       "maxDuration": 60,
       "memory": 2048
+    },
+    "app/api/resumes/[id]/public/pdf/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
     }
   }
 }

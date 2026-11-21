@@ -283,14 +283,10 @@ async function downloadClientPdf(name: string) {
   saveBlob(blob, name);
 }
 
-async function downloadServerPdf(name: string) {
-  const token = readToken();
-  const response = await fetch("/api/resumes/pdf", {
+async function postPdf(path: string, name: string, headers?: HeadersInit) {
+  const response = await fetch(path, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
+    headers: { "Content-Type": "application/json", ...(headers || {}) },
     body: JSON.stringify({ html: await printDocument() }),
   });
   if (!response.ok) {
@@ -305,6 +301,40 @@ async function downloadServerPdf(name: string) {
     console.warn("PDF response missing X-Pdf-Engine — file may be a low-quality fallback path.");
   }
   saveBlob(await response.blob(), name);
+}
+
+async function downloadServerPdf(name: string) {
+  const token = readToken();
+  await postPdf("/api/resumes/pdf", name, token ? { Authorization: `Bearer ${token}` } : undefined);
+}
+
+/** Free PDF on a shared public profile (`/:slug`). */
+export async function downloadPublicResumePdf(name: string, resumeKey: string) {
+  let serverError: unknown = null;
+  const path = `/api/resumes/${encodeURIComponent(resumeKey)}/public/pdf`;
+  try {
+    await postPdf(path, name);
+    return;
+  } catch (reason) {
+    serverError = reason;
+  }
+
+  const onLive =
+    typeof location !== "undefined" &&
+    !/localhost|127\.0\.0\.1/.test(location.hostname);
+  if (onLive) {
+    const message =
+      serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
+    throw new Error(`${message} Try again in a moment or use Print → Save as PDF.`);
+  }
+
+  try {
+    await downloadClientPdf(name);
+  } catch (fallback) {
+    const primary = serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
+    if (fallback instanceof Error) throw new Error(fallback.message || primary);
+    throw new Error(primary);
+  }
 }
 
 export async function downloadResumePdf(name: string) {

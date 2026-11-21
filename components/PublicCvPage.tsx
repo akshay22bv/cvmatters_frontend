@@ -202,13 +202,14 @@ export function PublicCvPage({
         {onDownload ? (
           <button
             type="button"
-            className="public-download-btn"
+            className="public-join-cta public-download-cta"
             aria-label={downloading ? "Building PDF…" : `Download ${name}'s resume as PDF`}
-            title={downloading ? "Building PDF…" : "Download PDF"}
+            title={downloading ? "Building PDF…" : "Free PDF download"}
             disabled={downloading}
             onClick={() => onDownload(name)}
           >
             {downloading ? <span className="public-download-spin" aria-hidden="true" /> : <IconDownload />}
+            <span>{downloading ? "Building PDF…" : "Free download"}</span>
           </button>
         ) : null}
       </div>

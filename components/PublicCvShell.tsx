@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AuthDialog } from "./AuthDialog";
-import { PlanDialog } from "./PlanDialog";
 import { PublicCvPage } from "./PublicCvPage";
-import { downloadResumePdf } from "@/lib/pdf";
+import { downloadPublicResumePdf } from "@/lib/pdf";
 import { useAccount } from "@/lib/useAccount";
-import type { Entitlement, ResumeRecord } from "@/lib/types";
+import type { ResumeRecord } from "@/lib/types";
 
 function readOwnerKey(): string {
   try {
@@ -29,67 +28,25 @@ export function PublicCvShell({
 }) {
   const owner = useRef("");
   const account = useAccount(() => owner.current);
-  const [gate, setGate] = useState<null | "auth" | "plan">(null);
+  const [gate, setGate] = useState(false);
   const [gateReason, setGateReason] = useState("");
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
-  const pendingDownload = useRef<string | null>(null);
-  const latestEntitlement = useRef<Entitlement | null>(null);
 
   useEffect(() => {
     owner.current = readOwnerKey();
   }, []);
 
-  const runDownload = async (name: string) => {
-    setDownloading(true);
-    setDownloadError("");
-    try {
-      await downloadResumePdf(name);
-    } catch (error) {
-      const status = error && typeof error === "object" && "status" in error ? Number(error.status) : 0;
-      if (status === 401) {
-        pendingDownload.current = name;
-        setGateReason("Sign in to download this resume.");
-        setGate("auth");
-      } else if (status === 402) {
-        pendingDownload.current = name;
-        setGateReason("");
-        setGate("plan");
-      } else {
-        setDownloadError(error instanceof Error ? error.message : "Couldn't download the PDF.");
-      }
-    } finally {
-      setDownloading(false);
-    }
-  };
-
   const requestDownload = (name: string) => {
     setDownloadError("");
-    if (!account.user) {
-      pendingDownload.current = name;
-      setGateReason("Sign in to download this resume.");
-      setGate("auth");
-      return;
-    }
-    if (!account.entitlement.canDownload) {
-      pendingDownload.current = name;
-      setGateReason("");
-      setGate("plan");
-      return;
-    }
-    void runDownload(name);
-  };
-
-  const handleRegister = async (input: { email: string; name: string; password: string }) => {
-    const ent = await account.register(input);
-    latestEntitlement.current = ent;
-    return ent;
-  };
-
-  const handleLogin = async (input: { email: string; password: string }) => {
-    const ent = await account.login(input);
-    latestEntitlement.current = ent;
-    return ent;
+    setDownloading(true);
+    void downloadPublicResumePdf(name, id)
+      .catch((error) => {
+        setDownloadError(error instanceof Error ? error.message : "Couldn't download the PDF.");
+      })
+      .finally(() => {
+        setDownloading(false);
+      });
   };
 
   return (
@@ -101,60 +58,20 @@ export function PublicCvShell({
         downloading={downloading}
         downloadError={downloadError}
         onSignIn={() => {
-          pendingDownload.current = null;
           setGateReason("Sign in to rate this resume.");
-          setGate("auth");
+          setGate(true);
         }}
         onDownload={requestDownload}
       />
 
       <AuthDialog
-        open={gate === "auth"}
+        open={gate}
         reason={gateReason}
         ownerKey={owner.current}
-        onRegister={handleRegister}
-        onLogin={handleLogin}
-        onAuthenticated={() => {
-          const wanted = pendingDownload.current;
-          const canDownload = latestEntitlement.current?.canDownload ?? account.entitlement.canDownload;
-          latestEntitlement.current = null;
-          if (!wanted) {
-            setGate(null);
-            return;
-          }
-          if (canDownload) {
-            pendingDownload.current = null;
-            setGate(null);
-            void runDownload(wanted);
-          } else {
-            setGateReason("");
-            setGate("plan");
-          }
-        }}
-        onClose={() => {
-          pendingDownload.current = null;
-          setGate(null);
-        }}
-      />
-
-      <PlanDialog
-        open={gate === "plan"}
-        account={account}
-        reason={gateReason}
-        onClose={() => {
-          pendingDownload.current = null;
-          setGate(null);
-        }}
-        onSignIn={() => {
-          setGateReason("Sign in to subscribe and download.");
-          setGate("auth");
-        }}
-        onPaid={() => {
-          const wanted = pendingDownload.current;
-          pendingDownload.current = null;
-          setGate(null);
-          if (wanted) void runDownload(wanted);
-        }}
+        onRegister={account.register}
+        onLogin={account.login}
+        onAuthenticated={() => setGate(false)}
+        onClose={() => setGate(false)}
       />
     </div>
   );
