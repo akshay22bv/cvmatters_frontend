@@ -40,30 +40,107 @@ const PANEL_TO_SLUG: Record<PanelId, string> = {
 
 /** Paths that must never be treated as a public username. */
 const RESERVED_ROOT = new Set([
+  "404",
+  "500",
+  "about",
+  "account",
+  "accounts",
+  "admin",
+  "ai",
   "api",
+  "app",
+  "assets",
+  "auth",
   "backend",
+  "billing",
+  "blog",
+  "careers",
+  "chat",
+  "checkout",
+  "contact",
+  "css",
   "cv",
+  "cvmatters",
+  "dashboard",
+  "delete",
+  "discover",
+  "docs",
+  "download",
+  "edit",
   "examples",
+  "explore",
+  "export",
+  "faq",
+  "features",
+  "feedback",
+  "fonts",
+  "forgot",
+  "gallery",
+  "help",
   "home",
+  "images",
+  "img",
+  "import",
+  "jobs",
+  "js",
+  "legal",
+  "linkedin",
   "login",
   "logout",
+  "mail",
   "me",
-  "profile",
-  "r",
-  "settings",
-  "signup",
-  "admin",
-  "auth",
-  "about",
-  "contact",
-  "privacy",
-  "terms",
-  "help",
-  "support",
-  "billing",
+  "media",
+  "new",
+  "null",
+  "official",
+  "og",
+  "pay",
+  "payment",
+  "payments",
+  "pdf",
+  "plan",
   "plans",
-  "blog",
+  "preview",
+  "pricing",
+  "print",
+  "privacy",
+  "pro",
+  "profile",
+  "public",
+  "r",
+  "register",
+  "reset",
+  "resume",
+  "resumes",
+  "robots",
+  "root",
+  "search",
+  "security",
+  "settings",
+  "share",
+  "signin",
+  "signout",
+  "signup",
+  "sitemap",
+  "staff",
   "start",
+  "static",
+  "status",
+  "subscribe",
+  "subscription",
+  "support",
+  "system",
+  "team",
+  "template",
+  "templates",
+  "terms",
+  "undefined",
+  "upgrade",
+  "upload",
+  "user",
+  "users",
+  "verify",
+  "www",
   "sitemap.xml",
   "robots.txt",
   "opengraph-image",
@@ -165,13 +242,24 @@ export function isBuilderPath(pathname: string) {
   if (
     pathname === "/blog" ||
     pathname.startsWith("/blog/") ||
+    pathname === "/pricing" ||
+    pathname.startsWith("/pricing/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/signup" ||
+    pathname.startsWith("/signup/") ||
+    pathname === "/templates" ||
+    pathname.startsWith("/templates/") ||
+    pathname === "/help" ||
+    pathname.startsWith("/help/") ||
     pathname === "/privacy" ||
     pathname.startsWith("/privacy/") ||
     pathname === "/terms" ||
     pathname.startsWith("/terms/") ||
     pathname === "/billing" ||
     pathname.startsWith("/billing/") ||
-    pathname.startsWith("/auth/")
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/og/")
   ) {
     return false;
   }

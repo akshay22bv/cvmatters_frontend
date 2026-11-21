@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
 
 const title = `Terms of Use · ${SITE_NAME}`;
-const description = `Terms governing use of ${SITE_NAME}, resume ownership, subscriptions, billing in INR via Cashfree, and refunds.`;
+const description = `Terms governing use of ${SITE_NAME}, resume ownership, subscriptions, cancellation, billing in INR via Cashfree, refunds, governing law, and grievance redressal.`;
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -35,11 +35,14 @@ export default function TermsPage() {
             Terms of Use
           </h1>
           <p className="board-lead is-narrow">
-            Last updated: November 20, 2026. Plain-language terms for using {SITE_NAME}.
+            Last updated: November 21, 2026. Plain-language terms for using {SITE_NAME}.
           </p>
           <div className="board-about-acts">
             <Link href="/" className="board-pill board-pill-outline">
               <span className="board-pill-label">Back to home</span>
+            </Link>
+            <Link href="/pricing" className="board-pill board-pill-outline">
+              <span className="board-pill-label">View pricing</span>
             </Link>
             <Link href="/privacy" className="board-pill board-pill-outline">
               <span className="board-pill-label">Privacy policy</span>
@@ -70,7 +73,8 @@ export default function TermsPage() {
             <h2>3. Free and paid plans</h2>
             <p>
               You can draft up to two resumes, preview templates live, and publish a shareable resume link for free. Paid plans
-              unlock unlimited PDF downloads and unlimited CVs for the subscription period shown at checkout.
+              unlock unlimited PDF downloads and unlimited CVs for the subscription period shown on our{" "}
+              <Link href="/pricing">pricing page</Link> and at checkout.
             </p>
           </article>
 
@@ -78,14 +82,27 @@ export default function TermsPage() {
             <h2>4. Billing, currency, and refunds</h2>
             <p>
               All paid plans are billed in Indian Rupees (INR, ₹) through Cashfree Payments, supporting UPI, domestic and
-              international credit/debit cards, and net banking. If you were charged in error or run into a billing issue, contact{" "}
-              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> within 7 days of payment; refunds are processed in accordance
-              with Cashfree&apos;s settlement rules and applicable Indian consumer law.
+              international credit/debit cards, and net banking. If you were charged in error, experienced a duplicate charge, or ran
+              into a technical issue that prevented you from using a paid feature, contact{" "}
+              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> within 7 days of payment with your order ID. Approved refunds
+              are issued back to the original payment method within 5–7 business days in accordance with Cashfree&apos;s settlement
+              rules and applicable Indian consumer law.
             </p>
           </article>
 
           <article className="board-legal-block">
-            <h2>5. Acceptable use</h2>
+            <h2>5. Cancellation and renewal</h2>
+            <p>
+              Paid plans provide fixed-term prepaid access (30 days for Monthly, 365 days for Yearly) with no lock-in contracts or
+              hidden cancellation fees. You may stop or cancel any active plan or upcoming renewal at any time from your{" "}
+              <Link href="/profile">account profile</Link> or by emailing <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+              After cancellation, your paid features remain active until the end of the current paid period. Once a plan expires,
+              your saved CVs and public link remain intact and editable within free-plan limits.
+            </p>
+          </article>
+
+          <article className="board-legal-block">
+            <h2>6. Acceptable use</h2>
             <p>
               Do not publish unlawful, impersonating, or abusive content on public resume URLs, or attempt to scrape, overload, or
               reverse-engineer the service. We may suspend accounts or unpublish pages that violate these rules.
@@ -93,10 +110,31 @@ export default function TermsPage() {
           </article>
 
           <article className="board-legal-block">
-            <h2>6. Contact</h2>
+            <h2>7. Governing law and dispute resolution</h2>
             <p>
-              Questions about these terms? Reach us at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or via the{" "}
-              <Link href="/contact">contact page</Link>.
+              These Terms of Use are governed by and construed in accordance with the laws of India. Any dispute arising out of or
+              relating to {SITE_NAME} or these terms shall first be raised with our support team for good-faith resolution and, if
+              unresolved, shall be subject to the exclusive jurisdiction of the competent courts in Bengaluru, Karnataka, India —
+              without limiting any mandatory rights you hold under the Consumer Protection Act, 2019.
+            </p>
+          </article>
+
+          <article className="board-legal-block">
+            <h2>8. Grievance Officer</h2>
+            <p>
+              In accordance with the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 and
+              the Consumer Protection (E-Commerce) Rules, 2020, grievances regarding content, privacy, billing, or service issues may
+              be addressed to our Grievance Officer:
+            </p>
+            <p>
+              <strong>Grievance Officer — {SITE_NAME}</strong>
+              <br />
+              Email: <a href={`mailto:${SUPPORT_EMAIL}?subject=Grievance%20Redressal`}>{SUPPORT_EMAIL}</a>
+              <br />
+              Support form: <Link href="/contact">cvmatters.net/contact</Link>
+              <br />
+              Response timeline: Grievances are acknowledged within 48 hours and resolved within 15 days of receipt (and in all
+              cases within 30 days as required by applicable law).
             </p>
           </article>
         </div>

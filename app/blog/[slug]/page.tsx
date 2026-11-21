@@ -17,6 +17,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!post) return { title: "Post not found" };
   const url = blogAbsoluteUrl(post.slug);
   const description = post.excerpt || post.title;
+  // WhatsApp, LinkedIn, and X ignore SVG og:images — serve a 1200x630 PNG card for SVG/missing covers.
+  const isRasterCover = /\.(png|jpe?g|webp)(\?.*)?$/i.test(post.coverImage || "");
+  const ogImageUrl = isRasterCover
+    ? siteUrl(post.coverImage)
+    : siteUrl(`/og/blog/${encodeURIComponent(post.slug)}`);
   return {
     title: post.title,
     description,
@@ -27,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: post.title,
       description,
       url,
-      images: post.coverImage ? [{ url: siteUrl(post.coverImage) }] : undefined,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: post.title }],
       publishedTime: post.publishedAt || post.createdAt,
       modifiedTime: post.updatedAt,
     },
@@ -35,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title: post.title,
       description,
-      images: post.coverImage ? [siteUrl(post.coverImage)] : undefined,
+      images: [ogImageUrl],
     },
   };
 }

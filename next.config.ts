@@ -36,11 +36,23 @@ const nextConfig: NextConfig = {
     "/api/resumes/pdf": ["./node_modules/@sparticuz/chromium/bin/**"],
   },
   async headers() {
+    const immutableAsset = [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }];
+    const swrPage = [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" }];
     return [
       {
         source: "/:path*",
         headers: securityHeaders,
       },
+      { source: "/about", headers: swrPage },
+      { source: "/contact", headers: swrPage },
+      { source: "/pricing", headers: swrPage },
+      { source: "/privacy", headers: swrPage },
+      { source: "/terms", headers: swrPage },
+      { source: "/blog", headers: swrPage },
+      { source: "/blog/:slug", headers: swrPage },
+      // Keep immutable static asset rules after page rules so /blog/*.svg wins over /blog/:slug.
+      { source: "/blog/:file(.+\\.svg)", headers: immutableAsset },
+      { source: "/:file(icon[^/]*\\.png|apple-icon\\.png|logo[^/]*|favicon\\.ico)", headers: immutableAsset },
     ];
   },
   async rewrites() {

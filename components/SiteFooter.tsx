@@ -79,6 +79,9 @@ export function SiteFooter({
                 <li>
                   <a href={templatesHref}>Templates</a>
                 </li>
+                <li>
+                  <Link href="/pricing">Pricing</Link>
+                </li>
               </ul>
             </nav>
 
@@ -103,6 +106,9 @@ export function SiteFooter({
             <nav className="board-foot-col" aria-label="Support and legal">
               <h3 className="board-foot-col-title">Support</h3>
               <ul className="board-foot-list">
+                <li>
+                  <Link href="/login">Sign in</Link>
+                </li>
                 <li>
                   <Link href="/contact">Contact us</Link>
                 </li>

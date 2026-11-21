@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/icons";
 import { SITE_NAME } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: { absolute: `Page not found · ${SITE_NAME}` },
+  description: `That link doesn't match a page or public resume on ${SITE_NAME}.`,
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+};
 
 export default function NotFound() {
   return (

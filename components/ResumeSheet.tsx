@@ -187,7 +187,7 @@ function pushJobBullets(pieces: ReactNode[], job: ResumeData["experience"][numbe
 function editorialPieces(data: ResumeData, hideContact: boolean) {
   const pieces: ReactNode[] = [
     <Block key="head" section="details">
-      <h1 className="ed-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+      <div className="ed-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
       <p className="ed-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
       <div className="ed-contact"><ContactLines personal={data.personal} hideContact={hideContact} plain /></div>
       <div className="ed-rule" aria-hidden="true" />
@@ -239,7 +239,7 @@ function signalPieces(data: ResumeData, hideContact: boolean, templateId: Templa
     <Block key="head" section="details">
       <header className="sig-top">
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <div className="sig-contact"><ContactLines personal={data.personal} hideContact={hideContact} plain /></div>
@@ -352,7 +352,7 @@ function primePieces(data: ResumeData, hideContact: boolean) {
     <Block key="head" section="details">
       <header className="sig-top">
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <div className="sig-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -403,7 +403,7 @@ function folioPieces(data: ResumeData, hideContact: boolean) {
       <header className="folio-head">
         <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={86} />
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
           <div className="folio-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
         </div>
@@ -437,7 +437,7 @@ function timelinePieces(data: ResumeData, hideContact: boolean) {
     <Block key="head" section="details">
       <header className="sig-top">
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <div className="sig-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -489,7 +489,7 @@ function densPieces(data: ResumeData, hideContact: boolean) {
       <header className="dens-bar">
         <span className="dens-initials">{initialsOf(data.personal.fullName)}</span>
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <div className="sig-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -522,7 +522,7 @@ function helloPieces(data: ResumeData, hideContact: boolean) {
   return [
     <Block key="head" section="details">
       <header className="hello-bubble">
-        <h1>Hi, I&apos;m {first}.</h1>
+        <div className="hello-name">Hi, I&apos;m {first}.</div>
         <p>{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
       </header>
       <div className="hello-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -554,7 +554,7 @@ function gridPieces(data: ResumeData, hideContact: boolean) {
     <Block key="head" section="details">
       <header className="sig-top">
         <div>
-          <h1 className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="sig-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="sig-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <div className="sig-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -695,7 +695,7 @@ function QuartzBanner({ data, hideContact }: { data: ResumeData; hideContact?: b
   return (
     <header className="quartz-banner" data-section="details">
       <div className="quartz-id">
-        <h1 className="split-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="split-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="split-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
       </div>
       <div className="quartz-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
@@ -709,7 +709,7 @@ function SplitSide({ data, hideContact, plain = false, identity = true }: { data
       {identity && (
         <div data-section="details">
           {!plain && <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={84} />}
-          <h1 className="split-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="split-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="split-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
           <div className="split-contact"><ContactLines personal={data.personal} hideContact={hideContact} /></div>
         </div>
@@ -968,7 +968,7 @@ export function ResumeView({
           </div>
         ))}
       </div>
-      <div className="print-root">
+      <div className="print-root" aria-hidden="true">
         {pages.map((indexes, index) => <div key={`print-${index}`}>{sheet(indexes, index)}</div>)}
       </div>
     </>
@@ -996,7 +996,7 @@ export function ResumeSheet({
 }) {
   const templateId = readTemplateId(rawId);
   const pieces = piecesFor(templateId, data, hideContact);
-  const measurePieces = piecesFor(templateId, data, hideContact);
+  const measurePieces = preview && !fill ? piecesFor(templateId, data, hideContact) : null;
   const measureRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLElement>(null);
   const [firstPage, setFirstPage] = useState<{ indexes: number[]; total: number } | null>(null);

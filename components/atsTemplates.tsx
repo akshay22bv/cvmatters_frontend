@@ -166,7 +166,7 @@ export function mintPieces(data: ResumeData, hideContact: boolean) {
     <Block key="head" section="details">
       <header className="mint-head">
         <div>
-          <h1 className="mint-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="mint-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="mint-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <IconContacts personal={data.personal} hideContact={hideContact} className="mint-contacts" />
@@ -240,7 +240,7 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
   const pieces: ReactNode[] = [
     <Block key="head" section="details">
       <header className="banner-head">
-        <h1 className="banner-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="banner-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="banner-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         <IconContacts personal={data.personal} hideContact={hideContact} className="banner-contacts" />
       </header>
@@ -305,7 +305,7 @@ export function formalPieces(data: ResumeData, hideContact: boolean) {
   const pieces: ReactNode[] = [
     <Block key="head" section="details">
       <header className="formal-head">
-        <h1 className="formal-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="formal-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="formal-contact">{contacts.length ? contacts.join(" | ") : "email | phone | city"}</p>
       </header>
     </Block>,
@@ -413,7 +413,7 @@ export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContac
     <>
       <header className="apex-head" data-section="details">
         <div className="apex-id">
-          <h1 className="apex-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="apex-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="apex-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
           <IconContacts personal={data.personal} hideContact={hideContact} className="apex-contacts" />
         </div>
@@ -528,7 +528,7 @@ export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideCon
         <div className="cab-id">
           <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={78} />
           <div>
-            <h1 className="cab-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+            <div className="cab-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
             <p className="cab-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
           </div>
         </div>
@@ -659,7 +659,7 @@ export function ManorChrome({ data, hideContact }: { data: ResumeData; hideConta
         {sectionOnCv(data, "extras") && languages ? <SideExtra extra={languages} labelClass="manor-label" listClass="manor-side-list" plainClass="manor-side-plain" /> : null}
       </aside>
       <header className="manor-head" data-section="details">
-        <h1 className="manor-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="manor-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <div className="manor-band">
           <p className="manor-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
@@ -706,7 +706,7 @@ export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideCont
       <header className="canvas-head" data-section="details">
         <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={88} />
         <div className="canvas-id">
-          <h1 className="canvas-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="canvas-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="canvas-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <IconContacts personal={data.personal} hideContact={hideContact} className="canvas-contacts" />
@@ -805,7 +805,7 @@ export function CobaltChrome({ data, hideContact }: { data: ResumeData; hideCont
       <span className="cobalt-dots is-top" aria-hidden="true" />
       <div className="cobalt-id" data-section="details">
         <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={108} />
-        <h1 className="cobalt-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="cobalt-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="cobalt-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         <IconContacts personal={data.personal} hideContact={hideContact} className="cobalt-contacts" />
       </div>
@@ -837,7 +837,7 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
   const pieces: ReactNode[] = [
     <Block key="head" section="details">
       <header className="studio-head">
-        <h1 className="studio-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="studio-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="studio-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         <p className="studio-contact">{contacts.length ? contacts.join("  |  ") : "email | phone | web"}</p>
       </header>
@@ -931,7 +931,7 @@ export function VaultChrome({ data, hideContact }: { data: ResumeData; hideConta
   return (
     <>
       <header className="vault-head" data-section="details">
-        <h1 className="vault-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+        <div className="vault-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="vault-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
       </header>
       <aside className="vault-side">
@@ -980,7 +980,7 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
     <Block key="head" section="details">
       <header className="plaza-head">
         <div className="plaza-id">
-          <h1 className="plaza-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</h1>
+          <div className="plaza-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="plaza-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
         <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={86} />

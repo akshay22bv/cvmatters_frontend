@@ -895,7 +895,8 @@
   padding: 22px 26px;
   margin-bottom: calc(14px * var(--space, 1));
 }
-.hello-bubble h1 {
+.hello-bubble h1,
+.hello-bubble .hello-name {
   margin: 0;
   font-size: calc(28px * var(--type, 1));
   letter-spacing: -0.04em;

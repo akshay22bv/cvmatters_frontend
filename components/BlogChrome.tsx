@@ -13,8 +13,10 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
             <span>{SITE_NAME}</span>
           </Link>
           <nav className="blog-top-nav" aria-label="Blog">
+            <Link href="/pricing">Pricing</Link>
             <Link href="/blog">Blog</Link>
             <Link href="/examples">Examples</Link>
+            <Link href="/login">Sign in</Link>
             <Link href="/cv/details" className="blog-top-cta">
               Build your CV
             </Link>

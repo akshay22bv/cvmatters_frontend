@@ -6,10 +6,11 @@ import { ResumeView } from "./ResumeSheet";
 import { LoadScreen } from "./LoadScreen";
 import { Stars } from "./Stars";
 import { ApiError, loadPublicResume, loadRatings, rateResume } from "@/lib/api";
+import { hasPublicResumeContent } from "@/lib/publicResume";
 import type { RatingSummary, ResumeRecord } from "@/lib/types";
 
 /**
- * Public resume at `/:username` — black stage, CV only, no site header.
+ * Public resume at `/:username` — black stage, CV first, optional rating below.
  */
 export function PublicCvPage({
   id,
@@ -27,6 +28,7 @@ export function PublicCvPage({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState("");
+  const [pendingStars, setPendingStars] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,6 +40,10 @@ export function PublicCvPage({
       .then(async (row) => {
         if (cancelled) return;
         setRecord(row);
+        if (!hasPublicResumeContent(row.data)) {
+          setNotes([]);
+          return;
+        }
         try {
           const detail = await loadRatings(row.id);
           if (!cancelled) setNotes(detail.notes || []);
@@ -56,11 +62,7 @@ export function PublicCvPage({
     };
   }, [id, initialRecord]);
 
-  const onRate = async (stars: number) => {
-    if (!signedIn) {
-      onSignIn();
-      return;
-    }
+  const submitRating = async (stars: number) => {
     if (!record) return;
     if (record.isMine) {
       setHint("You can't rate your own resume.");
@@ -72,11 +74,34 @@ export function PublicCvPage({
       const next = await rateResume(record.id, stars, "");
       setRecord((current) => (current ? { ...current, rating: next } : current));
     } catch (reason) {
-      if (reason instanceof ApiError && reason.needsSignIn) onSignIn();
-      else setHint(reason instanceof Error ? reason.message : "Couldn't save that rating.");
+      if (reason instanceof ApiError && reason.needsSignIn) {
+        setPendingStars(stars);
+        onSignIn();
+      } else {
+        setHint(reason instanceof Error ? reason.message : "Couldn't save that rating.");
+      }
     } finally {
       setBusy(false);
     }
+  };
+
+  // If the visitor clicked a star while signed out and just finished signing in, submit it smoothly.
+  useEffect(() => {
+    if (!signedIn || pendingStars == null || !record || busy) return;
+    const stars = pendingStars;
+    setPendingStars(null);
+    void submitRating(stars);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, pendingStars, record?.id]);
+
+  const onRate = (stars: number) => {
+    if (busy) return;
+    if (!signedIn) {
+      setPendingStars(stars);
+      onSignIn();
+      return;
+    }
+    void submitRating(stars);
   };
 
   if (error) {
@@ -88,7 +113,11 @@ export function PublicCvPage({
         <div className="public-empty">
           <h1>Resume not found</h1>
           <p>{error}</p>
-          <Link href="/">Go home</Link>
+          <div className="public-empty-acts">
+            <Link href="/" className="btn-cta">
+              Go home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -102,41 +131,71 @@ export function PublicCvPage({
     );
   }
 
+  if (!hasPublicResumeContent(record.data)) {
+    const handle = record.slug || id;
+    return (
+      <div className="public-stage">
+        <Link href="/" className="public-float-close" aria-label="Close">
+          ×
+        </Link>
+        <div className="public-empty public-unpublished">
+          <span className="public-unpublished-pill">/{handle}</span>
+          <h1>This resume isn&apos;t published yet</h1>
+          <p>
+            The owner of this link is still putting their CV together. Check back soon, or create your own
+            resume on CV Matters.
+          </p>
+          <div className="public-empty-acts">
+            <Link href="/start" className="btn-cta">
+              Create your own CV
+            </Link>
+            <Link href="/" className="public-empty-ghost">
+              Go home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const rating = (record.rating || { average: 0, count: 0, mine: 0 }) as RatingSummary;
   const name = record.data.personal.fullName.trim() || "This resume";
+  const role = record.data.personal.title.trim();
 
   return (
     <div className="public-stage">
+      <h1 className="sr-only">{role ? `${name} — ${role}` : name}</h1>
       <Link href="/" className="public-float-close" aria-label="Close">
         ×
       </Link>
+
+      <div className="public-sheet">
+        <ResumeView templateId={record.templateId} data={record.data} hideContact={false} />
+      </div>
 
       <div className="public-rate-bar">
         <Stars
           value={rating.mine || 0}
           size={16}
           label={`Rate ${name}`}
-          onRate={(stars) => {
-            if (!busy) void onRate(stars);
-          }}
+          onRate={onRate}
         />
         <span>
           {rating.count
-            ? `${rating.average.toFixed(1)} · ${rating.count}`
-            : signedIn
-              ? "Rate this CV"
-              : "Sign in to rate"}
+            ? `${rating.average.toFixed(1)} · ${rating.count} ${rating.count === 1 ? "rating" : "ratings"}`
+            : "Rate this CV"}
         </span>
-        {!signedIn ? (
-          <button type="button" className="public-rate-btn" onClick={onSignIn}>
-            Sign in
-          </button>
-        ) : null}
         {hint ? <em>{hint}</em> : null}
       </div>
 
-      <div className="public-sheet">
-        <ResumeView templateId={record.templateId} data={record.data} hideContact={false} />
+      <div className="public-join-bar">
+        <span>Built with CV Matters</span>
+        <Link href="/start" className="public-join-cta">
+          Create your free CV →
+        </Link>
+        <Link href="/pricing" className="public-join-link">
+          Pricing
+        </Link>
       </div>
 
       {notes.length > 0 ? (
