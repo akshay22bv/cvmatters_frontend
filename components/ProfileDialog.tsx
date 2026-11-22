@@ -1,8 +1,7 @@
 "use client";
 
 import { Dialog } from "./Dialog";
-import { SearchSelect } from "./Field";
-import { CATEGORIES, type Category, type ResumeData } from "@/lib/types";
+import type { ResumeData } from "@/lib/types";
 import type { AccountState } from "@/lib/useAccount";
 
 /**
@@ -14,23 +13,19 @@ export function ProfileDialog({
   open,
   account,
   data,
-  category,
   isPublic,
   busy,
   onClose,
   onData,
-  onCategory,
   onPublic,
 }: {
   open: boolean;
   account: AccountState;
   data: ResumeData;
-  category: Category;
   isPublic: boolean;
   busy: boolean;
   onClose: () => void;
   onData: (data: ResumeData) => void;
-  onCategory: (category: Category) => void;
   onPublic: (value: boolean) => void;
 }) {
   const share = data.share || { email: false, phone: false };
@@ -72,14 +67,6 @@ export function ProfileDialog({
       subtitle={account.user ? account.user.email : "Not signed in"}
     >
       <div className="modal-body">
-        <SearchSelect
-          label="Field"
-          value={category}
-          options={CATEGORIES.map((item) => ({ id: item, name: item }))}
-          hint="Where your resume is listed, and what you browse in Reference CVs."
-          onChange={(id) => onCategory(id as Category)}
-        />
-
         <div className="fld">
           <div className="fld-top">
             <span className="fld-label">Sharing</span>
@@ -89,7 +76,7 @@ export function ProfileDialog({
               "listed",
               isPublic,
               `Host my CV publicly`,
-              `Shows in ${category} and unlocks a share link like yoursite.com/your-name.`,
+              "Anyone with the link can view your CV, like yoursite.com/your-name.",
               onPublic,
             )}
             {row(

@@ -2,7 +2,6 @@
 
 import { AreaField } from "./Field";
 import { StepCard } from "./StepCard";
-import { Spark } from "./icons";
 import { resumePlainText } from "@/lib/content";
 import { keywords } from "@/lib/keywords";
 import type { ResumeData } from "@/lib/types";
@@ -18,14 +17,12 @@ export function JobStep({
   onJob,
   onAdjust,
   adjusting,
-  onSeeField,
 }: {
   data: ResumeData;
   jobDescription: string;
   onJob: (value: string) => void;
   onAdjust: (text: string) => void;
   adjusting: boolean;
-  onSeeField?: () => void;
 }) {
   const value = jobDescription.trim();
 
@@ -47,15 +44,9 @@ export function JobStep({
         />
 
         <div className="job-acts">
-          <button type="button" className="btn-cta" disabled={adjusting || !value} onClick={() => onAdjust(value)}>
-            <Spark />
+          <button type="button" className="btn" disabled={adjusting || !value} onClick={() => onAdjust(value)}>
             {adjusting ? "Rewriting your CV…" : "Rewrite my CV for this job"}
           </button>
-          {onSeeField ? (
-            <button type="button" className="btn" onClick={onSeeField}>
-              See resumes in your field
-            </button>
-          ) : null}
         </div>
       </StepCard>
 

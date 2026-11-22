@@ -888,7 +888,6 @@ export default function Builder() {
                   onJob={(jobDescription) => patch({ jobDescription })}
                   onAdjust={onAdjust}
                   adjusting={adjusting}
-                  onSeeField={() => router.push("/examples")}
                 />
               )}
             </div>
@@ -1056,12 +1055,10 @@ export default function Builder() {
         open={profileOpen}
         account={account}
         data={snapshot.data}
-        category={snapshot.category}
         isPublic={snapshot.isPublic}
         busy={saveState === "saving"}
         onClose={() => setProfileOpen(false)}
         onData={(data) => patch({ data })}
-        onCategory={(category) => patch({ category })}
         onPublic={async (isPublic) => {
           patch({ isPublic });
           live.current = { ...live.current, isPublic };

@@ -108,6 +108,32 @@ function recommendationsFor(section: string): RecCard[] {
       designCard,
     ];
   }
+  if (section === "extras") {
+    return [
+      {
+        id: "add-cert",
+        tone: "blue",
+        title: "Add certifications section",
+        desc: "Create a Certifications block and list credentials you name.",
+        prompt: "Add a Certifications section to my CV",
+      },
+      {
+        id: "add-projects",
+        tone: "pink",
+        title: "Add projects section",
+        desc: "Start a Projects section with bullet-style lines for key work.",
+        prompt: "Add a Projects section with bullet points for my top projects",
+      },
+      {
+        id: "add-custom",
+        tone: "green",
+        title: "Add a custom section",
+        desc: "Volunteer work, publications, languages — any titled extra block.",
+        prompt: "Add a new section called Volunteer experience to my CV",
+      },
+      designCard,
+    ];
+  }
 
   return [summaryCard, expCard, skillsCard, designCard];
 }
