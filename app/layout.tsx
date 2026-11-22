@@ -40,7 +40,12 @@ const outfit = Outfit({
 });
 // Resume-only typefaces load on demand instead of preloading ~15 font files on every page.
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap", preload: false });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 const roboto = Roboto({ weight: ["400", "500", "700"], subsets: ["latin"], variable: "--font-roboto", display: "swap", preload: false });
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -127,7 +132,7 @@ const fontVars = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fontVars}>
-      <body className={montserrat.className}>
+      <body className={inter.className}>
         <AppShell />
         {children}
       </body>

@@ -1,4 +1,13 @@
+import { heroSampleData } from "./heroShowcase";
 import type { ResumeRecord } from "./types";
+
+const stamp = "2026-11-20T00:00:00.000Z";
+
+function requireHero(templateId: "mint" | "formal" | "slate") {
+  const data = heroSampleData(templateId);
+  if (!data) throw new Error(`Missing hero sample for ${templateId}`);
+  return data;
+}
 
 /**
  * Anonymized sample resumes across fields — rendered immediately in SSR HTML
@@ -12,70 +21,8 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
     isPublic: true,
     slug: null,
     jobDescription: "",
-    updatedAt: "2026-11-20T00:00:00.000Z",
-    data: {
-      fontId: "sans",
-      typeSize: 10,
-      spacing: 10,
-      leading: 1,
-      personal: {
-        fullName: "Ananya Verma",
-        title: "Senior Product Designer",
-        email: "",
-        phone: "",
-        location: "Bengaluru, India",
-        pincode: "",
-        photoUrl: "",
-        linkedin: "",
-        github: "",
-        website: "",
-        portfolio: "",
-      },
-      summary:
-        "Product designer with 7+ years building design systems and B2B workflows. Focused on simplifying dense operational tools into clear, fast interfaces.",
-      experience: [
-        {
-          id: "ex-d1",
-          role: "Senior Product Designer",
-          company: "Northwind Cloud",
-          location: "Bengaluru",
-          start: "04/2022",
-          end: "",
-          current: true,
-          bullets: [
-            "Led a 40-component design system adopted across 4 web products, cutting UI QA regressions by 38%.",
-            "Redesigned self-serve onboarding with product and engineering, lifting week-1 activation from 41% to 63%.",
-          ],
-        },
-        {
-          id: "ex-d2",
-          role: "Product Designer",
-          company: "Fieldnote Labs",
-          location: "Remote",
-          start: "01/2020",
-          end: "03/2022",
-          current: false,
-          bullets: [
-            "Owned core planning and reporting screens used weekly by 12,000+ small business teams.",
-            "Ran 50+ customer interviews to reshape mobile navigation and reduce drop-off.",
-          ],
-        },
-      ],
-      education: [
-        {
-          id: "ed-d1",
-          degree: "BDes in Communication Design",
-          school: "National Institute of Design",
-          year: "2018",
-          detail: "Graduated with distinction",
-        },
-      ],
-      skills: {
-        industry: ["Product Design", "Design Systems", "User Research", "Information Architecture"],
-        tools: ["Figma", "Prototyping", "FigJam"],
-        other: ["HTML", "CSS"],
-      },
-    },
+    updatedAt: stamp,
+    data: requireHero("mint"),
   },
   {
     id: "sample-eng-1",
@@ -84,70 +31,8 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
     isPublic: true,
     slug: null,
     jobDescription: "",
-    updatedAt: "2026-11-20T00:00:00.000Z",
-    data: {
-      fontId: "libre",
-      typeSize: 10,
-      spacing: 10,
-      leading: 1,
-      personal: {
-        fullName: "Rohan Kulkarni",
-        title: "Senior Full-Stack Engineer",
-        email: "",
-        phone: "",
-        location: "Pune, India",
-        pincode: "",
-        photoUrl: "",
-        linkedin: "",
-        github: "",
-        website: "",
-        portfolio: "",
-      },
-      summary:
-        "Full-stack engineer specializing in TypeScript, Node.js, and PostgreSQL. Track record of shipping reliable billing, search, and low-latency web apps.",
-      experience: [
-        {
-          id: "ex-e1",
-          role: "Senior Software Engineer",
-          company: "Clearledger",
-          location: "Pune",
-          start: "06/2021",
-          end: "",
-          current: true,
-          bullets: [
-            "Architected an idempotent webhook and invoicing pipeline processing 180k monthly transactions with 99.98% uptime.",
-            "Reduced P95 search latency from 620ms to 95ms through PostgreSQL indexing and query caching.",
-          ],
-        },
-        {
-          id: "ex-e2",
-          role: "Software Engineer",
-          company: "Kestrel Systems",
-          location: "Hyderabad",
-          start: "07/2019",
-          end: "05/2021",
-          current: false,
-          bullets: [
-            "Built React + TypeScript analytics dashboards serving 35k daily active users.",
-            "Introduced end-to-end CI checks that halved post-release hotfixes.",
-          ],
-        },
-      ],
-      education: [
-        {
-          id: "ed-e1",
-          degree: "BTech in Computer Science",
-          school: "COEP Technological University",
-          year: "2019",
-          detail: "First class with distinction",
-        },
-      ],
-      skills: {
-        industry: ["System Design", "REST APIs", "Distributed Systems"],
-        tools: ["TypeScript", "React", "Next.js", "Node.js", "PostgreSQL", "Docker"],
-        other: ["AWS", "Redis"],
-      },
-    },
+    updatedAt: stamp,
+    data: requireHero("formal"),
   },
   {
     id: "sample-pm-1",
@@ -156,69 +41,8 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
     isPublic: true,
     slug: null,
     jobDescription: "",
-    updatedAt: "2026-11-20T00:00:00.000Z",
-    data: {
-      fontId: "sans",
-      typeSize: 10,
-      spacing: 10,
-      leading: 1,
-      personal: {
-        fullName: "Meera Nair",
-        title: "Product Manager",
-        email: "",
-        phone: "",
-        location: "Mumbai, India",
-        pincode: "",
-        photoUrl: "",
-        linkedin: "",
-        github: "",
-        website: "",
-        portfolio: "",
-      },
-      summary:
-        "Product manager focused on fintech checkout and activation loops. Combines funnel analytics with rapid user discovery to grow conversion and retention.",
-      experience: [
-        {
-          id: "ex-p1",
-          role: "Product Manager — Checkout",
-          company: "Paybridge",
-          location: "Mumbai",
-          start: "02/2022",
-          end: "",
-          current: true,
-          bullets: [
-            "Increased mobile checkout completion by 14% by streamlining UPI intent and fallback card flows.",
-            "Partnered with 6 engineers and 2 designers to launch saved payment methods in 8 weeks.",
-          ],
-        },
-        {
-          id: "ex-p2",
-          role: "Associate Product Manager",
-          company: "Cartloom",
-          location: "Bengaluru",
-          start: "08/2019",
-          end: "01/2022",
-          current: false,
-          bullets: [
-            "Defined activation metrics and shipped guided onboarding, lifting 30-day retention by 9 percentage points.",
-          ],
-        },
-      ],
-      education: [
-        {
-          id: "ed-p1",
-          degree: "MBA in Strategy & Product",
-          school: "SPJIMR Mumbai",
-          year: "2019",
-          detail: "",
-        },
-      ],
-      skills: {
-        industry: ["Product Strategy", "A/B Experimentation", "Funnel Analytics", "Roadmapping"],
-        tools: ["SQL", "Mixpanel", "Amplitude", "Figma", "Jira"],
-        other: ["Payments", "B2C Growth"],
-      },
-    },
+    updatedAt: stamp,
+    data: requireHero("slate"),
   },
   {
     id: "sample-mkt-1",
@@ -227,7 +51,7 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
     isPublic: true,
     slug: null,
     jobDescription: "",
-    updatedAt: "2026-11-20T00:00:00.000Z",
+    updatedAt: stamp,
     data: {
       fontId: "sans",
       typeSize: 10,
@@ -236,18 +60,18 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
       personal: {
         fullName: "Siddharth Rao",
         title: "Growth & Content Lead",
-        email: "",
-        phone: "",
+        email: "siddharth.rao@signaldesk.io",
+        phone: "+91 98110 22345",
         location: "Remote · Delhi NCR",
-        pincode: "",
+        pincode: "110001",
         photoUrl: "",
-        linkedin: "",
+        linkedin: "linkedin.com/in/siddharthrao",
         github: "",
-        website: "",
+        website: "siddharthrao.com",
         portfolio: "",
       },
       summary:
-        "B2B SaaS growth marketer driving organic acquisition and lifecycle revenue. Built search-led content programs from 0 to 120k monthly visits.",
+        "B2B SaaS growth marketer driving organic acquisition and lifecycle revenue. Built search-led content programs from 0 to 120k monthly visits while keeping payback period under six months.",
       experience: [
         {
           id: "ex-m1",
@@ -260,6 +84,33 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
           bullets: [
             "Grew non-brand organic traffic 4.2x in 18 months while keeping customer acquisition cost flat.",
             "Launched product-led comparison pages that now drive 31% of qualified inbound demos.",
+            "Built an email lifecycle program that lifted trial-to-paid conversion by 11 percentage points.",
+          ],
+        },
+        {
+          id: "ex-m2",
+          role: "SEO & Content Manager",
+          company: "Plotline",
+          location: "Gurugram",
+          start: "03/2019",
+          end: "04/2021",
+          current: false,
+          bullets: [
+            "Scaled blog output from 4 to 14 posts per month without sacrificing quality scores.",
+            "Ranked 28 priority keywords in the top three on Google within 12 months.",
+          ],
+        },
+        {
+          id: "ex-m3",
+          role: "Content Marketing Associate",
+          company: "Brightlane",
+          location: "Delhi NCR",
+          start: "07/2017",
+          end: "02/2019",
+          current: false,
+          bullets: [
+            "Owned social and newsletter channels reaching 45k subscribers.",
+            "Introduced editorial calendar tooling that cut approval cycles by 40%.",
           ],
         },
       ],
@@ -268,15 +119,39 @@ export const SAMPLE_EXAMPLES: ResumeRecord[] = [
           id: "ed-m1",
           degree: "BA (Hons) Economics",
           school: "University of Delhi",
-          year: "2018",
+          year: "2017",
+          detail: "Minor in statistics",
+        },
+        {
+          id: "ed-m2",
+          degree: "Higher Secondary",
+          school: "Delhi Public School, R.K. Puram",
+          year: "2014",
           detail: "",
         },
       ],
       skills: {
-        industry: ["Technical SEO", "Content Strategy", "Lifecycle Email", "Demand Generation"],
-        tools: ["GA4", "Search Console", "Ahrefs", "HubSpot"],
-        other: ["Copywriting", "SQL"],
+        industry: ["Technical SEO", "Content Strategy", "Lifecycle Email", "Demand Generation", "Product marketing"],
+        tools: ["GA4", "Search Console", "Ahrefs", "HubSpot", "Semrush", "Webflow"],
+        other: ["Copywriting", "SQL", "A/B testing"],
       },
+      extras: [
+        {
+          id: "ex-mkt-x1",
+          title: "Certifications",
+          items: ["HubSpot Inbound Marketing, 2022", "Google Analytics Individual Qualification, 2021"],
+        },
+        {
+          id: "ex-mkt-x2",
+          title: "Languages",
+          items: ["English — fluent", "Hindi — native"],
+        },
+        {
+          id: "ex-mkt-x3",
+          title: "Speaking",
+          items: ["Growth Engage India 2023 — SEO panel", "Newsletter: Signal Weekly — 4.2k subs"],
+        },
+      ],
     },
   },
 ];

@@ -199,8 +199,6 @@ textarea {
 }
 
 .nav-cta {
-  position: relative;
-  overflow: hidden;
   height: 40px;
   margin-left: 8px;
   border: 0;
@@ -210,23 +208,13 @@ textarea {
   color: var(--cta-ink);
   font-size: 14px;
   font-weight: 600;
-  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: none;
+  transition: background 0.18s ease;
 }
-
-.nav-cta::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.16), transparent 80%);
-  transform: translateX(-120%);
-  transition: transform 0.5s ease;
-}
-
-.nav-cta:hover:not(:disabled)::after { transform: translateX(120%); }
 
 .nav-cta:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(16, 16, 16, 0.18);
+  background: var(--cta-hover);
+  box-shadow: none;
 }
 
 .nav-cta:disabled { opacity: 0.55; }
@@ -709,9 +697,8 @@ textarea.grow {
 }
 
 .ghost:hover:not(:disabled) {
-  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
-  box-shadow: var(--pill-shadow-hover);
+  box-shadow: none;
 }
 
 .ghost.accent { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, white); }
@@ -787,9 +774,8 @@ textarea.grow {
 
 .btn:hover:not(:disabled),
 .job-acts .btn:hover:not(:disabled) {
-  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
-  box-shadow: var(--pill-shadow-hover);
+  box-shadow: none;
   text-decoration: none;
 }
 
@@ -804,9 +790,8 @@ textarea.grow {
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
   background: var(--cta-hover);
-  box-shadow: var(--pill-shadow-primary-hover);
+  box-shadow: none;
   text-decoration: none;
 }
 
@@ -1851,4 +1836,33 @@ button.example {
   .upload-art { min-height: 220px; }
   .head-actions { gap: 2px; }
   .nav-cta { margin-left: 4px; padding: 0 14px; }
+}
+
+/* Pill / CTA controls stay flat (cards and sheets may still use --shadow-*). */
+:where(
+  button,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  .btn,
+  .btn-primary,
+  .btn-cta,
+  .btn-quiet,
+  .ghost,
+  .board-pill,
+  .prof-btn,
+  .nav-cta,
+  .land-start,
+  .app-nav-sign,
+  .app-nav-profile,
+  .blog-top-cta,
+  .mn-signin,
+  .board-link-btn,
+  .auth-provider
+) {
+  box-shadow: none;
+}
+
+:where(.btn-primary:hover, .btn-cta:hover, .board-pill:hover, .board-pill-primary:hover) {
+  transform: none;
 }

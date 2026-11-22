@@ -574,6 +574,7 @@ export default function Builder() {
         busy={busy}
         busyLabel={busyLabel}
         error={error}
+        signedIn={!!account.user}
         onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
       />
     );
@@ -588,6 +589,7 @@ export default function Builder() {
         busy={busy}
         busyLabel={busyLabel}
         error={error}
+        signedIn={!!account.user}
         onOpen={
           ready
             ? (intent) => {

@@ -1,15 +1,16 @@
 /*
   Theme — restrained palette
   Pure white surfaces, charcoal ink, light grey lines, brand green accents.
+  Buttons are flat (no elevation shadows).
  */
 
 :root {
-  --black: #0a0a0a;
+  --black: #000000;
   --white: #ffffff;
   --gray: #f4f4f5;
   --gray-soft: #ffffff;
   --gray-muted: #e4e4e7;
-  /* Legacy token names — values are the brand green */
+
   --lime: #0abf53;
   --lime-deep: #099e46;
   --lime-soft: #e8faf0;
@@ -18,29 +19,29 @@
   --peach-deep: var(--lime);
 
   --bg: var(--white);
-  --bg-deep: #0f172a;
-  --bg-glow: #f4f4f5;
+  --bg-deep: #1c1c1e;
+  --bg-glow: var(--gray);
   --bg-glow-2: #fafafa;
   --header: var(--black);
   --bar: var(--white);
   --bar-ink: var(--black);
-  --bar-muted: rgba(10, 10, 10, 0.55);
+  --bar-muted: rgba(0, 0, 0, 0.55);
   --card: var(--white);
-  --soft: rgba(10, 10, 10, 0.04);
+  --soft: rgba(0, 0, 0, 0.04);
   --tab: var(--gray);
   --preview: var(--white);
   --field: var(--white);
-  --field-line: rgba(10, 10, 10, 0.12);
-  --field-hover: rgba(10, 10, 10, 0.42);
-  --placeholder: rgba(10, 10, 10, 0.35);
+  --field-line: rgba(0, 0, 0, 0.12);
+  --field-hover: rgba(0, 0, 0, 0.42);
+  --placeholder: rgba(0, 0, 0, 0.35);
   --bad: #c62828;
   --bad-soft: #ffc6c6;
   --glass: rgba(255, 255, 255, 0.88);
-  --glass-line: rgba(10, 10, 10, 0.08);
+  --glass-line: rgba(0, 0, 0, 0.08);
 
   --ink: var(--black);
-  --ink-soft: #2a2a2a;
-  --muted: rgba(10, 10, 10, 0.5);
+  --ink-soft: #3a3a3c;
+  --muted: rgba(0, 0, 0, 0.5);
   --label: var(--black);
   --rail-bg: var(--white);
   --rail-ink: var(--ink-soft);
@@ -50,11 +51,10 @@
   --go-ink: var(--white);
   --forest: var(--black);
   --forest-deep: var(--black);
-  --line: rgba(10, 10, 10, 0.1);
+  --line: rgba(0, 0, 0, 0.1);
 
-  /* Primary actions: black fill, white label (green reserved for rare brand accents) */
   --cta: var(--black);
-  --cta-hover: #1c1c1c;
+  --cta-hover: #1c1c1e;
   --cta-ink: var(--white);
   --accent: var(--lime-deep);
   --accent-strong: #056b32;
@@ -74,28 +74,26 @@
   --wash-green-soft: #dcf9e8;
   --wash-pink-soft: var(--gray);
 
-  --shadow-1: 0 2px 6px rgba(10, 10, 10, 0.06);
-  --shadow-2: 0 8px 20px rgba(10, 10, 10, 0.08);
-  --shadow-3: 0 16px 32px rgba(10, 10, 10, 0.1);
-  --shadow-4: 0 24px 48px rgba(10, 10, 10, 0.12);
+  --shadow-1: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 8px 20px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 16px 32px rgba(0, 0, 0, 0.1);
+  --shadow-4: 0 24px 48px rgba(0, 0, 0, 0.12);
   --shadow: var(--shadow-2);
   --ring: 0 0 0 3px color-mix(in srgb, var(--lime) 35%, transparent);
 
-  /* Unified controls (filled primary + outline secondary) */
   --pill-h: 48px;
   --pill-h-sm: 44px;
   --pill-h-xs: 40px;
   --pill-radius: 10px;
-  /* Icon-only controls — same radius as text buttons, smaller hit target */
   --icon-btn: 36px;
-  --pill-shadow: var(--shadow-1);
-  --pill-shadow-hover: var(--shadow-2);
-  --pill-shadow-primary: 0 10px 28px rgba(10, 10, 10, 0.12);
-  --pill-shadow-primary-hover: 0 14px 32px rgba(10, 10, 10, 0.18);
+  --pill-shadow: none;
+  --pill-shadow-hover: none;
+  --pill-shadow-primary: none;
+  --pill-shadow-primary-hover: none;
 
   --radius: 16px;
   --radius-lg: 24px;
-  --radius-sm: 10px;
+  --radius-sm: 12px;
 
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
@@ -104,7 +102,7 @@
   --mid: 0.3s;
   --slow: 0.62s;
 
-  --font-sans: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
-  --font-serif: var(--font-google-sans), "Google Sans", sans-serif;
-  --font-display: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
 }

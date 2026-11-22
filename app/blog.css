@@ -78,7 +78,7 @@
 
 .blog-top-cta:hover {
   background: var(--cta-hover);
-  transform: translateY(-1px);
+  box-shadow: none;
   text-decoration: none !important;
 }
 

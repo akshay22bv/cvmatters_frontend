@@ -8,6 +8,7 @@ import { SiteFooter } from "./SiteFooter";
 import { HOME_FAQS } from "./HomeJsonLd";
 import { IconChevronRight } from "./icons";
 import { Reveal, Tilt } from "./motion";
+import { HeroResumePreview } from "./HeroResumePreview";
 import { ResumeSheet } from "./ResumeSheet";
 import { offeredCatalog } from "@/lib/catalog";
 import { sampleForTemplate } from "@/lib/content";
@@ -69,6 +70,7 @@ export function Landing({
   busy = false,
   busyLabel = "",
   error = "",
+  signedIn = false,
   onOpen,
   onCreate,
 }: {
@@ -77,6 +79,7 @@ export function Landing({
   busy?: boolean;
   busyLabel?: string;
   error?: string;
+  signedIn?: boolean;
   onOpen?: (intent: DashIntent) => void;
   onCreate: (intent: DashIntent, templateId: TemplateId) => void;
   onUpload?: (file: File, intent: DashIntent, templateId: TemplateId) => void;
@@ -84,8 +87,6 @@ export function Landing({
 }) {
   const router = useRouter();
   const templates = useMemo(() => offeredCatalog(), []);
-  const heroTemplate = templateId || "mint";
-  const heroData = data || sampleForTemplate(heroTemplate);
   const owned = !!data;
 
   const pickIntent = (intent: DashIntent) => {
@@ -106,38 +107,40 @@ export function Landing({
       {error ? <p className="board-flash banner">{error}</p> : null}
       <section className="board-story" aria-label="Home">
         <header className="board-hero">
-          <div className="board-hero-glow" aria-hidden="true" />
-          <div className="board-rail board-hero-grid">
+          <div className="board-rail board-hero-shell">
             <div className="board-hero-copy">
-              <p className="board-kicker">Resume builder</p>
-              <h1 className="board-brand">CV Matters</h1>
-              <p className="board-lead">
-                Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts, and a shareable link.
-              </p>
-              <p className="board-seo-blurb">
-                CV Matters is an online resume builder for students and professionals in India and worldwide. Create a
-                single-column, ATS-friendly curriculum vitae, match bullets to a job description, publish a public page
-                at cvmatters.net/your-name, and export a sharp PDF when recruiters ask for a file.
-              </p>
-              <div className="board-cta">
-                <button type="button" className="board-pill board-pill-primary" disabled={busy} onClick={() => pickIntent("build")}>
-                  <span className="board-pill-label">{owned ? "Open your CV" : "Create my resume"}</span>
-                  <span className="board-pill-icon" aria-hidden="true">
-                    <IconChevronRight />
-                  </span>
-                </button>
-                <p className="board-cta-meta">
-                  <Link href="/login">Sign in</Link>
+              <div className="board-hero-top">
+                <p className="board-kicker">Resume builder</p>
+                <h1 className="board-brand">
+                  <span className="board-brand-dark">CV</span>{" "}
+                  <span className="board-brand-accent">Matters</span>
+                </h1>
+              </div>
+
+              <div className="board-hero-panel">
+                <p className="board-lead">
+                  Build a clean CV and tune it to a job post—live preview, ATS-friendly layouts, and a shareable link.
                 </p>
+                <p className="board-seo-blurb sr-only">
+                  CV Matters is an online resume builder for students and professionals in India and worldwide. Create a
+                  single-column, ATS-friendly curriculum vitae, match bullets to a job description, publish a public page
+                  at cvmatters.net/your-name, and export a sharp PDF when recruiters ask for a file.
+                </p>
+                <div className="board-cta">
+                  <button type="button" className="board-pill board-pill-primary board-hero-cta" disabled={busy} onClick={() => pickIntent("build")}>
+                    <span className="board-pill-label">{owned ? "Open your CV" : "Create my resume"}</span>
+                  </button>
+                  {!signedIn ? (
+                    <p className="board-cta-meta">
+                      <Link href="/login">Sign in</Link>
+                    </p>
+                  ) : null}
+                </div>
               </div>
             </div>
 
             <div className="board-hero-visual">
-              <div className="board-hero-stage">
-                <div className="board-hero-paper">
-                  <ResumeSheet templateId={heroTemplate} data={heroData} preview fill />
-                </div>
-              </div>
+              <HeroResumePreview />
             </div>
           </div>
         </header>
