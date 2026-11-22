@@ -122,7 +122,8 @@ export function Landing({
                 <p className="board-seo-blurb sr-only">
                   CV Matters is an online resume builder for students and professionals in India and worldwide. Create a
                   single-column, ATS-friendly curriculum vitae, match bullets to a job description, publish a public page
-                  at cvmatters.net/your-name, and export a sharp PDF when recruiters ask for a file.
+                  at cvmatters.net/your-name, and export a sharp PDF when recruiters ask for a file. Pick a short handle
+                  after the slash to share one link instead of attachments.
                 </p>
                 <div className="board-cta">
                   <button type="button" className="board-pill board-pill-primary board-hero-cta" disabled={busy} onClick={() => pickIntent("build")}>
@@ -130,18 +131,19 @@ export function Landing({
                   </button>
                 </div>
                 <div className="board-hero-public">
-                  <p className="board-hero-public-title">One link for your resume</p>
+                  <p className="board-hero-public-title">Your resume gets its own web address</p>
                   <p className="board-hero-public-url" aria-label="Example public resume URL">
-                    cvmatters.net/<span className="board-hero-public-slug">username</span>
+                    cvmatters.net/<span className="board-hero-public-slug">your-name</span>
+                  </p>
+                  <p>You pick the ending after the slash. That link is what you share instead of emailing a PDF.</p>
+                  <p>
+                    Open it on any phone or laptop: your CV shows as a simple page in the browser. No download or login
+                    needed for the person viewing it.
                   </p>
                   <p>
-                    Claim a short username and publish a clean, mobile-friendly CV page recruiters can open in one tap.
+                    Edit here as often as you like—the link stays the same, and the page matches what you export to
+                    PDF. Sharing stays off until you switch it on.
                   </p>
-                  <p>
-                    Put that URL on LinkedIn, WhatsApp, or your email signature—it stays in sync with what you export to
-                    PDF.
-                  </p>
-                  <p>Your draft stays private until you turn sharing on. Update anytime; the live page follows your latest edits.</p>
                 </div>
               </div>
             </div>

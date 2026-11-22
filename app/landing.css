@@ -1238,6 +1238,7 @@
   color: var(--accent-strong, var(--accent));
 }
 
+
 .board-cta {
   display: grid;
   gap: 14px;
