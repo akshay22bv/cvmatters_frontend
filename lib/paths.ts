@@ -275,7 +275,8 @@ export function isBuilderPath(pathname: string) {
     pathname === "/billing" ||
     pathname.startsWith("/billing/") ||
     pathname.startsWith("/auth/") ||
-    pathname.startsWith("/og/")
+    pathname.startsWith("/og/") ||
+    pathname.startsWith("/embed/")
   ) {
     return false;
   }

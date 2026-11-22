@@ -1334,6 +1334,67 @@
     0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
+.board-hero-paper-fit--skeleton {
+  aspect-ratio: 794 / 1123;
+  box-shadow:
+    0 16px 36px rgba(15, 23, 42, 0.08),
+    0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.board-hero-paper-fit--embed {
+  position: relative;
+  width: 100%;
+  height: auto !important;
+  overflow: hidden;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+.board-hero-paper-fit--embed.is-loading {
+  opacity: 0.92;
+  background: color-mix(in srgb, var(--soft) 40%, var(--white));
+}
+
+.board-hero-paper-fit--embed.is-ready {
+  opacity: 1;
+  background: var(--white);
+}
+
+.board-resume-embed-shell {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.board-tile-paper.is-embed,
+.board-proof-paper.is-embed {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  box-shadow: none;
+}
+
+.board-tile-paper.is-embed .board-resume-embed-shell,
+.board-proof-paper.is-embed .board-resume-embed-shell {
+  width: 100%;
+  height: 100%;
+}
+
+.board-proof-samples--skeleton {
+  min-height: 310px;
+  margin-top: 32px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--wash-lime) 45%, var(--soft));
+}
+
+.board-gallery--skeleton {
+  min-height: 280px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--wash-lime) 35%, var(--soft));
+}
+
 @media (min-width: 961px) {
   .board-hero-paper-fit {
     width: min(100%, 380px);
@@ -1347,8 +1408,10 @@
   pointer-events: none;
   box-shadow: none;
   animation: none;
+}
+
+.board-hero-paper.is-scale {
   backface-visibility: hidden;
-  transform-style: preserve-3d;
 }
 
 .board-hero-paper-swap {
@@ -1359,6 +1422,20 @@
   animation: board-hero-cv-in 0.65s var(--ease-out) both;
 }
 
+.board-hero-paper-swap--slow {
+  animation: board-hero-cv-in-slow 1.15s var(--ease-out) both;
+}
+
+.board-hero-embed-fade {
+  width: 100%;
+  height: 100%;
+  animation: board-hero-cv-in-slow 1.15s var(--ease-out) both;
+}
+
+.board-hero-embed-fade.is-instant {
+  animation: none;
+}
+
 .board-hero-paper-swap .paper {
   width: 794px;
   height: 1123px;
@@ -1367,6 +1444,45 @@
   margin: 0 auto;
   overflow: hidden;
   box-shadow: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (max-width: 960px) {
+  .board-hero-paper-fit {
+    overflow: clip;
+    overflow-x: clip;
+  }
+
+  /*
+   * Nested transforms (scale on the page + translateY on the slide) make iOS
+   * Safari garble serif/sans when the user pinch-zooms — zoom property and a
+   * fade-only swap avoid that stack.
+   */
+  .board-hero-paper.is-zoom .board-hero-paper-swap {
+    animation: board-hero-cv-in-zoom 0.55s var(--ease-out) both;
+  }
+
+  .board-hero-paper.is-scale .board-hero-paper-swap {
+    animation: board-hero-cv-in-zoom 0.55s var(--ease-out) both;
+  }
+
+  .board-hero-paper-swap .paper * {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  .board-hero-paper-swap .formal-contact {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+  }
+
+}
+
+@keyframes board-hero-cv-in-zoom {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .board-hero-paper-swap.is-instant {
@@ -1377,6 +1493,17 @@
   from {
     opacity: 0;
     transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes board-hero-cv-in-slow {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -2566,9 +2693,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .board-hero-paper-swap {
+  .board-hero-paper-swap,
+  .board-hero-embed-fade {
     animation: none !important;
     opacity: 1 !important;
+    transform: none !important;
   }
 
   .board-tile-tilt,

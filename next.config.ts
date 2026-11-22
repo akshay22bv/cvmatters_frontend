@@ -17,13 +17,25 @@ const csp = [
   "object-src 'none'",
 ].join("; ");
 
-const securityHeaders = [
-  { key: "Content-Security-Policy", value: csp },
-  { key: "X-Frame-Options", value: "DENY" },
+const sharedHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+];
+
+const securityHeaders = [
+  { key: "Content-Security-Policy", value: csp },
+  { key: "X-Frame-Options", value: "DENY" },
+  ...sharedHeaders,
+];
+
+/** Landing resume previews embed these routes in same-origin iframes on mobile. */
+const embedCsp = csp.replace("frame-ancestors 'none'", "frame-ancestors 'self'");
+const embedHeaders = [
+  { key: "Content-Security-Policy", value: embedCsp },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  ...sharedHeaders,
 ];
 
 const nextConfig: NextConfig = {
@@ -42,6 +54,11 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      /* Later rules override earlier ones for the same path (embed must allow iframes). */
+      {
+        source: "/embed/:path*",
+        headers: embedHeaders,
       },
       { source: "/about", headers: swrPage },
       { source: "/contact", headers: swrPage },

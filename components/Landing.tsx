@@ -7,14 +7,13 @@ import { LoadScreen } from "./LoadScreen";
 import { SiteFooter } from "./SiteFooter";
 import { HOME_FAQS } from "./HomeJsonLd";
 import { IconChevronRight } from "./icons";
-import { Reveal, Tilt } from "./motion";
+import { Reveal } from "./motion";
 import { HeroResumePreview } from "./HeroResumePreview";
-import { ResumeSheet } from "./ResumeSheet";
+import { LandingProofSamples } from "./LandingProofSamples";
+import { LandingTemplateGallery } from "./LandingTemplateGallery";
 import { offeredCatalog } from "@/lib/catalog";
-import { sampleForTemplate } from "@/lib/content";
-import { SAMPLE_EXAMPLES } from "@/lib/examples";
 import { startPath, type StartIntent } from "@/lib/paths";
-import { templateName, type ResumeData, type TemplateId } from "@/lib/types";
+import type { ResumeData, TemplateId } from "@/lib/types";
 
 export type DashIntent = StartIntent;
 
@@ -209,30 +208,7 @@ export function Landing({
             </Reveal>
           </div>
 
-          <div className="board-gallery" role="list" aria-label="Resume templates">
-            {templates.map((item, index) => (
-              <Tilt key={item.id} className="board-tile-tilt" max={4} lift={8}>
-                <button
-                  type="button"
-                  role="listitem"
-                  className="board-tile"
-                  disabled={busy}
-                  style={{ animationDelay: `${index * 40}ms` }}
-                  onClick={() => startWith(item.id)}
-                >
-                  <span className="board-tile-stage" aria-hidden="true">
-                    <span className="board-tile-paper">
-                      <ResumeSheet templateId={item.id} data={sampleForTemplate(item.id)} preview fill />
-                    </span>
-                  </span>
-                  <span className="board-tile-meta">
-                    <strong>{templateName(item.id)}</strong>
-                    <em>{item.blurb}</em>
-                  </span>
-                </button>
-              </Tilt>
-            ))}
-          </div>
+          <LandingTemplateGallery templates={templates} busy={busy} onPick={startWith} />
         </article>
 
         <article className="board-section" aria-labelledby="proof-title">
@@ -247,21 +223,7 @@ export function Landing({
               </p>
             </Reveal>
 
-            <div className="board-proof-samples" role="list" aria-label="Anonymized resume previews">
-              {SAMPLE_EXAMPLES.slice(0, 3).map((sample) => (
-                <Link key={sample.id} href="/examples" className="board-proof-sample" role="listitem">
-                  <span className="board-proof-paper" aria-hidden="true">
-                    <ResumeSheet templateId={sample.templateId} data={sample.data} preview fill />
-                  </span>
-                  <span className="board-proof-meta">
-                    <strong>{sample.data.personal.title}</strong>
-                    <span>
-                      {sample.category} · {templateName(sample.templateId)}
-                    </span>
-                  </span>
-                </Link>
-              ))}
-            </div>
+            <LandingProofSamples />
 
             <div className="board-quotes">
               {STORIES.map((item) => (

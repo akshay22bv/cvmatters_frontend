@@ -112,6 +112,11 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   interactiveWidget: "overlays-content",
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
 };
 
 const fontVars = [

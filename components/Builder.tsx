@@ -982,7 +982,7 @@ export default function Builder() {
                 </button>
               </div>
             </div>
-            <div className="look-paper" key={snapshot.templateId}>
+            <div className="look-paper paper-anim paper-anim-slow" key={snapshot.templateId}>
               <ResumeView
                 templateId={snapshot.templateId}
                 data={snapshot.data}

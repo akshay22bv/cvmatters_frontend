@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ResumeSheet } from "./ResumeSheet";
+import { ResumeEmbedFrame } from "./ResumeEmbedFrame";
+import { HeroResumePreviewSkeleton } from "./HeroResumePreviewSkeleton";
 import { heroShowcaseSlides } from "@/lib/heroShowcase";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 const PAGE_W = 794;
 const PAGE_H = 1123;
@@ -14,36 +17,42 @@ const HERO_SLIDES = heroShowcaseSlides();
 /** Fixed sample CVs in the hero — one full page each; never the visitor's draft. */
 export function HeroResumePreview() {
   const fitRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
   const [index, setIndex] = useState(0);
-  const [scale, setScale] = useState(0.52);
+  const [scale, setScale] = useState(0.45);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
 
   const slide = HERO_SLIDES[index] ?? HERO_SLIDES[0];
   const fitH = PAGE_H * scale;
 
-  const measure = useCallback(() => {
-    const fit = fitRef.current;
-    if (!fit) return;
-
-    const isDesktop = window.matchMedia("(min-width: 961px)").matches;
-    const boxW = fit.clientWidth;
-    if (boxW <= 0) return;
-
-    const targetW = isDesktop ? Math.min(boxW, DESKTOP_MAX_W) : boxW;
-    const raw = targetW / PAGE_W;
-    const dpr = window.devicePixelRatio || 1;
-    setScale(Math.round(raw * dpr * 1000) / (dpr * 1000));
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   useLayoutEffect(() => {
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (fitRef.current) ro.observe(fitRef.current);
+    if (!mounted || isMobile) return;
+    const fit = fitRef.current;
+    if (!fit) return;
+    const boxW = fit.getBoundingClientRect().width;
+    if (boxW <= 0) return;
+    const targetW = Math.min(boxW, DESKTOP_MAX_W);
+    setScale(targetW / PAGE_W);
+    const ro = new ResizeObserver(() => {
+      const nextW = fit.getBoundingClientRect().width;
+      if (nextW > 0) setScale(Math.min(nextW, DESKTOP_MAX_W) / PAGE_W);
+    });
+    ro.observe(fit);
     return () => ro.disconnect();
-  }, [measure]);
+  }, [mounted, isMobile]);
 
-  const reducedMotion = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotion = () => setReducedMotion(motion.matches);
+    onMotion();
+    motion.addEventListener("change", onMotion);
+    return () => motion.removeEventListener("change", onMotion);
   }, []);
 
   useEffect(() => {
@@ -54,25 +63,72 @@ export function HeroResumePreview() {
     return () => window.clearInterval(id);
   }, [reducedMotion]);
 
+  useEffect(() => {
+    if (!mounted || !isMobile || typeof document === "undefined") return;
+    const links: HTMLLinkElement[] = [];
+    for (let i = 0; i < HERO_SLIDES.length; i++) {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.as = "document";
+      link.href = `/embed/resume?hero=${i}`;
+      document.head.appendChild(link);
+      links.push(link);
+    }
+    return () => links.forEach((link) => link.remove());
+  }, [mounted, isMobile]);
+
+  useEffect(() => {
+    if (isMobile) setHeroReady(false);
+  }, [index, isMobile]);
+
+  if (!mounted) {
+    return <HeroResumePreviewSkeleton />;
+  }
+
+  if (isMobile) {
+    return (
+      <div className="board-hero-stage">
+        <div
+          className={`board-hero-paper-fit board-hero-paper-fit--embed${heroReady ? " is-ready" : " is-loading"}`}
+        >
+          <div
+            key={`hero-embed-${index}`}
+            className={reducedMotion ? "board-hero-embed-fade is-instant" : "board-hero-embed-fade"}
+          >
+            <ResumeEmbedFrame
+              src={`/embed/resume?hero=${index}`}
+              title={`Example resume: ${slide.data.personal.fullName}`}
+              priority
+              onReady={() => setHeroReady(true)}
+            />
+          </div>
+        </div>
+        <p className="sr-only" aria-live="polite">
+          Example resume: {slide.data.personal.fullName}, {slide.data.personal.title}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="board-hero-stage">
-      <div
-        className="board-hero-paper-fit"
-        ref={fitRef}
-        style={{ height: fitH }}
-      >
+      <div className="board-hero-paper-fit" ref={fitRef} style={{ height: fitH }}>
         <div
-          className="board-hero-paper"
+          className="board-hero-paper is-scale"
           style={{
             width: PAGE_W,
             height: PAGE_H,
-            transform: `translateX(-50%) scale(${scale})`,
+            transform: `translate3d(-50%, 0, 0) scale(${scale})`,
             transformOrigin: "top center",
           }}
         >
           <div
             key={`hero-slide-${index}`}
-            className={reducedMotion ? "board-hero-paper-swap is-instant" : "board-hero-paper-swap"}
+            className={
+              reducedMotion
+                ? "board-hero-paper-swap is-instant"
+                : "board-hero-paper-swap board-hero-paper-swap--slow"
+            }
           >
             <ResumeSheet templateId={slide.templateId} data={slide.data} preview fill />
           </div>

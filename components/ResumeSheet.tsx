@@ -143,7 +143,7 @@ function ContactLines({
       {rows.map((row) => (
         <div className="contact-line" key={row.kind}>
           <ContactIcon kind={row.kind} />
-          <span>{row.text}</span>
+          <span className="contact-val">{row.text}</span>
         </div>
       ))}
     </>

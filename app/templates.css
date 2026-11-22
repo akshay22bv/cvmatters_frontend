@@ -17,6 +17,29 @@
   overflow-wrap: anywhere;
 }
 
+/* Resume previews: stop mobile Safari painting phone/email as default blue links. */
+.paper a[x-apple-data-detectors],
+.paper a[x-apple-data-detectors-type],
+.paper a[href^="tel:"],
+.paper a[href^="mailto:"] {
+  color: inherit !important;
+  text-decoration: none !important;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.paper .contact-val {
+  color: inherit;
+}
+
+.mint-contacts a,
+.ats-contacts a,
+.formal-contact a,
+.studio-contact a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
 .contact-plain {
   margin: 0;
   font-size: inherit;

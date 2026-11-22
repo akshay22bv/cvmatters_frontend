@@ -857,9 +857,30 @@ a.blog-top-cta:hover {
   display: flex;
 }
 
+.paper-anim-slow {
+  animation: paper-in-slow 1.05s cubic-bezier(0.22, 0.8, 0.24, 1) both;
+}
+
 @keyframes paper-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes paper-in-slow {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-anim-slow {
+    animation: none;
+  }
 }
 
 .fan.is-curve {

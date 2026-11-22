@@ -97,7 +97,7 @@ export function IconContacts({
       {rows.map((row, index) => (
         <div className="ats-contact" key={`${row.kind}-${index}`}>
           <MetaIcon kind={row.kind} />
-          <span>{row.text}</span>
+          <span className="contact-val">{row.text}</span>
         </div>
       ))}
     </div>
