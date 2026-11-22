@@ -3,6 +3,7 @@ import "../embed.css";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 /** Fixed A4 layout width — parent iframe handles display size without scaling fonts. */
@@ -11,11 +12,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 10,
   userScalable: true,
-  formatDetection: {
-    telephone: false,
-    email: false,
-    address: false,
-  },
 };
 
 export default function EmbedResumeLayout({ children }: { children: React.ReactNode }) {
