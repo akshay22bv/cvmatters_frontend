@@ -385,10 +385,10 @@ export function ProfilePage({
               return (
                 <li key={item.id} className={current ? "prof-cv is-current" : "prof-cv"}>
                   <div className="prof-cv-copy">
-                    <strong>
-                      {rowTitle}
+                    <div className="prof-cv-head">
+                      <strong>{rowTitle}</strong>
                       {current ? <em className="prof-cv-active">Active</em> : null}
-                    </strong>
+                    </div>
                     <span>
                       {role}
                       {item.isPublic && item.slug ? (

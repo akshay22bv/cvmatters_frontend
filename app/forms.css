@@ -6257,10 +6257,27 @@ button.finish-check-grip:active {
   color: color-mix(in srgb, var(--prof-muted) 70%, transparent);
 }
 
+.prof-cv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.prof-cv-head strong {
+  margin: 0;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
 .prof-cv-active {
   display: inline-flex;
   align-items: center;
-  margin-left: 8px;
+  flex: none;
+  margin: 0;
   padding: 2px 8px;
   border-radius: 6px;
   background: var(--accent-soft);
@@ -6270,7 +6287,7 @@ button.finish-check-grip:active {
   font-style: normal;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  vertical-align: middle;
+  line-height: 1.2;
 }
 
 .prof-cv-acts {
@@ -6323,17 +6340,6 @@ button.finish-check-grip:active {
 .prof-cv.is-current {
   border-color: color-mix(in srgb, var(--lime) 42%, var(--prof-line));
   background: color-mix(in srgb, var(--lime) 7%, white);
-}
-
-.prof-cv-copy strong {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0;
-  margin: 0;
-  font-size: 15px;
-  font-weight: 650;
-  line-height: 1.25;
 }
 
 .prof-cv-copy > span {
@@ -6825,14 +6831,35 @@ button.finish-check-grip:active {
   }
 
   .prof-cv {
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 10px;
-    padding: 10px 12px;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 12px;
+    padding: 12px;
+  }
+
+  .prof-cv-head {
+    align-items: flex-start;
+  }
+
+  .prof-cv-head strong {
+    flex: 1 1 auto;
+    white-space: normal;
   }
 
   .prof-cv-acts {
-    flex-wrap: nowrap;
-    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .prof-cv-acts .prof-btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .prof-cv-acts .prof-cv-del {
+    flex: none;
   }
 
   .prof-hero-main { flex-direction: column; align-items: center; text-align: center; }
