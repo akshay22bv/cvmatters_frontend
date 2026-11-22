@@ -4902,31 +4902,26 @@ button.finish-check-grip:active {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
-  padding: 0 18px;
-  border: 1px solid color-mix(in srgb, var(--lime-deep) 88%, #000);
-  border-radius: 8px;
-  background: var(--lime);
-  color: var(--white);
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--pill-radius);
+  background: var(--white);
+  color: var(--ink);
   font: inherit;
   font-size: 13.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 640;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--lime) 35%, transparent);
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .app-nav-sign:hover {
-  background: var(--lime-deep);
-  border-color: var(--lime-deep);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--lime-deep) 40%, transparent);
-}
-
-.app-nav-sign:active {
-  transform: translateY(0);
+  background: var(--soft);
+  border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
+  box-shadow: var(--pill-shadow);
 }
 
 .app-nav-path {
