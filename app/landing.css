@@ -2772,16 +2772,19 @@
 }
 
 @media (max-width: 960px) {
-  #templates,
-  .board-section-templates,
   .board-hero-visual,
   .board-hero-visual--desktop {
     display: none !important;
   }
 
-  .board-foot-link-grid li:has(a[href="#templates"]),
-  .board-foot-link-grid li:has(a[href="/#templates"]) {
-    display: none;
+  .board-section-templates .board-intro.is-row {
+    padding-inline: var(--board-gutter);
+  }
+
+  .board-section-templates .board-gallery {
+    margin-top: 28px;
+    padding-inline: var(--board-gutter);
+    scroll-padding-inline: var(--board-gutter);
   }
 
   .board-hero-panel .board-hero-public {
