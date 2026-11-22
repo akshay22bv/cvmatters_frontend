@@ -295,9 +295,6 @@ export function CvAiDrawer({
                     disabled={busy}
                     onClick={() => void send(item.prompt)}
                   >
-                    <span className="ai-rec-tag" aria-hidden="true">
-                      Ask AI
-                    </span>
                     <span className="ai-rec-copy">
                       <strong>{item.title}</strong>
                       <span>{item.desc}</span>
