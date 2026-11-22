@@ -21,6 +21,7 @@ export function PublicCvPage({
   downloadError = "",
   onSignIn,
   onDownload,
+  onRecord,
 }: {
   id: string;
   initialRecord?: (ResumeRecord & { isMine?: boolean }) | null;
@@ -29,6 +30,7 @@ export function PublicCvPage({
   downloadError?: string;
   onSignIn: () => void;
   onDownload?: (name: string) => void;
+  onRecord?: (record: ResumeRecord & { isMine?: boolean }) => void;
 }) {
   const [record, setRecord] = useState<(ResumeRecord & { isMine?: boolean }) | null>(initialRecord);
   const [notes, setNotes] = useState<{ stars: number; note: string; name: string; at: string }[]>([]);
@@ -47,6 +49,7 @@ export function PublicCvPage({
       .then(async (row) => {
         if (cancelled) return;
         setRecord(row);
+        onRecord?.(row);
         if (!hasPublicResumeContent(row.data)) {
           setNotes([]);
           return;

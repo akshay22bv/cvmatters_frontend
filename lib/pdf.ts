@@ -308,26 +308,16 @@ async function downloadServerPdf(name: string) {
   await postPdf("/api/resumes/pdf", name, token ? { Authorization: `Bearer ${token}` } : undefined);
 }
 
-/** Free PDF on a shared public profile (`/:slug`). */
-export async function downloadPublicResumePdf(name: string, resumeKey: string) {
-  let serverError: unknown = null;
-  const path = `/api/resumes/${encodeURIComponent(resumeKey)}/public/pdf`;
-  try {
-    await postPdf(path, name);
-    return;
-  } catch (reason) {
-    serverError = reason;
-  }
+function devClientFallbackAllowed(entitled: boolean) {
+  return entitled && process.env.NODE_ENV === "development";
+}
 
-  const onLive =
-    typeof location !== "undefined" &&
-    !/localhost|127\.0\.0\.1/.test(location.hostname);
-  if (onLive) {
+async function maybeClientFallback(name: string, serverError: unknown, entitled: boolean) {
+  if (!devClientFallbackAllowed(entitled)) {
     const message =
       serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
     throw new Error(`${message} Try again in a moment or use Print → Save as PDF.`);
   }
-
   try {
     await downloadClientPdf(name);
   } catch (fallback) {
@@ -337,7 +327,25 @@ export async function downloadPublicResumePdf(name: string, resumeKey: string) {
   }
 }
 
-export async function downloadResumePdf(name: string) {
+/** Free PDF for visitors on a shared public profile (`/:slug`). */
+export async function downloadPublicResumePdf(name: string, resumeKey: string) {
+  let serverError: unknown = null;
+  const path = `/api/resumes/${encodeURIComponent(resumeKey)}/public/pdf`;
+  const token = readToken();
+  try {
+    await postPdf(path, name, token ? { Authorization: `Bearer ${token}` } : undefined);
+    return;
+  } catch (reason) {
+    serverError = reason;
+    const status = reason && typeof reason === "object" && "status" in reason ? Number(reason.status) : 0;
+    if (status === 401 || status === 402) throw reason;
+  }
+
+  await maybeClientFallback(name, serverError, false);
+}
+
+/** Account PDF — server enforces subscription; never raster-fallback without entitlement. */
+export async function downloadResumePdf(name: string, opts: { entitled: boolean }) {
   let serverError: unknown = null;
   try {
     await downloadServerPdf(name);
@@ -345,27 +353,10 @@ export async function downloadResumePdf(name: string) {
   } catch (reason) {
     serverError = reason;
     const status = reason && typeof reason === "object" && "status" in reason ? Number(reason.status) : 0;
-    // Auth / paywall must stay visible.
     if (status === 401 || status === 402) throw reason;
   }
 
-  // On production prefer a clear error over a blurry screenshot PDF.
-  const onLive =
-    typeof location !== "undefined" &&
-    !/localhost|127\.0\.0\.1/.test(location.hostname);
-  if (onLive) {
-    const message =
-      serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
-    throw new Error(`${message} Try again in a moment or use Print → Save as PDF.`);
-  }
-
-  try {
-    await downloadClientPdf(name);
-  } catch (fallback) {
-    const primary = serverError instanceof Error ? serverError.message : "Couldn't build a sharp PDF on the server.";
-    if (fallback instanceof Error) throw new Error(fallback.message || primary);
-    throw new Error(primary);
-  }
+  await maybeClientFallback(name, serverError, opts.entitled);
 }
 
 /**

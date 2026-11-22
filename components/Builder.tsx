@@ -378,10 +378,16 @@ export default function Builder() {
   };
 
   const download = async () => {
+    if (!account.user || !account.entitlement.canDownload) {
+      afterGate.current = "download";
+      setGateReason("");
+      setGate("plan");
+      return;
+    }
     setDownloading(true);
     setPdfError("");
     try {
-      await downloadResumePdf(live.current.data.personal.fullName);
+      await downloadResumePdf(live.current.data.personal.fullName, { entitled: true });
     } catch (error) {
       console.error("PDF export failed", error);
       setPdfError(error instanceof Error ? error.message : "Couldn't download the PDF.");
@@ -391,6 +397,12 @@ export default function Builder() {
   };
 
   const print = () => {
+    if (!account.user || !account.entitlement.canDownload) {
+      afterGate.current = "print";
+      setGateReason("");
+      setGate("plan");
+      return;
+    }
     setPdfError("");
     try {
       printResume(live.current.data.personal.fullName);

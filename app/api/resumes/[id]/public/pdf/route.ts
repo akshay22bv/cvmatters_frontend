@@ -8,7 +8,7 @@ function apiOrigin() {
   return (process.env.BACKEND_ORIGIN || "http://127.0.0.1:4000").replace(/\/$/, "");
 }
 
-/** Public profile PDF — no account or subscription; resume must be shared. */
+/** Visitor PDF on shared profiles; owners need a subscription when signed in. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -18,11 +18,30 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     const origin = apiOrigin();
+    const auth = req.headers.get("authorization") || "";
     const publicRes = await fetch(`${origin}/api/resumes/${encodeURIComponent(key)}/public`, {
       cache: "no-store",
+      headers: auth ? { Authorization: auth } : {},
     });
     if (!publicRes.ok) {
       return Response.json({ error: "That resume isn't shared." }, { status: 404 });
+    }
+
+    if (auth) {
+      const publicRecord = (await publicRes.clone().json()) as { isMine?: boolean };
+      const meRes = await fetch(`${origin}/api/auth/me`, {
+        headers: { Authorization: auth },
+        cache: "no-store",
+      });
+      if (meRes.ok) {
+        const me = (await meRes.json()) as { entitlement?: { canDownload?: boolean } };
+        if (publicRecord.isMine && !me.entitlement?.canDownload) {
+          return Response.json(
+            { error: "Downloads come with a subscription.", code: "upgrade" },
+            { status: 402 },
+          );
+        }
+      }
     }
 
     let body: { html?: string };
