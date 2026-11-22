@@ -297,14 +297,7 @@ export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup
               </label>
 
               <label className="auth-page-field">
-                <span className="auth-page-field-row">
-                  <span>Password</span>
-                  {mode === "login" ? (
-                    <button type="button" className="auth-link-btn" onClick={() => switchMode("forgot")}>
-                      Forgot password?
-                    </button>
-                  ) : null}
-                </span>
+                <span>Password</span>
                 <span className="auth-pass-wrap">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -324,6 +317,11 @@ export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup
                     {showPassword ? <IconEyeOff /> : <IconEye />}
                   </button>
                 </span>
+                {mode === "login" ? (
+                  <button type="button" className="auth-forgot auth-forgot-below" onClick={() => switchMode("forgot")}>
+                    Forgot password?
+                  </button>
+                ) : null}
               </label>
 
               <button type="submit" className="btn-cta auth-page-submit" disabled={busy}>

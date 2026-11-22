@@ -84,16 +84,17 @@
   --pill-h: 48px;
   --pill-h-sm: 44px;
   --pill-h-xs: 40px;
-  --pill-radius: 10px;
+  --pill-radius: 7px;
   --icon-btn: 36px;
   --pill-shadow: none;
   --pill-shadow-hover: none;
   --pill-shadow-primary: none;
   --pill-shadow-primary-hover: none;
 
-  --radius: 16px;
-  --radius-lg: 24px;
-  --radius-sm: 12px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-sm: 9px;
+  --card-radius: 18px;
 
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);

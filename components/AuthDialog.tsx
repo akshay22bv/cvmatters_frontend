@@ -285,19 +285,7 @@ export function AuthDialog({
                 />
               </label>
               <div className="auth-field">
-                <div className="auth-field-head">
-                  <label htmlFor="auth-password-input">Password</label>
-                  {mode === "login" ? (
-                    <button
-                      type="button"
-                      className="auth-forgot"
-                      disabled={busy}
-                      onClick={() => switchMode("forgot")}
-                    >
-                      Forgot password?
-                    </button>
-                  ) : null}
-                </div>
+                <label htmlFor="auth-password-input">Password</label>
                 <div className="auth-pass-wrap">
                   <input
                     id="auth-password-input"
@@ -319,6 +307,16 @@ export function AuthDialog({
                     {showPassword ? <IconEyeOff /> : <IconEye />}
                   </button>
                 </div>
+                {mode === "login" ? (
+                  <button
+                    type="button"
+                    className="auth-forgot auth-forgot-below"
+                    disabled={busy}
+                    onClick={() => switchMode("forgot")}
+                  >
+                    Forgot password?
+                  </button>
+                ) : null}
               </div>
               <button type="submit" className="btn-cta" disabled={busy || !email.trim() || !password || (mode === "signup" && !name.trim())}>
                 {busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}

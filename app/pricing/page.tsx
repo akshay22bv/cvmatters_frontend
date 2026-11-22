@@ -6,7 +6,7 @@ import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
 
 const title = `Pricing · ${SITE_NAME}`;
 const description =
-  "Simple, transparent pricing for CV Matters. Draft up to 2 resumes and publish a public CV link free forever, or unlock unlimited PDF exports from ₹48/month.";
+  "Simple, transparent pricing for CV Matters. Unlock unlimited PDF exports and full access from ₹48/month, ₹498/year, or ₹4,999 for 10 years.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -28,24 +28,6 @@ export const metadata: Metadata = {
 };
 
 const TIERS = [
-  {
-    id: "free",
-    name: "Free",
-    price: "₹0",
-    cadence: "forever",
-    blurb: "Everything you need to draft, preview, and publish your online CV.",
-    perks: [
-      "Up to 2 saved resumes",
-      "Live preview across all templates",
-      "ATS-friendly single-column layouts",
-      "Tailor copy to a job description",
-      "Public shareable link (cvmatters.net/your-name)",
-    ],
-    ctaLabel: "Start for free",
-    ctaHref: "/start",
-    featured: false,
-    badge: "",
-  },
   {
     id: "monthly",
     name: "Monthly",
@@ -69,7 +51,7 @@ const TIERS = [
     name: "Yearly",
     price: "₹498",
     cadence: "per year",
-    blurb: "Same full access for 365 days — save 14% compared to monthly.",
+    blurb: "Same full access for 365 days — save compared to paying monthly.",
     perks: [
       "Unlimited PDF downloads",
       "Unlimited CVs",
@@ -79,16 +61,30 @@ const TIERS = [
     ],
     ctaLabel: "Get Yearly",
     ctaHref: "/signup?next=/profile",
+    featured: false,
+    badge: "",
+  },
+  {
+    id: "ten_year",
+    name: "10 Year",
+    price: "₹4,999",
+    cadence: "for 10 years",
+    blurb: "One payment, a decade of full access — ideal if you update your CV across many roles.",
+    perks: [
+      "Unlimited PDF downloads",
+      "Unlimited CVs",
+      "All ATS-friendly templates",
+      "Tailor to any job post",
+      "Single checkout · no renewals for 10 years",
+    ],
+    ctaLabel: "Get 10 Year",
+    ctaHref: "/signup?next=/profile",
     featured: true,
-    badge: "Best value · Save 14%",
+    badge: "Best long-term value",
   },
 ] as const;
 
 const PRICING_FAQS = [
-  {
-    q: "Can I build and publish my CV without paying?",
-    a: "Yes. You can create up to two CVs, preview every template live, tailor your resume to a job posting, and publish a public cvmatters.net/your-name link completely free.",
-  },
   {
     q: "What payment methods are accepted?",
     a: "All paid plans are billed in Indian Rupees (₹) through Cashfree Payments, supporting UPI, domestic and international credit/debit cards, and net banking.",
@@ -110,11 +106,11 @@ export default function PricingPage() {
         <div className="board-rail">
           <p className="board-kicker">Pricing</p>
           <h1 id="pricing-page-title" className="board-heading">
-            Start free. Upgrade only when you need PDF exports.
+            Simple plans for PDF exports and full access.
           </h1>
           <p className="board-lead is-narrow">
-            Build, tailor, and publish your online CV for ₹0. Unlock unlimited PDF downloads and unlimited resumes whenever
-            you&apos;re ready to apply.
+            Pay monthly, yearly, or once for ten years. Every paid plan includes unlimited PDF downloads, unlimited CVs, and all
+            templates.
           </p>
           <div className="board-about-acts">
             <Link href="/start" className="board-pill board-pill-primary">

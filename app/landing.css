@@ -1201,7 +1201,7 @@
   max-width: 42ch;
   padding: 18px 18px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--wash-lime, #f4fbe8) 38%, var(--white));
 }
 
@@ -1595,7 +1595,7 @@
   align-items: flex-start;
   gap: 14px;
   padding: 28px 26px 26px;
-  border-radius: 20px;
+  border-radius: var(--radius);
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: var(--shadow-2, 0 8px 28px rgba(0, 0, 0, 0.06));
@@ -2430,7 +2430,7 @@
   min-height: 224px;
   padding: 26px 24px 22px;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: var(--radius);
   background: var(--white);
   color: var(--black);
   text-align: left;
@@ -2998,7 +2998,7 @@
   grid-template-rows: 310px auto;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius);
   background: var(--white);
   color: var(--ink);
   text-decoration: none;
@@ -3061,7 +3061,7 @@
   align-content: space-between;
   padding: 22px 24px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius);
   background: var(--white);
 }
 
@@ -3100,7 +3100,7 @@
 
 .board-faq-item {
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--white);
   padding: 16px 20px;
 }
