@@ -22,7 +22,7 @@ import { CvMobileChrome, CvSectionRail, SliceBack, SliceContinue, SliceViewCv } 
 import { DOCK_ORDER } from "./SideNav";
 import { ProfileDialog } from "./ProfileDialog";
 import { TemplateDialog } from "./TemplateDialog";
-import { IconAiDots, IconArrowUp, IconChevronLeft, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
+import { IconAiDots, IconArrowUp, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
 import { loginPath, panelPath, pathToView, publicResumePath } from "@/lib/paths";
@@ -1003,14 +1003,6 @@ export default function Builder() {
             <div className="preview-sheet-top-acts">
               <button
                 type="button"
-                className="preview-sheet-icon preview-sheet-back"
-                aria-label={view.kind === "profile" ? "Close preview" : "Back to editing"}
-                onClick={() => setPreviewOpen(false)}
-              >
-                <IconChevronLeft />
-              </button>
-              <button
-                type="button"
                 className="preview-sheet-icon preview-sheet-dl"
                 aria-label={downloading ? "Building PDF" : "Download PDF"}
                 aria-busy={downloading || undefined}
@@ -1018,6 +1010,14 @@ export default function Builder() {
                 onClick={() => requestPdf("download")}
               >
                 {downloading ? <IconSpinner /> : <IconDownload />}
+              </button>
+              <button
+                type="button"
+                className="sheet-x"
+                aria-label="Close preview"
+                onClick={() => setPreviewOpen(false)}
+              >
+                ×
               </button>
             </div>
           </div>

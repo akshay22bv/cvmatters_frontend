@@ -163,7 +163,7 @@ export const SECTION_LABEL: Record<string, string> = {
   about: "About",
   contact: "Contact",
   profile: "Profile",
-  examples: "Your field",
+  examples: "Resumes in your field",
   details: "Details",
   bio: "Summary",
   summary: "Summary",
@@ -309,7 +309,7 @@ export function crumbsFor(view: AppView) {
   if (view.kind === "about") return [{ href: "/", label: "Home" }, { href: "/about", label: "About" }];
   if (view.kind === "contact") return [{ href: "/", label: "Home" }, { href: "/contact", label: "Contact" }];
   if (view.kind === "profile") return [{ href: "/", label: "Home" }, { href: "/profile", label: "Profile" }];
-  if (view.kind === "examples") return [{ href: "/", label: "Home" }, { href: "/examples", label: "Your field" }];
+  if (view.kind === "examples") return [{ href: "/", label: "Home" }, { href: "/examples", label: SECTION_LABEL.examples }];
   if (view.kind === "public") return [{ href: "/", label: "Home" }, { href: publicResumePath(view.id), label: "Shared resume" }];
   if (view.kind === "not-found") return [{ href: "/", label: "Home" }];
   return [

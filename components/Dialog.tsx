@@ -50,7 +50,7 @@ export function Dialog({
     <div className="modal" role="dialog" aria-modal="true" aria-label={title}>
       <button type="button" className="modal-scrim" aria-label="Close" onClick={onClose} />
       <div className={`modal-panel ${className}`.trim()} style={{ width }} ref={panel}>
-        <button type="button" className="modal-x" aria-label="Close" onClick={onClose}>
+        <button type="button" className="sheet-x modal-x" aria-label="Close" onClick={onClose}>
           ×
         </button>
         <header className="modal-head">

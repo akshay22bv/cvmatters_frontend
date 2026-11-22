@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { runAiCommand } from "@/lib/api";
 import type { ResumeData, TemplateId } from "@/lib/types";
-import { IconAiDots, IconArrowUp, IconX } from "./icons";
+import { IconAiDots, IconArrowUp } from "./icons";
 
 type Snapshot = {
   templateId: TemplateId;
@@ -265,8 +265,8 @@ export function CvAiDrawer({
           ) : (
             <span />
           )}
-          <button type="button" className="ai-drawer-close" aria-label="Close AI assistant" onClick={onClose}>
-            <IconX />
+          <button type="button" className="sheet-x" aria-label="Close AI assistant" onClick={onClose}>
+            ×
           </button>
         </div>
 

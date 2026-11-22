@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ExamplesStep } from "./ExamplesStep";
 import { CvMobileChrome, CvSectionRail } from "./CvChrome";
 import { ResumeView } from "./ResumeSheet";
-import { IconChevronLeft, Pencil } from "./icons";
 import { Stars } from "./Stars";
 import { ApiError, rateResume } from "@/lib/api";
 import { SAMPLE_EXAMPLES } from "@/lib/examples";
@@ -17,6 +16,7 @@ import {
   type ResumeRecord,
   type RatingSummary,
 } from "@/lib/types";
+import { SECTION_LABEL } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
 
 /**
@@ -46,12 +46,32 @@ export function ExamplesBrowsePage({
   onDownload?: () => void;
   onTemplate?: () => void;
 }) {
-  const router = useRouter();
   const [viewing, setViewing] = useState<ResumeRecord | null>(SAMPLE_EXAMPLES[0] || null);
   const [rated, setRated] = useState<{ id: string; summary: RatingSummary } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [rateBusy, setRateBusy] = useState(false);
   const [rateHint, setRateHint] = useState("");
+
+  const closePreview = useCallback(() => setPreviewOpen(false), []);
+
+  useEffect(() => {
+    if (!previewOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closePreview();
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.classList.add("is-examples-preview");
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.classList.remove("is-examples-preview");
+      requestAnimationFrame(() => {
+        const active = document.activeElement;
+        if (active instanceof HTMLElement && active.closest(".preview-sheet")) {
+          active.blur();
+        }
+      });
+    };
+  }, [previewOpen, closePreview]);
 
   const stageRecord = viewing;
   const sharedPreview = previewOpen && stageRecord ? stageRecord : null;
@@ -86,6 +106,7 @@ export function ExamplesBrowsePage({
         <main className="work">
           <CvMobileChrome
             panel={panel}
+            sectionTitle={SECTION_LABEL.examples}
             downloading={downloading}
             onPreview={() => {
               if (viewing) setPreviewOpen(true);
@@ -155,53 +176,46 @@ export function ExamplesBrowsePage({
         </aside>
       </div>
 
-      {previewOpen && sharedPreview && (
-        <div
-          className="preview-sheet"
-          role="dialog"
-          aria-label={`${sharedPreview.data.personal.fullName || "Shared"} resume`}
-        >
-          <div className="preview-sheet-top">
-            <div className="preview-sheet-top-acts">
-              <button type="button" className="preview-sheet-icon preview-sheet-back" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
-                <IconChevronLeft />
-              </button>
-              <button
-                type="button"
-                className="preview-sheet-icon"
-                aria-label="Edit my CV"
-                onClick={() => {
-                  setPreviewOpen(false);
-                  router.push("/cv/details");
-                }}
-              >
-                <Pencil />
-              </button>
-            </div>
-          </div>
-          {!sharedOwn ? (
-            <div className="preview-rate">
-              <Stars
-                value={sharedPreview.rating?.mine || 0}
-                size={16}
-                label={`Rate ${sharedPreview.data.personal.fullName || "this resume"}`}
-                onRate={(stars) => {
-                  if (!rateBusy) void rateShared(sharedPreview, stars);
-                }}
-              />
-              {sharedPreview.rating?.count ? (
-                <span>
-                  {sharedPreview.rating.average.toFixed(1)} ({sharedPreview.rating.count})
-                </span>
+      {typeof document !== "undefined" && previewOpen && sharedPreview
+        ? createPortal(
+            <div
+              className="preview-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${sharedPreview.data.personal.fullName || "Shared"} resume`}
+            >
+              <div className="preview-sheet-top">
+                <div className="preview-sheet-top-acts">
+                  <button type="button" className="sheet-x" aria-label="Close preview" onClick={closePreview}>
+                    ×
+                  </button>
+                </div>
+              </div>
+              {!sharedOwn ? (
+                <div className="preview-rate">
+                  <Stars
+                    value={sharedPreview.rating?.mine || 0}
+                    size={16}
+                    label={`Rate ${sharedPreview.data.personal.fullName || "this resume"}`}
+                    onRate={(stars) => {
+                      if (!rateBusy) void rateShared(sharedPreview, stars);
+                    }}
+                  />
+                  {sharedPreview.rating?.count ? (
+                    <span>
+                      {sharedPreview.rating.average.toFixed(1)} ({sharedPreview.rating.count})
+                    </span>
+                  ) : null}
+                  {rateHint ? <p className="look-rate-hint">{rateHint}</p> : null}
+                </div>
               ) : null}
-              {rateHint ? <p className="look-rate-hint">{rateHint}</p> : null}
-            </div>
-          ) : null}
-          <div className="preview-sheet-body">
-            <ResumeView templateId={sharedPreview.templateId} data={sharedPreview.data} hideContact />
-          </div>
-        </div>
-      )}
+              <div className="preview-sheet-body">
+                <ResumeView templateId={sharedPreview.templateId} data={sharedPreview.data} hideContact />
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

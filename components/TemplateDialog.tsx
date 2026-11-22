@@ -58,7 +58,7 @@ export function TemplateDialog({
       <div className="picker-panel is-design">
         <header className="picker-head">
           <h2 id="picker-title">Change design</h2>
-          <button type="button" className="picker-x" aria-label="Close" onClick={onClose}>
+          <button type="button" className="sheet-x picker-x" aria-label="Close" onClick={onClose}>
             ×
           </button>
         </header>

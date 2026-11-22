@@ -1041,8 +1041,7 @@ body {
   cursor: default;
 }
 
-.preview-sheet-look,
-.preview-sheet-close {
+.preview-sheet-look {
   width: 36px;
   height: 36px;
   color: var(--muted);
@@ -1058,12 +1057,15 @@ body {
 .preview-sheet-look svg { width: 18px; height: 18px; }
 .preview-sheet-look:hover { color: var(--accent-strong); border-color: var(--accent); }
 
-.preview-sheet-close {
+.preview-sheet-who .preview-sheet-close {
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
   font-size: 20px;
   line-height: 1;
 }
 
-.preview-sheet-close:hover { transform: rotate(90deg); color: var(--ink); }
+.preview-sheet-who .preview-sheet-close:hover { transform: rotate(90deg); color: var(--ink); }
 
 .preview-sheet-who {
   flex: none;
@@ -2917,6 +2919,12 @@ body {
 
 .examples-panel > .card {
   flex: none;
+  position: relative;
+  z-index: 2;
+}
+
+body.is-examples-preview .cv-editor-shell .layout {
+  pointer-events: none;
 }
 
 .examples-panel .example-list {
@@ -2927,6 +2935,13 @@ body {
   overscroll-behavior: contain;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 860px) {
+  /* Title lives in the mobile chrome bar — drop duplicate heading and its rule. */
+  .examples-panel .examples-step.card.is-plain .card-head {
+    display: none;
+  }
 }
 
 .work-foot {
@@ -3333,6 +3348,11 @@ body {
   }
 
   .slice-mobile-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 17px;
     font-weight: 680;
     letter-spacing: -0.03em;
@@ -3795,24 +3815,6 @@ body {
 .ai-drawer-back:hover {
   color: var(--ink);
   background: #f4f4f5;
-}
-
-.ai-drawer-close {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #6b7280;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.ai-drawer-close:hover {
-  background: #f4f4f5;
-  color: var(--ink);
 }
 
 .ai-drawer-scroll {

@@ -114,7 +114,7 @@ export function PublicCvPage({
   if (error) {
     return (
       <div className="public-stage">
-        <Link href="/" className="public-float-close" aria-label="Close">
+        <Link href="/" className="sheet-x public-float-close" aria-label="Close">
           ×
         </Link>
         <div className="public-empty">
@@ -142,7 +142,7 @@ export function PublicCvPage({
     const handle = record.slug || id;
     return (
       <div className="public-stage">
-        <Link href="/" className="public-float-close" aria-label="Close">
+        <Link href="/" className="sheet-x public-float-close" aria-label="Close">
           ×
         </Link>
         <div className="public-empty public-unpublished">
@@ -172,7 +172,7 @@ export function PublicCvPage({
   return (
     <div className="public-stage">
       <h1 className="sr-only">{role ? `${name} — ${role}` : name}</h1>
-      <Link href="/" className="public-float-close" aria-label="Close">
+      <Link href="/" className="sheet-x public-float-close" aria-label="Close">
         ×
       </Link>
 

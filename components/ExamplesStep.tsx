@@ -95,7 +95,7 @@ export function ExamplesStep({
 
   return (
     <div className="examples-panel">
-      <StepCard title="Resumes in your field" plain>
+      <StepCard title="Resumes in your field" plain className="examples-step">
         <Field
           className="span-all"
           label="Search"

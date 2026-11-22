@@ -75,6 +75,8 @@ export function CvSectionRail({
 
 export function CvMobileChrome({
   panel,
+  /** When set (e.g. /examples), shown instead of the current CV section title. */
+  sectionTitle,
   downloading = false,
   onPreview,
   onDownload,
@@ -83,6 +85,7 @@ export function CvMobileChrome({
   onAskAi,
 }: {
   panel: PanelId | null;
+  sectionTitle?: string;
   downloading?: boolean;
   onPreview: () => void;
   onDownload: () => void;
@@ -105,6 +108,7 @@ export function CvMobileChrome({
   }, [panel]);
 
   const current = SECTIONS.find((item) => item.id === panel);
+  const title = sectionTitle ?? current?.title ?? "My CV";
 
   return (
     <>
@@ -115,7 +119,7 @@ export function CvMobileChrome({
         <Link href="/" className="slice-mobile-logo" aria-label="CV Matters home">
           <Logo />
         </Link>
-        <span className="slice-mobile-title">{current?.title ?? "My CV"}</span>
+        <span className="slice-mobile-title">{title}</span>
         {onAskAi ? (
           <button type="button" className="slice-mobile-ai" onClick={onAskAi} aria-label="Ask AI">
             <IconAiDots size={15} />
