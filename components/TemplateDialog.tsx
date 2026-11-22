@@ -65,7 +65,7 @@ export function TemplateDialog({
 
         <section className="picker-view" aria-label="Preview">
           <div className="picker-stage">
-            <ResumeView templateId={templateId} data={data} />
+            <ResumeView templateId={templateId} data={data} fitPagesInView />
           </div>
         </section>
 

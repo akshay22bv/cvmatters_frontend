@@ -8,7 +8,7 @@ import { RichEditor } from "./RichEditor";
 import { StepCard } from "./StepCard";
 import { IconArrowDown, IconArrowUp, Pencil, Spark, Trash } from "./icons";
 import { INDUSTRY_SKILLS, OTHER_SKILLS, TOOL_SKILLS } from "@/lib/skills";
-import { flatSkills, skillTags } from "@/lib/sectionOrder";
+import { flatSkills, SKILL_MAX, skillTags } from "@/lib/sectionOrder";
 import { newId } from "@/lib/id";
 import { templateHasPhoto, type ResumeData, type TemplateId } from "@/lib/types";
 import type { Errors } from "@/lib/validate";
@@ -907,9 +907,15 @@ export function SkillsStep({ data, onData }: { data: ResumeData; onData: (data: 
       <SearchTags
         label="Skills"
         lookup="skill"
+        max={SKILL_MAX}
         placeholder="Pick from the list or type your own"
         values={skillTags(data.skills)}
         suggestions={SKILL_SUGGESTIONS}
+        hint={
+          skillTags(data.skills).length >= SKILL_MAX
+            ? `You can list up to ${SKILL_MAX} skills. Remove one to add another.`
+            : "Type a skill and press Enter, or pick from suggestions."
+        }
         onChange={(tags) => onData({ ...data, skills: flatSkills(tags) })}
       />
     </StepCard>

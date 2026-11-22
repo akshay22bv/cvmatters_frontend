@@ -1,25 +1,30 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
+import { isValidElement, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
 import { createPortal } from "react-dom";
 import {
   ApexChrome,
+  ApexSide,
   apexMainPieces,
   bannerPieces,
   CabinetChrome,
+  CabinetSide,
   cabinetMainPieces,
   CanvasChrome,
+  CanvasSide,
   canvasMainPieces,
   CobaltChrome,
   cobaltMainPieces,
   formalPieces,
   isAtsSplit,
-  ManorChrome,
+  ManorHead,
+  ManorSide,
   manorMainPieces,
   mintPieces,
   plazaPieces,
   studioPieces,
   VaultChrome,
+  VaultSide,
   vaultMainPieces,
 } from "./atsTemplates";
 import { FormattedText, RichLine } from "./Formatted";
@@ -754,6 +759,7 @@ function Frame({
   children: ReactNode;
 }) {
   const number = total > 1 ? <span className="page-no">{pageIndex + 1} / {total}</span> : null;
+  const continued = pageIndex > 0;
   const classes = `paper ${
     isAtsSplit(templateId)
       ? templateId
@@ -762,13 +768,13 @@ function Frame({
         : templateId
   } ${fontClass(data.fontId)}${data.accent ? " has-accent" : ""}${
     data.align ? ` is-align-${data.align}` : ""
-  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`;
+  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}${continued && isAtsSplit(templateId) ? " is-continued" : ""}`;
   // accent, type size, spacing and line height, read by the template rules
   const tint = paperStyle(data) as CSSProperties;
   if (templateId === "apex") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <ApexChrome data={data} hideContact={hideContact} />}
+        {continued ? <ApexSide data={data} /> : <ApexChrome data={data} hideContact={hideContact} />}
         <div className="apex-main">{children}{number}</div>
       </article>
     );
@@ -776,7 +782,7 @@ function Frame({
   if (templateId === "cabinet") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <CabinetChrome data={data} hideContact={hideContact} />}
+        {continued ? <CabinetSide data={data} /> : <CabinetChrome data={data} hideContact={hideContact} />}
         <div className="cab-main">{children}{number}</div>
       </article>
     );
@@ -784,7 +790,8 @@ function Frame({
   if (templateId === "manor") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <ManorChrome data={data} hideContact={hideContact} />}
+        <ManorSide data={data} hideContact={hideContact} />
+        {continued ? null : <ManorHead data={data} />}
         <div className="manor-main">{children}{number}</div>
       </article>
     );
@@ -792,7 +799,7 @@ function Frame({
   if (templateId === "canvas") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <CanvasChrome data={data} hideContact={hideContact} />}
+        {continued ? <CanvasSide data={data} /> : <CanvasChrome data={data} hideContact={hideContact} />}
         <div className="canvas-main">{children}{number}</div>
       </article>
     );
@@ -800,7 +807,7 @@ function Frame({
   if (templateId === "cobalt") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <CobaltChrome data={data} hideContact={hideContact} />}
+        <CobaltChrome data={data} hideContact={hideContact} />
         <div className="cobalt-main">{children}{number}</div>
       </article>
     );
@@ -808,7 +815,7 @@ function Frame({
   if (templateId === "vault") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {pageIndex === 0 && <VaultChrome data={data} hideContact={hideContact} />}
+        {continued ? <VaultSide data={data} hideContact={hideContact} /> : <VaultChrome data={data} hideContact={hideContact} />}
         <div className="vault-main">{children}{number}</div>
       </article>
     );
@@ -832,29 +839,65 @@ function Frame({
   );
 }
 
-function pack(heights: number[], firstLimit: number) {
+const PAGE_H = 1123;
+
+/** Main column on page 1 is shorter when the template paints a fixed header chrome block. */
+const ATS_CHROME_RESERVE: Partial<Record<TemplateId, number>> = {
+  apex: 152,
+  cabinet: 168,
+  manor: 148,
+  canvas: 138,
+  cobalt: 132,
+  vault: 140,
+};
+
+function sumHeights(heights: number[], indexes: number[]) {
+  return indexes.reduce((total, index) => total + (heights[index] || 0), 0);
+}
+
+function fillPages(heights: number[], pages: number[][], softLimit: number) {
+  for (let page = 0; page < pages.length - 1; ) {
+    const current = pages[page];
+    const next = pages[page + 1];
+    if (!next?.length) {
+      page += 1;
+      continue;
+    }
+    const trial = [...current, next[0]];
+    if (sumHeights(heights, trial) <= softLimit) {
+      current.push(next.shift()!);
+      if (!next.length) pages.splice(page + 1, 1);
+      continue;
+    }
+    page += 1;
+  }
+  return pages;
+}
+
+function pack(heights: number[], hardLimit: number, softLimit: number) {
   const pages: number[][] = [];
   let current: number[] = [];
   let used = 0;
-  let limit = firstLimit;
+  let limit = hardLimit;
   heights.forEach((height, index) => {
     if (current.length && used + height > limit) {
       pages.push(current);
       current = [];
       used = 0;
-      limit = Math.max(640, firstLimit - 56);
+      limit = Math.max(600, hardLimit - 24);
     }
     current.push(index);
     used += height;
   });
   if (current.length || !pages.length) pages.push(current);
 
+  fillPages(heights, pages, softLimit);
+
   // A lone certification / short block on the last page looks broken. Pull a
   // few blocks from the previous page so the final sheet has real content.
-  const pageHeight = (indexes: number[]) => indexes.reduce((sum, index) => sum + (heights[index] || 0), 0);
   while (pages.length > 1) {
     const last = pages[pages.length - 1];
-    if (pageHeight(last) >= 180) break;
+    if (sumHeights(heights, last) >= 160) break;
     const prev = pages[pages.length - 2];
     if (prev.length <= 3) break;
     last.unshift(prev.pop()!);
@@ -862,35 +905,114 @@ function pack(heights: number[], firstLimit: number) {
   return pages;
 }
 
-function pagesFrom(root: HTMLElement, tight = false) {
-  const nodes = [...root.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+function flowBlockHeights(nodes: HTMLElement[]) {
+  if (!nodes.length) return [];
+  return nodes.map((node, index) => {
+    const rect = node.getBoundingClientRect();
+    if (index < nodes.length - 1) {
+      const gap = nodes[index + 1].getBoundingClientRect().top - rect.top;
+      return Math.max(0, Math.round(gap * 10) / 10);
+    }
+    const style = getComputedStyle(node);
+    const child = node.lastElementChild as HTMLElement | null;
+    const extra = Math.max(
+      parseFloat(style.marginBottom) || 0,
+      child ? parseFloat(getComputedStyle(child).marginBottom) || 0 : 0,
+    );
+    return Math.max(0, Math.round((rect.height + extra) * 10) / 10);
+  });
+}
+
+function pagesFrom(root: HTMLElement, tight = false, templateId?: TemplateId) {
+  // Blocks may sit inside apex-main / cab-main / split-main, not only as direct children of .paper
+  const nodes = [...root.querySelectorAll(":scope .flow-block")] as HTMLElement[];
+  if (!nodes.length) return [[]];
+
   const style = getComputedStyle(root);
   const padTop = parseFloat(style.paddingTop) || 0;
   const padBottom = parseFloat(style.paddingBottom) || 0;
   const borderTop = parseFloat(style.borderTopWidth) || 0;
   const borderBottom = parseFloat(style.borderBottomWidth) || 0;
-  const slack = tight ? 56 : 32;
-  const limit = 1123 - padTop - padBottom - borderTop - borderBottom - slack;
-  const rects = nodes.map((node) => node.getBoundingClientRect());
-  const heights = rects.map((rect, index) => {
-    if (index < rects.length - 1) return rects[index + 1].top - rect.top;
-    const node = nodes[index];
-    const child = node.lastElementChild as HTMLElement | null;
-    const extra = Math.max(
-      parseFloat(getComputedStyle(node).marginBottom) || 0,
-      child ? parseFloat(getComputedStyle(child).marginBottom) || 0 : 0,
-    );
-    return rect.height + extra;
-  });
-  if (rects.length) {
-    const contentTop = root.getBoundingClientRect().top + borderTop + padTop;
-    const lead = rects[0].top - contentTop;
-    if (lead > 0) heights[0] += lead;
+  const inner = PAGE_H - padTop - padBottom - borderTop - borderBottom;
+  const hardSlack = tight ? 10 : 6;
+  const fillSlack = tight ? 52 : 92;
+  let hardLimit = inner - hardSlack;
+  const softLimit = hardLimit + fillSlack;
+
+  const chrome = templateId && isAtsSplit(templateId) ? ATS_CHROME_RESERVE[templateId] || 0 : 0;
+  if (chrome) hardLimit = Math.max(480, hardLimit - chrome);
+
+  const heights = flowBlockHeights(nodes);
+  const contentTop = root.getBoundingClientRect().top + borderTop + padTop;
+  const lead = nodes[0].getBoundingClientRect().top - contentTop;
+  if (lead > 6) heights[0] += Math.min(lead, 28);
+
+  return pack(heights, Math.max(500, hardLimit), Math.max(500, softLimit));
+}
+
+function pieceKey(node: ReactNode): string {
+  if (!isValidElement(node)) return "";
+  return String(node.key ?? "");
+}
+
+/** Keep each role title with its bullets when pagination splits mid-job. */
+function stitchExperiencePages(pages: number[][], keys: string[]): number[][] {
+  const out = pages.map((page) => [...page]);
+  for (let pi = 1; pi < out.length; pi++) {
+    const page = out[pi];
+    if (!page.length) continue;
+    const firstKey = keys[page[0]] || "";
+    const bulletMatch = firstKey.match(/^(.+)-b\d+$/);
+    if (!bulletMatch) continue;
+    const jobId = bulletMatch[1];
+    const headIdx = keys.indexOf(`${jobId}-head`);
+    if (headIdx < 0 || page.includes(headIdx)) continue;
+    const prev = out[pi - 1];
+    const headPos = prev.indexOf(headIdx);
+    if (headPos < 0) continue;
+    prev.splice(headPos, 1);
+    page.unshift(headIdx);
   }
-  return pack(heights, Math.max(520, limit));
+  for (let pi = 0; pi < out.length - 1; pi++) {
+    const page = out[pi];
+    if (!page.length) continue;
+    const lastIdx = page[page.length - 1];
+    const headMatch = (keys[lastIdx] || "").match(/^(.+)-head$/);
+    if (!headMatch) continue;
+    const jobId = headMatch[1];
+    const next = out[pi + 1];
+    const hasBullet = next.some((idx) => (keys[idx] || "").startsWith(`${jobId}-b`));
+    if (!hasBullet) continue;
+    page.pop();
+    next.unshift(lastIdx);
+  }
+  return out;
 }
 
 const SECTIONS = new Set<string>(["details", "bio", "experience", "education", "skills", "extras"]);
+
+const ATS_MAIN: Partial<Record<TemplateId, string>> = {
+  apex: "apex-main",
+  cabinet: "cab-main",
+  manor: "manor-main",
+  canvas: "canvas-main",
+  cobalt: "cobalt-main",
+  vault: "vault-main",
+};
+
+function measurePaperClass(templateId: TemplateId) {
+  if (isSidebar(templateId) || isRightbar(templateId)) return "measure-split";
+  return templateId;
+}
+
+function wrapForMeasure(templateId: TemplateId, children: ReactNode) {
+  const mainClass = ATS_MAIN[templateId];
+  if (mainClass) return <div className={mainClass}>{children}</div>;
+  if (isSidebar(templateId) || isRightbar(templateId)) {
+    return <div className="split-main">{children}</div>;
+  }
+  return children;
+}
 
 export function ResumeView({
   templateId: rawId,
@@ -898,6 +1020,7 @@ export function ResumeView({
   hideContact = false,
   onPick,
   cornerAction,
+  fitPagesInView = false,
 }: {
   templateId: TemplateId;
   data: ResumeData;
@@ -905,6 +1028,8 @@ export function ResumeView({
   onPick?: (section: PanelId, focusId?: string) => void;
   /** Floated over the top-right of the first page (e.g. look control in full view). */
   cornerAction?: ReactNode;
+  /** Shrink scale so multiple pages fit without excessive scroll (e.g. Change design). */
+  fitPagesInView?: boolean;
 }) {
   const templateId = readTemplateId(rawId);
   const pieces = piecesFor(templateId, data, hideContact);
@@ -917,26 +1042,50 @@ export function ResumeView({
   useLayoutEffect(() => {
     const root = measureRef.current;
     if (!root) return;
-    const next = pagesFrom(root);
-    setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
-  }, [templateId, data, hideContact]);
+    let cancelled = false;
+    const keys = measurePieces.map((node) => pieceKey(node));
+    const measure = () => {
+      if (cancelled) return;
+      const raw = pagesFrom(root, false, templateId);
+      const next = stitchExperiencePages(raw, keys);
+      setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+    };
+    measure();
+    const fonts = document.fonts;
+    if (fonts?.ready) {
+      fonts.ready.then(() => {
+        if (!cancelled) requestAnimationFrame(measure);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [templateId, data, hideContact, measurePieces]);
 
   useLayoutEffect(() => {
     const node = stageRef.current;
     if (!node) return;
+    const pageCount = pages.length;
     const measure = () => {
       const width = node.clientWidth;
+      const height = node.clientHeight;
       if (!width) return;
-      const pad = width < 520 ? 20 : 36;
-      // Keep mobile preview readable without overflowing the sheet.
-      const next = Math.min(1, (width - pad) / 794);
-      setScale(width < 520 ? Math.max(0.42, next) : next);
+      const padX = width < 520 ? 20 : 36;
+      let next = Math.min(1, (width - padX) / 794);
+      if (fitPagesInView && pageCount > 1 && height > 80) {
+        const gap = 10;
+        const padY = 32;
+        const byHeight = (height - padY - gap * (pageCount - 1)) / (pageCount * 1123);
+        if (byHeight > 0.22) next = Math.min(next, byHeight);
+      }
+      const floor = width < 520 ? 0.38 : 0.42;
+      setScale(Math.max(floor, next));
     };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [fitPagesInView, pages.length]);
 
   const sheet = (indexes: number[], pageIndex: number) => (
     <Frame templateId={templateId} data={data} hideContact={hideContact} pageIndex={pageIndex} total={pages.length}>
@@ -946,12 +1095,17 @@ export function ResumeView({
 
   return (
     <>
-      <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
+      <div
+        className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+        style={paperStyle(data) as CSSProperties}
+        ref={measureRef}
+        aria-hidden="true"
+      >
         {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
-        {measurePieces}
+        {wrapForMeasure(templateId, measurePieces)}
       </div>
       <div
-        className={onPick ? "page-stack is-linked" : "page-stack"}
+        className={`${onPick ? "page-stack is-linked" : "page-stack"}${pages.length > 1 ? " is-multi" : ""}`}
         ref={stageRef}
         onClick={(event) => {
           if (!onPick) return;
@@ -1006,7 +1160,8 @@ export function ResumeSheet({
     if (!preview || fill) return;
     const root = measureRef.current;
     if (!root) return;
-    const pages = pagesFrom(root, true);
+    const keys = pieces.map((node) => pieceKey(node));
+    const pages = stitchExperiencePages(pagesFrom(root, true, templateId), keys);
     const next = { indexes: pages[0] || [], total: Math.max(pages.length, 1) };
     setFirstPage((current) => (
       current && current.total === next.total && JSON.stringify(current.indexes) === JSON.stringify(next.indexes) ? current : next
@@ -1028,9 +1183,14 @@ export function ResumeSheet({
   const total = preview && !fill && firstPage ? firstPage.total : 1;
   const measure = preview && !fill && typeof document !== "undefined"
     ? createPortal(
-        <div className={`measure-col paper ${isSidebar(templateId) || isRightbar(templateId) ? "measure-split" : templateId}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`} style={paperStyle(data) as CSSProperties} ref={measureRef} aria-hidden="true">
+        <div
+          className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+          style={paperStyle(data) as CSSProperties}
+          ref={measureRef}
+          aria-hidden="true"
+        >
           {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
-          {measurePieces}
+          {wrapForMeasure(templateId, measurePieces)}
         </div>,
         document.body,
       )

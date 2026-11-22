@@ -77,6 +77,9 @@ export function moveSectionOrder(
   return next;
 }
 
+/** Max skills in one list (editor + API). */
+export const SKILL_MAX = 40;
+
 /** Flat skill tags — no industry / tools / other buckets on the page. */
 export function skillTags(skills: { industry?: string[]; tools?: string[]; other?: string[] } | null | undefined) {
   const seen = new Set<string>();
@@ -93,7 +96,8 @@ export function skillTags(skills: { industry?: string[]; tools?: string[]; other
 }
 
 export function flatSkills(tags: string[]) {
-  return { industry: [] as string[], tools: [] as string[], other: skillTags({ other: tags }) };
+  const industry = skillTags({ industry: tags, tools: [], other: [] }).slice(0, SKILL_MAX);
+  return { industry, tools: [] as string[], other: [] as string[] };
 }
 
 function pieceSection(node: ReactNode): string | undefined {

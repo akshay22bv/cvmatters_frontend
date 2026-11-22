@@ -97,6 +97,7 @@
 .flow-li.is-last { margin-bottom: calc(10px * var(--space, 1)); }
 
 .mint-job.is-split,
+.studio-job.is-split,
 .banner-job.is-split,
 .formal-job.is-split,
 .apex-job.is-split,
@@ -531,6 +532,19 @@
 .paper.classic .ed-summary {
   font-size: calc(12.5px * var(--type, 1));
   line-height: calc(1.5 * var(--lead, 1));
+}
+
+/* Paginated role bullets sit in plain .flow-li blocks — inherit page centre otherwise */
+.paper.classic > .flow-block > .flow-li {
+  text-align: left;
+  width: 100%;
+}
+
+.paper.classic > .flow-block > .flow-li ul {
+  margin: calc(4px * var(--space, 1)) 0 0;
+  padding-left: 18px;
+  text-align: left;
+  list-style-position: outside;
 }
 
 /* Ink */
@@ -1288,6 +1302,19 @@
   margin-bottom: calc(10px * var(--space, 1));
 }
 
+.paper.mint > .flow-block > .flow-li.mint-pad ul {
+  margin-top: 8px;
+}
+
+.paper.studio > .flow-block > .studio-job.studio-job-continue {
+  margin-top: calc(8px * var(--space, 1));
+  margin-bottom: calc(10px * var(--space, 1));
+}
+
+.paper.studio > .flow-block > .flow-li.studio-pad ul {
+  margin-top: 8px;
+}
+
 .mint-job-top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1399,14 +1426,10 @@
 }
 
 .banner-skills {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px 24px;
   margin: 0;
   font-size: calc(12.5px * var(--type, 1));
+  line-height: calc(1.45 * var(--lead, 1));
 }
-
-.banner-skills p { margin: 0; }
 
 .banner-job { margin-bottom: calc(12px * var(--space, 1)); }
 .banner-job strong { font-size: calc(13.5px * var(--type, 1)); }
@@ -1597,19 +1620,62 @@
 .apex-company { margin-top: 2px; color: #1d6fb8; font-size: calc(12.5px * var(--type, 1)); font-weight: 650; }
 .apex-job ul { margin: 6px 0 0; padding-left: 16px; font-size: calc(12.5px * var(--type, 1)); }
 
-.apex-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.apex-skill-line {
+  margin: 0;
+  font-size: calc(11.5px * var(--type, 1));
+  line-height: calc(1.45 * var(--lead, 1));
+  color: #3a444c;
 }
 
-.apex-pills span {
-  padding: 5px 8px;
-  border-radius: 4px;
-  background: #e8edf5;
-  color: #1c1c1c;
-  font-size: calc(11px * var(--type, 1));
-  font-weight: 600;
+.cab-skill-line {
+  margin: 0;
+  font-size: calc(11.5px * var(--type, 1));
+  line-height: 1.45;
+  color: #3a444c;
+}
+
+.paper.apex.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.apex.is-continued .apex-main,
+.paper.apex.is-continued .apex-side {
+  grid-row: 1;
+}
+
+.paper.cabinet.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.cabinet.is-continued .cab-main,
+.paper.cabinet.is-continued .cab-side {
+  grid-row: 1;
+}
+
+.paper.canvas.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.canvas.is-continued .canvas-main,
+.paper.canvas.is-continued .canvas-side {
+  grid-row: 1;
+}
+
+.paper.vault.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.vault.is-continued .vault-main,
+.paper.vault.is-continued .vault-side {
+  grid-row: 1;
+}
+
+.paper.manor.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.manor.is-continued .manor-main {
+  grid-row: 1;
 }
 
 .apex-side-list,
@@ -1634,9 +1700,6 @@
 .paper.has-accent.apex .apex-contacts,
 .paper.has-accent.apex .apex-company { color: var(--theme); }
 .paper.has-accent.apex .apex-label { border-bottom-color: var(--theme); }
-.paper.has-accent.apex .apex-pills span {
-  background: color-mix(in srgb, var(--theme) 14%, white);
-}
 
 /* --- Cabinet (Jennie) --- */
 
@@ -2279,7 +2342,7 @@
   color: #111;
 }
 
-.studio-head { margin-bottom: 8px; }
+.studio-head { margin-bottom: 4px; }
 
 .studio-name {
   margin: 0;
@@ -2612,6 +2675,22 @@
 
 .paper.is-align-center .mint-contact {
   text-align: center;
+}
+
+/* Header centre only — body blocks stay left-aligned (incl. split experience bullets) */
+.paper.is-align-center > .flow-block,
+.paper.is-align-center .flow-li,
+.paper.is-align-center .ed-section,
+.paper.is-align-center .ed-job,
+.paper.is-align-center .formal-section,
+.paper.is-align-center .formal-job,
+.paper.is-align-center .sig-section,
+.paper.is-align-center .sig-job,
+.paper.is-align-center .mint-section,
+.paper.is-align-center .mint-job,
+.paper.is-align-center .studio-section,
+.paper.is-align-center .studio-job {
+  text-align: left;
 }
 
 .paper.is-align-left header,

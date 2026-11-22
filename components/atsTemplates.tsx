@@ -259,12 +259,11 @@ export function bannerPieces(data: ResumeData, hideContact: boolean) {
     <Block key="skills" section="skills">
       <section className="banner-section">
         <ResumeSectionLabel className="banner-label">Skills</ResumeSectionLabel>
-        <div className="banner-skills">
-          {skillList(data.skills).map((item, index) => (
-            <p key={`${item}-${index}`}><RichLine text={item} /></p>
-          ))}
-          {!skillList(data.skills).length ? <p className="placeholder-line">Your skills will show here.</p> : null}
-        </div>
+        {skillList(data.skills).length ? (
+          <p className="banner-skills">{skillList(data.skills).join(", ")}</p>
+        ) : (
+          <p className="placeholder-line">Your skills will show here.</p>
+        )}
       </section>
     </Block>,
   ];
@@ -406,72 +405,83 @@ export function apexMainPieces(data: ResumeData) {
   return pieces;
 }
 
-export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+export function ApexHead({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <header className="apex-head" data-section="details">
+      <div className="apex-id">
+        <div className="apex-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
+        <p className="apex-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+        <IconContacts personal={data.personal} hideContact={hideContact} className="apex-contacts" />
+      </div>
+      <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={92} />
+    </header>
+  );
+}
+
+export function ApexSide({ data }: { data: ResumeData }) {
   const skills = skillList(data.skills);
   const languages = (data.extras || []).find((extra) => /language/i.test(extra.title));
   const strengths = (data.extras || []).find((extra) => /strength|award|accomplishment/i.test(extra.title));
   return (
-    <>
-      <header className="apex-head" data-section="details">
-        <div className="apex-id">
-          <div className="apex-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
-          <p className="apex-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
-          <IconContacts personal={data.personal} hideContact={hideContact} className="apex-contacts" />
+    <aside className="apex-side">
+      {sectionOnCv(data, "skills") ? (
+        <div data-section="skills">
+          <ResumeSectionLabel className="apex-label">Skills</ResumeSectionLabel>
+          {skills.length ? (
+            <p className="apex-skill-line">{skills.join(", ")}</p>
+          ) : (
+            <p className="placeholder-line">Skills</p>
+          )}
         </div>
-        <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={92} />
-      </header>
-      <aside className="apex-side">
-        {sectionOnCv(data, "skills") ? (
-          <div data-section="skills">
-            <ResumeSectionLabel className="apex-label">Skills</ResumeSectionLabel>
-            <div className="apex-pills">
-              {skills.map((item, index) => (
-                <span key={`${item}-${index}`}>{item}</span>
-              ))}
-              {!skills.length ? <span className="placeholder-line">Skills</span> : null}
+      ) : null}
+      {sectionOnCv(data, "extras") && strengths ? (
+        <div data-section="extras" data-focus={strengths.id}>
+          <ResumeSectionLabel className="apex-label"><RichLine text={strengths.title} /></ResumeSectionLabel>
+          <div className={strengths.bullets === true ? "apex-side-list" : "apex-side-plain"}>
+            {strengths.items.filter(Boolean).map((item, index) =>
+              strengths.bullets === true ? (
+                <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
+              ) : (
+                <p key={index}><RichLine text={item} /></p>
+              ),
+            )}
+          </div>
+        </div>
+      ) : null}
+      {sectionOnCv(data, "extras") && languages ? (
+        <div data-section="extras" data-focus={languages.id}>
+          <ResumeSectionLabel className="apex-label"><RichLine text={languages.title} /></ResumeSectionLabel>
+          <div className={languages.bullets === true ? "apex-side-list" : "apex-side-plain"}>
+            {languages.items.filter(Boolean).map((item, index) =>
+              languages.bullets === true ? (
+                <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
+              ) : (
+                <p key={index}><RichLine text={item} /></p>
+              ),
+            )}
+          </div>
+        </div>
+      ) : null}
+      {sectionOnCv(data, "education") ? (
+        <div data-section="education">
+          <ResumeSectionLabel className="apex-label">Education</ResumeSectionLabel>
+          {data.education.map((item) => (
+            <div className="apex-edu" key={item.id} data-focus={item.id}>
+              <strong><RichLine text={item.degree || "Degree"} /></strong>
+              <div>{[item.school, item.year].filter(Boolean).join(" · ")}</div>
             </div>
-          </div>
-        ) : null}
-        {sectionOnCv(data, "extras") && strengths ? (
-          <div data-section="extras" data-focus={strengths.id}>
-            <ResumeSectionLabel className="apex-label"><RichLine text={strengths.title} /></ResumeSectionLabel>
-            <div className={strengths.bullets === true ? "apex-side-list" : "apex-side-plain"}>
-              {strengths.items.filter(Boolean).map((item, index) =>
-                strengths.bullets === true ? (
-                  <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
-                ) : (
-                  <p key={index}><RichLine text={item} /></p>
-                ),
-              )}
-            </div>
-          </div>
-        ) : null}
-        {sectionOnCv(data, "extras") && languages ? (
-          <div data-section="extras" data-focus={languages.id}>
-            <ResumeSectionLabel className="apex-label"><RichLine text={languages.title} /></ResumeSectionLabel>
-            <div className={languages.bullets === true ? "apex-side-list" : "apex-side-plain"}>
-              {languages.items.filter(Boolean).map((item, index) =>
-                languages.bullets === true ? (
-                  <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
-                ) : (
-                  <p key={index}><RichLine text={item} /></p>
-                ),
-              )}
-            </div>
-          </div>
-        ) : null}
-        {sectionOnCv(data, "education") ? (
-          <div data-section="education">
-            <ResumeSectionLabel className="apex-label">Education</ResumeSectionLabel>
-            {data.education.map((item) => (
-              <div className="apex-edu" key={item.id} data-focus={item.id}>
-                <strong><RichLine text={item.degree || "Degree"} /></strong>
-                <div>{[item.school, item.year].filter(Boolean).join(" · ")}</div>
-              </div>
-            ))}
-          </div>
-        ) : null}
-      </aside>
+          ))}
+        </div>
+      ) : null}
+    </aside>
+  );
+}
+
+export function ApexChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <>
+      <ApexHead data={data} hideContact={hideContact} />
+      <ApexSide data={data} />
     </>
   );
 }
@@ -520,8 +530,7 @@ export function cabinetMainPieces(data: ResumeData) {
   return pieces;
 }
 
-export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
-  const skills = skillList(data.skills);
+export function CabinetHead({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
   return (
     <>
       <div className="cab-bar" aria-hidden="true" />
@@ -535,23 +544,30 @@ export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideCon
         </div>
         <IconContacts personal={data.personal} hideContact={hideContact} className="cab-contacts" />
       </header>
-      {sectionOnCv(data, "skills") ? (
-        <aside className="cab-side" data-section="skills">
-          <ResumeSectionLabel className="cab-label">Skills</ResumeSectionLabel>
-          <div className="cab-bars">
-            {skills.map((item, index) => {
-              const level = Math.max(45, 100 - index * 8);
-              return (
-                <div className="cab-bar-item" key={`${item}-${index}`}>
-                  <strong>{item}</strong>
-                  <span className="cab-track"><i style={{ width: `${level}%` }} /></span>
-                </div>
-              );
-            })}
-            {!skills.length ? <p className="placeholder-line">Your skills will show here.</p> : null}
-          </div>
-        </aside>
-      ) : null}
+    </>
+  );
+}
+
+export function CabinetSide({ data }: { data: ResumeData }) {
+  const skills = skillList(data.skills);
+  if (!sectionOnCv(data, "skills")) return null;
+  return (
+    <aside className="cab-side" data-section="skills">
+      <ResumeSectionLabel className="cab-label">Skills</ResumeSectionLabel>
+      {skills.length ? (
+        <p className="cab-skill-line">{skills.join(", ")}</p>
+      ) : (
+        <p className="placeholder-line">Your skills will show here.</p>
+      )}
+    </aside>
+  );
+}
+
+export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <>
+      <CabinetHead data={data} hideContact={hideContact} />
+      <CabinetSide data={data} />
     </>
   );
 }
@@ -620,51 +636,63 @@ export function manorMainPieces(data: ResumeData) {
   return pieces;
 }
 
-export function ManorChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+export function ManorSide({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
   const skills = skillList(data.skills);
   const languages = findExtra(data, /language/i);
   return (
-    <>
-      <aside className="manor-side">
-        <div className="manor-photo" data-section="details">
-          <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={118} />
+    <aside className="manor-side">
+      <div className="manor-photo" data-section="details">
+        <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={118} />
+      </div>
+      <div data-section="details">
+        <ResumeSectionLabel className="manor-label">Contact</ResumeSectionLabel>
+        <IconContacts personal={data.personal} hideContact={hideContact} className="manor-contacts" />
+      </div>
+      {sectionOnCv(data, "education") ? (
+        <div data-section="education">
+          <ResumeSectionLabel className="manor-label">Education</ResumeSectionLabel>
+          {data.education.map((item) => (
+            <div className="manor-edu" key={item.id} data-focus={item.id}>
+              <span className="manor-edu-year">{item.year}</span>
+              <strong><RichLine text={item.school || "School"} /></strong>
+              <div>{item.degree}</div>
+              {item.detail ? <div className="manor-edu-detail"><RichLine text={item.detail} /></div> : null}
+            </div>
+          ))}
         </div>
-        <div data-section="details">
-          <ResumeSectionLabel className="manor-label">Contact</ResumeSectionLabel>
-          <IconContacts personal={data.personal} hideContact={hideContact} className="manor-contacts" />
-        </div>
-        {sectionOnCv(data, "education") ? (
-          <div data-section="education">
-            <ResumeSectionLabel className="manor-label">Education</ResumeSectionLabel>
-            {data.education.map((item) => (
-              <div className="manor-edu" key={item.id} data-focus={item.id}>
-                <span className="manor-edu-year">{item.year}</span>
-                <strong><RichLine text={item.school || "School"} /></strong>
-                <div>{item.degree}</div>
-                {item.detail ? <div className="manor-edu-detail"><RichLine text={item.detail} /></div> : null}
-              </div>
+      ) : null}
+      {sectionOnCv(data, "skills") ? (
+        <div data-section="skills">
+          <ResumeSectionLabel className="manor-label">Skills</ResumeSectionLabel>
+          <ul className="manor-skill-list">
+            {skills.map((item, index) => (
+              <li key={`${item}-${index}`}><RichLine text={item} /></li>
             ))}
-          </div>
-        ) : null}
-        {sectionOnCv(data, "skills") ? (
-          <div data-section="skills">
-            <ResumeSectionLabel className="manor-label">Skills</ResumeSectionLabel>
-            <ul className="manor-skill-list">
-              {skills.map((item, index) => (
-                <li key={`${item}-${index}`}><RichLine text={item} /></li>
-              ))}
-              {!skills.length ? <li className="placeholder-line">Skills</li> : null}
-            </ul>
-          </div>
-        ) : null}
-        {sectionOnCv(data, "extras") && languages ? <SideExtra extra={languages} labelClass="manor-label" listClass="manor-side-list" plainClass="manor-side-plain" /> : null}
-      </aside>
-      <header className="manor-head" data-section="details">
-        <div className="manor-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
-        <div className="manor-band">
-          <p className="manor-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+            {!skills.length ? <li className="placeholder-line">Skills</li> : null}
+          </ul>
         </div>
-      </header>
+      ) : null}
+      {sectionOnCv(data, "extras") && languages ? <SideExtra extra={languages} labelClass="manor-label" listClass="manor-side-list" plainClass="manor-side-plain" /> : null}
+    </aside>
+  );
+}
+
+export function ManorHead({ data }: { data: ResumeData }) {
+  return (
+    <header className="manor-head" data-section="details">
+      <div className="manor-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
+      <div className="manor-band">
+        <p className="manor-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+      </div>
+    </header>
+  );
+}
+
+export function ManorChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <>
+      <ManorSide data={data} hideContact={hideContact} />
+      <ManorHead data={data} />
     </>
   );
 }
@@ -699,45 +727,57 @@ export function canvasMainPieces(data: ResumeData) {
   return pieces;
 }
 
-export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+export function CanvasHead({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <header className="canvas-head" data-section="details">
+      <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={88} />
+      <div className="canvas-id">
+        <div className="canvas-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
+        <p className="canvas-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+      </div>
+      <IconContacts personal={data.personal} hideContact={hideContact} className="canvas-contacts" />
+    </header>
+  );
+}
+
+export function CanvasSide({ data }: { data: ResumeData }) {
   const skills = skillList(data.skills);
   const hobbies = findExtra(data, /hobb|interest/i);
   return (
-    <>
-      <header className="canvas-head" data-section="details">
-        <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={88} />
-        <div className="canvas-id">
-          <div className="canvas-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
-          <p className="canvas-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+    <aside className="canvas-side">
+      {sectionOnCv(data, "education") ? (
+        <div data-section="education">
+          <ResumeSectionLabel className="canvas-label">Education</ResumeSectionLabel>
+          {data.education.map((item) => (
+            <div className="canvas-edu" key={item.id} data-focus={item.id}>
+              <strong><RichLine text={item.degree || "Degree"} /></strong>
+              <div>{item.school}</div>
+              <span>{item.year}</span>
+            </div>
+          ))}
         </div>
-        <IconContacts personal={data.personal} hideContact={hideContact} className="canvas-contacts" />
-      </header>
-      <aside className="canvas-side">
-        {sectionOnCv(data, "education") ? (
-          <div data-section="education">
-            <ResumeSectionLabel className="canvas-label">Education</ResumeSectionLabel>
-            {data.education.map((item) => (
-              <div className="canvas-edu" key={item.id} data-focus={item.id}>
-                <strong><RichLine text={item.degree || "Degree"} /></strong>
-                <div>{item.school}</div>
-                <span>{item.year}</span>
-              </div>
+      ) : null}
+      {sectionOnCv(data, "skills") ? (
+        <div data-section="skills">
+          <ResumeSectionLabel className="canvas-label">Skills</ResumeSectionLabel>
+          <ul className="canvas-list">
+            {skills.map((item, index) => (
+              <li key={`${item}-${index}`}><RichLine text={item} /></li>
             ))}
-          </div>
-        ) : null}
-        {sectionOnCv(data, "skills") ? (
-          <div data-section="skills">
-            <ResumeSectionLabel className="canvas-label">Skills</ResumeSectionLabel>
-            <ul className="canvas-list">
-              {skills.map((item, index) => (
-                <li key={`${item}-${index}`}><RichLine text={item} /></li>
-              ))}
-              {!skills.length ? <li className="placeholder-line">Skills</li> : null}
-            </ul>
-          </div>
-        ) : null}
-        {sectionOnCv(data, "extras") && hobbies ? <SideExtra extra={hobbies} labelClass="canvas-label" listClass="canvas-side-list" plainClass="canvas-side-plain" /> : null}
-      </aside>
+            {!skills.length ? <li className="placeholder-line">Skills</li> : null}
+          </ul>
+        </div>
+      ) : null}
+      {sectionOnCv(data, "extras") && hobbies ? <SideExtra extra={hobbies} labelClass="canvas-label" listClass="canvas-side-list" plainClass="canvas-side-plain" /> : null}
+    </aside>
+  );
+}
+
+export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <>
+      <CanvasHead data={data} hideContact={hideContact} />
+      <CanvasSide data={data} />
     </>
   );
 }
@@ -843,12 +883,18 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
         <p className="studio-contact">{contacts.length ? contacts.join("  |  ") : "email | phone | web"}</p>
       </header>
     </Block>,
-    <Block key="about" section="bio">
-      <section className="studio-section">
-        <ResumeSectionLabel className="studio-label">Summary</ResumeSectionLabel>
-        {data.summary ? <FormattedText text={data.summary} className="studio-summary" /> : <p className="placeholder-line">Your summary will show here.</p>}
-      </section>
-    </Block>,
+  ];
+  if (data.summary) {
+    pieces.push(
+      <Block key="about" section="bio">
+        <section className="studio-section">
+          <ResumeSectionLabel className="studio-label">Summary</ResumeSectionLabel>
+          <FormattedText text={data.summary} className="studio-summary" />
+        </section>
+      </Block>,
+    );
+  }
+  pieces.push(
     <Block key="skills" section="skills">
       <section className="studio-section">
         <ResumeSectionLabel className="studio-label">Skills</ResumeSectionLabel>
@@ -859,19 +905,29 @@ export function studioPieces(data: ResumeData, hideContact: boolean) {
         )}
       </section>
     </Block>,
-  ];
+  );
   data.experience.forEach((job, index) => {
+    const jobCard = (
+      <div className={`studio-job${index > 0 ? " studio-job-continue" : ""}${job.bullets.some(Boolean) ? " is-split" : ""}`}>
+        <div className="studio-job-top">
+          <strong>{job.role || "Role"}</strong>
+          <span>{plainRange(job)}</span>
+        </div>
+        {job.company || job.location ? (
+          <div className="studio-sub">{[job.company, job.location].filter(Boolean).join(" · ")}</div>
+        ) : null}
+      </div>
+    );
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
-        <section className="studio-section">
-          {index === 0 && <ResumeSectionLabel className="studio-label">Work Experience</ResumeSectionLabel>}
-          <div className={`studio-job${job.bullets.some(Boolean) ? " is-split" : ""}`}>
-            <div className="studio-job-top">
-              <strong>{[job.role, job.company].filter(Boolean).join(" | ") || "Role"}</strong>
-              <span>{plainRange(job)}</span>
-            </div>
-          </div>
-        </section>
+        {index === 0 ? (
+          <section className="studio-section">
+            <ResumeSectionLabel className="studio-label">Work Experience</ResumeSectionLabel>
+            {jobCard}
+          </section>
+        ) : (
+          jobCard
+        )}
       </Block>,
     );
     pushJobBullets(pieces, job, "studio-pad");
@@ -926,16 +982,20 @@ export function vaultMainPieces(data: ResumeData) {
   return pieces;
 }
 
-export function VaultChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+export function VaultHead({ data }: { data: ResumeData }) {
+  return (
+    <header className="vault-head" data-section="details">
+      <div className="vault-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
+      <p className="vault-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
+    </header>
+  );
+}
+
+export function VaultSide({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
   const languages = findExtra(data, /language/i);
   const certs = findExtra(data, /certif/i);
   return (
-    <>
-      <header className="vault-head" data-section="details">
-        <div className="vault-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
-        <p className="vault-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
-      </header>
-      <aside className="vault-side">
+    <aside className="vault-side">
         <div className="vault-photo" data-section="details">
           <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={120} />
         </div>
@@ -969,7 +1029,15 @@ export function VaultChrome({ data, hideContact }: { data: ResumeData; hideConta
         ) : null}
         {sectionOnCv(data, "extras") && languages ? <SideExtra extra={languages} labelClass="vault-side-label" listClass="vault-side-list" plainClass="vault-side-plain" /> : null}
         {sectionOnCv(data, "extras") && certs ? <SideExtra extra={certs} labelClass="vault-side-label" listClass="vault-side-list" plainClass="vault-side-plain" /> : null}
-      </aside>
+    </aside>
+  );
+}
+
+export function VaultChrome({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
+  return (
+    <>
+      <VaultHead data={data} />
+      <VaultSide data={data} hideContact={hideContact} />
     </>
   );
 }

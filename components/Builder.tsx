@@ -1037,6 +1037,7 @@ export default function Builder() {
               templateId={snapshot.templateId}
               data={snapshot.data}
               hideContact={false}
+              fitPagesInView
               onPick={
                 view.kind === "cv"
                   ? (section, focusId) => {

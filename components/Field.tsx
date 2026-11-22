@@ -863,11 +863,12 @@ export function SearchTags({
     }
     return out;
   }, [suggestions, remote, query, values]);
+  const atCap = values.length >= max;
   const add = (next: string) => {
     const value = next.trim();
     setQuery("");
     setActive(0);
-    if (!value || values.includes(value) || values.length >= max) return;
+    if (!value || values.some((item) => item.toLowerCase() === value.toLowerCase()) || values.length >= max) return;
     onChange([...values, value]);
     input.current?.focus();
   };
@@ -977,6 +978,9 @@ export function SearchTags({
       </div>
 
       {hint ? <p className="fld-note">{hint}</p> : null}
+      {atCap && !hint ? (
+        <p className="fld-note">You&apos;ve reached the maximum of {max} items. Remove one to add another.</p>
+      ) : null}
 
       {mobile && showMenu ? <div className="tag-suggest">{optionList}</div> : null}
 
