@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ResumeSheet } from "./ResumeSheet";
-import { ResumeEmbedFrame } from "./ResumeEmbedFrame";
 import { HeroResumePreviewSkeleton } from "./HeroResumePreviewSkeleton";
 import { heroShowcaseSlides } from "@/lib/heroShowcase";
 import { useMediaQuery } from "@/lib/useMediaQuery";
@@ -22,7 +21,6 @@ export function HeroResumePreview() {
   const [scale, setScale] = useState(0.45);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [heroReady, setHeroReady] = useState(false);
 
   const slide = HERO_SLIDES[index] ?? HERO_SLIDES[0];
   const fitH = PAGE_H * scale;
@@ -63,51 +61,13 @@ export function HeroResumePreview() {
     return () => window.clearInterval(id);
   }, [reducedMotion]);
 
-  useEffect(() => {
-    if (!mounted || !isMobile || typeof document === "undefined") return;
-    const links: HTMLLinkElement[] = [];
-    for (let i = 0; i < HERO_SLIDES.length; i++) {
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.as = "document";
-      link.href = `/embed/resume?hero=${i}`;
-      document.head.appendChild(link);
-      links.push(link);
-    }
-    return () => links.forEach((link) => link.remove());
-  }, [mounted, isMobile]);
-
-  useEffect(() => {
-    if (isMobile) setHeroReady(false);
-  }, [index, isMobile]);
-
   if (!mounted) {
     return <HeroResumePreviewSkeleton />;
   }
 
+  /** Mobile hero uses copy instead of preview — keep DOM stable; no iframe branch. */
   if (isMobile) {
-    return (
-      <div className="board-hero-stage">
-        <div
-          className={`board-hero-paper-fit board-hero-paper-fit--embed${heroReady ? " is-ready" : " is-loading"}`}
-        >
-          <div
-            key={`hero-embed-${index}`}
-            className={reducedMotion ? "board-hero-embed-fade is-instant" : "board-hero-embed-fade"}
-          >
-            <ResumeEmbedFrame
-              src={`/embed/resume?hero=${index}`}
-              title={`Example resume: ${slide.data.personal.fullName}`}
-              priority
-              onReady={() => setHeroReady(true)}
-            />
-          </div>
-        </div>
-        <p className="sr-only" aria-live="polite">
-          Example resume: {slide.data.personal.fullName}, {slide.data.personal.title}
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (

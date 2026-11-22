@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoadScreen } from "./LoadScreen";
 import { SiteFooter } from "./SiteFooter";
@@ -129,16 +128,25 @@ export function Landing({
                   <button type="button" className="board-pill board-pill-primary board-hero-cta" disabled={busy} onClick={() => pickIntent("build")}>
                     <span className="board-pill-label">{owned ? "Open your CV" : "Create my resume"}</span>
                   </button>
-                  {!signedIn ? (
-                    <p className="board-cta-meta">
-                      <Link href="/login">Sign in</Link>
-                    </p>
-                  ) : null}
+                </div>
+                <div className="board-hero-public">
+                  <p className="board-hero-public-title">One link for your resume</p>
+                  <p className="board-hero-public-url" aria-label="Example public resume URL">
+                    cvmatters.net/<span className="board-hero-public-slug">username</span>
+                  </p>
+                  <p>
+                    Claim a short username and publish a clean, mobile-friendly CV page recruiters can open in one tap.
+                  </p>
+                  <p>
+                    Put that URL on LinkedIn, WhatsApp, or your email signature—it stays in sync with what you export to
+                    PDF.
+                  </p>
+                  <p>Your draft stays private until you turn sharing on. Update anytime; the live page follows your latest edits.</p>
                 </div>
               </div>
             </div>
 
-            <div className="board-hero-visual">
+            <div className="board-hero-visual board-hero-visual--desktop">
               <HeroResumePreview />
             </div>
           </div>
@@ -197,13 +205,15 @@ export function Landing({
           </div>
         </article>
 
-        <article className="board-section is-warm" id="templates">
+        <article className="board-section is-warm board-section-templates" id="templates">
           <div className="board-rail">
             <Reveal className="board-intro is-row" blur={false}>
               <div>
                 <p className="board-kicker">Templates</p>
                 <h2 className="board-heading">Tested layouts recruiters and ATS both read cleanly.</h2>
-                <p className="board-lead is-narrow">Pick a layout to start. You can switch templates later without losing your draft.</p>
+                <p className="board-lead is-narrow">
+                  Pick a layout to start. You can switch templates later without losing your draft.
+                </p>
               </div>
             </Reveal>
           </div>

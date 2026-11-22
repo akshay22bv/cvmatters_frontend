@@ -136,8 +136,8 @@ const fontVars = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={fontVars}>
-      <body className={inter.className}>
+    <html lang="en" className={fontVars} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <AppShell />
         {children}
       </body>

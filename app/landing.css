@@ -1193,6 +1193,51 @@
   line-height: 1.55;
 }
 
+/* Hero — public link story (below primary CTA). */
+.board-hero-public {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  max-width: 42ch;
+  padding: 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--wash-lime, #f4fbe8) 38%, var(--white));
+}
+
+.board-hero-panel .board-hero-public {
+  animation: board-rise 0.85s var(--ease-out) 0.18s both;
+}
+
+.board-hero-public p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.board-hero-public-title {
+  font-size: 12px !important;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink) !important;
+}
+
+.board-hero-public-url {
+  margin: 8px 0 14px !important;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 17px !important;
+  font-weight: 600;
+  line-height: 1.35 !important;
+  color: var(--ink) !important;
+  word-break: break-word;
+}
+
+.board-hero-public-slug {
+  color: var(--accent-strong, var(--accent));
+}
+
 .board-cta {
   display: grid;
   gap: 14px;
@@ -2727,6 +2772,27 @@
 }
 
 @media (max-width: 960px) {
+  #templates,
+  .board-section-templates,
+  .board-hero-visual,
+  .board-hero-visual--desktop {
+    display: none !important;
+  }
+
+  .board-foot-link-grid li:has(a[href="#templates"]),
+  .board-foot-link-grid li:has(a[href="/#templates"]) {
+    display: none;
+  }
+
+  .board-hero-panel .board-hero-public {
+    margin-top: 28px;
+    max-width: 38ch;
+    text-align: left;
+    justify-self: center;
+    width: 100%;
+    padding: 18px 16px;
+  }
+
   .board-hero {
     min-height: 0;
     padding: max(28px, env(safe-area-inset-top)) 0 40px;
