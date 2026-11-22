@@ -162,7 +162,7 @@ textarea:disabled,
   padding: 0;
   background: none;
   color: inherit;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: -0.005em;
 }
 
@@ -203,7 +203,7 @@ textarea:disabled,
 .fld-box.is-area textarea {
   height: auto;
   line-height: 1.55;
-  font-size: 14.5px;
+  font-size: 16px;
   resize: vertical;
 }
 
@@ -4807,7 +4807,8 @@ button.finish-check-grip:active {
   padding: 8px 0 0;
   outline: none;
   line-height: 1.55;
-  font-size: 15px;
+  /* 16px stops iOS Safari from viewport-zooming on focus (which used to shake the whole editor). */
+  font-size: 16px;
 }
 
 .rich-area:empty::before {

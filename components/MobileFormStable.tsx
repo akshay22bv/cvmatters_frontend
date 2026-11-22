@@ -71,6 +71,9 @@ export function MobileFormStable() {
     };
 
     const onViewport = () => {
+      const view = window.visualViewport;
+      /* iOS may still zoom focused fields; ignore that so the shell does not resize for the whole page. */
+      if (view && view.scale > 1.02) return;
       setFrame();
       if (focused) keepInView(focused);
     };

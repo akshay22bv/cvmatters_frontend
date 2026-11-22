@@ -1226,10 +1226,11 @@
 
 .board-hero-public-url {
   margin: 8px 0 14px !important;
-  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-family: var(--font-sans);
   font-size: 17px !important;
   font-weight: 600;
   line-height: 1.35 !important;
+  letter-spacing: -0.02em;
   color: var(--ink) !important;
   word-break: break-word;
 }

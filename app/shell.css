@@ -3602,6 +3602,8 @@ body.is-examples-preview .cv-editor-shell .layout {
   .fld-box .rich-line,
   .bullet-list textarea,
   .editor-box textarea,
+  .editor-box .rich-area,
+  .rich-area,
   .pop-search input,
   .look-stepper input,
   .work input,

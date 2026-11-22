@@ -37,9 +37,16 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: "swap",
+  preload: false,
 });
 // Resume-only typefaces load on demand instead of preloading ~15 font files on every page.
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap", preload: false });
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  preload: true,
+});
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -132,7 +139,7 @@ const fontVars = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fontVars} suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={dmSans.className} suppressHydrationWarning>
         <AppShell />
         {children}
       </body>
