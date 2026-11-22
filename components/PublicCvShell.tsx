@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AuthDialog } from "./AuthDialog";
+import { useRouter } from "next/navigation";
 import { PublicCvPage } from "./PublicCvPage";
+import { loginPath } from "@/lib/paths";
 import { downloadPublicResumePdf } from "@/lib/pdf";
 import { useAccount } from "@/lib/useAccount";
 import type { ResumeRecord } from "@/lib/types";
@@ -26,10 +27,9 @@ export function PublicCvShell({
   id: string;
   initialRecord?: (ResumeRecord & { isMine?: boolean }) | null;
 }) {
+  const router = useRouter();
   const owner = useRef("");
   const account = useAccount(() => owner.current);
-  const [gate, setGate] = useState(false);
-  const [gateReason, setGateReason] = useState("");
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
 
@@ -49,6 +49,8 @@ export function PublicCvShell({
       });
   };
 
+  const returnPath = `/${id}`;
+
   return (
     <div className="app-frame is-public">
       <PublicCvPage
@@ -57,21 +59,8 @@ export function PublicCvShell({
         signedIn={!!account.user}
         downloading={downloading}
         downloadError={downloadError}
-        onSignIn={() => {
-          setGateReason("Sign in to rate this resume.");
-          setGate(true);
-        }}
+        onSignIn={() => router.push(loginPath(returnPath))}
         onDownload={requestDownload}
-      />
-
-      <AuthDialog
-        open={gate}
-        reason={gateReason}
-        ownerKey={owner.current}
-        onRegister={account.register}
-        onLogin={account.login}
-        onAuthenticated={() => setGate(false)}
-        onClose={() => setGate(false)}
       />
     </div>
   );

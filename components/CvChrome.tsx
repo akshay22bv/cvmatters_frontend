@@ -245,9 +245,18 @@ export function SliceViewCv({ onPreview, onDesign }: { onPreview: () => void; on
   );
 }
 
-export function SliceBack({ disabled, onClick }: { disabled?: boolean; onClick: () => void }) {
+export function SliceBack({
+  className,
+  disabled,
+  onClick,
+}: {
+  className?: string;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  const classes = ["slice-back", className].filter(Boolean).join(" ");
   return (
-    <button type="button" className="slice-back" aria-label="Back" disabled={disabled} onClick={onClick}>
+    <button type="button" className={classes} aria-label="Back" disabled={disabled} onClick={onClick}>
       <IconChevronLeft />
     </button>
   );

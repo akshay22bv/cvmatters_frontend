@@ -367,9 +367,6 @@ export function DetailsStep({
   return (
     <StepCard plain>
       <div className="step-group span-all">
-        <header className="step-group-head">
-          <h2>Details</h2>
-        </header>
         {photoField}
         <div className="pair span-all">
           <Field

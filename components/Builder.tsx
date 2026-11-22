@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AuthDialog } from "./AuthDialog";
 import { AppNav } from "./AppNav";
 import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
 import { ExamplesBrowsePage } from "./ExamplesBrowsePage";
@@ -26,7 +25,7 @@ import { TemplateDialog } from "./TemplateDialog";
 import { IconAiDots, IconArrowUp, IconChevronLeft, IconDownload, IconOpenBook, IconPalette, IconSpinner } from "./icons";
 import { adjustResume, ensureResume, importResume, improveText, loadMine, loadRatings, readJobLink, updateResume } from "@/lib/api";
 import { blank } from "@/lib/content";
-import { panelPath, pathToView } from "@/lib/paths";
+import { loginPath, panelPath, pathToView, publicResumePath } from "@/lib/paths";
 import { checkpoints, completeness } from "@/lib/progress";
 import { isBodySectionId, moveSectionOrder, resolveSectionOrder, sectionOnCv, toggleHiddenSection, type BodySectionId } from "@/lib/sectionOrder";
 import { stepErrors } from "@/lib/validate";
@@ -51,6 +50,7 @@ type Snapshot = {
 
 const OWNER_KEY = "cv-matters-owner";
 const ACTIVE_KEY = "cv-matters-active";
+const AFTER_AUTH_KEY = "cv-matters-after-auth";
 
 function ownerKey() {
   const existing = localStorage.getItem(OWNER_KEY);
@@ -77,6 +77,10 @@ export default function Builder() {
     setSearch(window.location.search || "");
   }, [pathname]);
   const view = pathToView(pathname, search);
+  const authReturnPath = `${pathname}${search}`;
+  const goToLogin = (next?: string) => {
+    router.push(loginPath(next ?? authReturnPath));
+  };
   const [mode, setMode] = useState<"loading" | "start" | "ready">("loading");
   const [panel, setPanel] = useState<PanelId | null>(null);
 
@@ -106,7 +110,7 @@ export default function Builder() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [showErrors, setShowErrors] = useState(false);
-  const [gate, setGate] = useState<null | "auth" | "plan">(null);
+  const [gate, setGate] = useState<null | "plan">(null);
   const [gateReason, setGateReason] = useState("");
   const [snapshot, setSnapshot] = useState<Snapshot>({
     id: null,
@@ -398,9 +402,12 @@ export default function Builder() {
   /** Account first, then a live subscription, then the file. */
   const requestPdf = (how: "download" | "print") => {
     if (!account.user) {
-      afterGate.current = how;
-      setGateReason(`Create an account to ${how === "print" ? "print" : "download"} your resume.`);
-      setGate("auth");
+      try {
+        sessionStorage.setItem(AFTER_AUTH_KEY, how);
+      } catch {
+        /* ignore storage errors */
+      }
+      goToLogin(authReturnPath);
       return;
     }
     if (!account.entitlement.canDownload) {
@@ -412,6 +419,22 @@ export default function Builder() {
     if (how === "print") print();
     else void download();
   };
+
+  useEffect(() => {
+    if (!account.user) return;
+    let pending: string | null = null;
+    try {
+      pending = sessionStorage.getItem(AFTER_AUTH_KEY);
+      if (pending) sessionStorage.removeItem(AFTER_AUTH_KEY);
+    } catch {
+      /* ignore storage errors */
+    }
+    if (pending !== "download" && pending !== "print") return;
+    if (!account.entitlement.canDownload) return;
+    if (pending === "print") print();
+    else void download();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resume PDF intent after /login
+  }, [account.user?.id, account.entitlement.canDownload]);
 
   // only shown once Continue has been pressed, so nothing turns red while typing
   const errors = showErrors ? stepErrors(panel, page, snapshot.data) : {};
@@ -444,30 +467,15 @@ export default function Builder() {
           signedIn={!!account.user}
           downloading={downloading}
           downloadError={pdfError}
-          onSignIn={() => {
-            setGateReason("Sign in to rate this resume.");
-            setGate("auth");
-          }}
+          onSignIn={() => goToLogin(publicResumePath(view.id))}
           onDownload={() => requestPdf("download")}
-        />
-        <AuthDialog
-          open={gate === "auth"}
-          reason={gateReason}
-          ownerKey={owner.current}
-          onRegister={account.register}
-          onLogin={account.login}
-          onAuthenticated={() => setGate(null)}
-          onClose={() => setGate(null)}
         />
         <PlanDialog
           open={gate === "plan"}
           account={account}
           reason={gateReason}
           onClose={() => setGate(null)}
-          onSignIn={() => {
-            setGateReason("Sign in to subscribe and download.");
-            setGate("auth");
-          }}
+          onSignIn={() => goToLogin(publicResumePath(view.id))}
           onPaid={() => {
             const wanted = afterGate.current;
             afterGate.current = null;
@@ -530,10 +538,7 @@ export default function Builder() {
         <AppNav
           view={view}
           signedIn={!!account.user}
-          onSignIn={() => {
-            setGateReason("");
-            setGate("auth");
-          }}
+          onSignIn={() => goToLogin(authReturnPath)}
         />
         <StartPage
           intent={view.intent}
@@ -546,15 +551,6 @@ export default function Builder() {
           onCreate={(intent, templateId) => begin(intent, templateId, structuredClone(blank), "Starting your CV…")}
           onUpload={(file, intent, templateId) => void beginFromUpload(file, intent, templateId)}
           onLinkedin={beginFromLinkedin}
-        />
-        <AuthDialog
-          open={gate === "auth"}
-          ownerKey={owner.current}
-          reason={gateReason}
-          onRegister={account.register}
-          onLogin={account.login}
-          onAuthenticated={() => setGate(null)}
-          onClose={() => setGate(null)}
         />
       </div>
     );
@@ -605,10 +601,7 @@ export default function Builder() {
         <AppNav
           view={view}
           signedIn={!!account.user}
-          onSignIn={() => {
-            setGateReason("");
-            setGate("auth");
-          }}
+          onSignIn={() => goToLogin(authReturnPath)}
         />
       )}
 
@@ -620,6 +613,7 @@ export default function Builder() {
           rating={rating}
           account={account}
           resumeId={snapshot.id}
+          backHref={snapshot.id ? panelPath(panel || "details") : undefined}
           slug={snapshot.slug}
           ownerKey={owner.current}
           onShare={() => setProfileOpen(true)}
@@ -627,10 +621,6 @@ export default function Builder() {
             afterGate.current = null;
             setGateReason("");
             setGate("plan");
-          }}
-          onSignIn={() => {
-            setGateReason("Sign in to host a public page.");
-            setGate("auth");
           }}
           onSaved={({ slug, isPublic }) => {
             patch({ slug, isPublic });
@@ -895,6 +885,7 @@ export default function Builder() {
           {dockIndex >= 0 && (
             <div className="work-bar">
               <SliceBack
+                className="slice-back-leading"
                 disabled={dockIndex <= 0}
                 onClick={() => {
                   if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
@@ -921,25 +912,34 @@ export default function Builder() {
                   setTemplatesOpen(true);
                 }}
               />
-              <SliceContinue
-                label={dockIndex >= steps.length - 1 ? "Download" : "Continue"}
-                busy={dockIndex >= steps.length - 1 && downloading}
-                onClick={async () => {
-                  if (dockIndex >= steps.length - 1 && downloading) return;
-                  const found = panel ? stepErrors(panel, page, live.current.data) : {};
-                  if (Object.keys(found).length) {
-                    setShowErrors(true);
-                    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-                    return;
-                  }
-                  await flush();
-                  if (dockIndex < steps.length - 1) {
-                    goPanel(steps[dockIndex + 1]);
-                    return;
-                  }
-                  requestPdf("download");
-                }}
-              />
+              <div className="work-bar-end">
+                <SliceBack
+                  className="slice-back-trailing"
+                  disabled={dockIndex <= 0}
+                  onClick={() => {
+                    if (dockIndex > 0) goPanel(steps[dockIndex - 1]);
+                  }}
+                />
+                <SliceContinue
+                  label={dockIndex >= steps.length - 1 ? "Download" : "Continue"}
+                  busy={dockIndex >= steps.length - 1 && downloading}
+                  onClick={async () => {
+                    if (dockIndex >= steps.length - 1 && downloading) return;
+                    const found = panel ? stepErrors(panel, page, live.current.data) : {};
+                    if (Object.keys(found).length) {
+                      setShowErrors(true);
+                      scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                      return;
+                    }
+                    await flush();
+                    if (dockIndex < steps.length - 1) {
+                      goPanel(steps[dockIndex + 1]);
+                      return;
+                    }
+                    requestPdf("download");
+                  }}
+                />
+              </div>
             </div>
           )}
         </main>
@@ -1000,24 +1000,26 @@ export default function Builder() {
       {previewOpen && (view.kind === "cv" || view.kind === "profile") && (
         <div className="preview-sheet" role="dialog" aria-label="Resume preview">
           <div className="preview-sheet-top">
-            <button
-              type="button"
-              className="preview-sheet-icon preview-sheet-back"
-              aria-label={view.kind === "profile" ? "Close preview" : "Back to editing"}
-              onClick={() => setPreviewOpen(false)}
-            >
-              <IconChevronLeft />
-            </button>
-            <button
-              type="button"
-              className="preview-sheet-icon preview-sheet-dl"
-              aria-label={downloading ? "Building PDF" : "Download PDF"}
-              aria-busy={downloading || undefined}
-              disabled={downloading}
-              onClick={() => requestPdf("download")}
-            >
-              {downloading ? <IconSpinner /> : <IconDownload />}
-            </button>
+            <div className="preview-sheet-top-acts">
+              <button
+                type="button"
+                className="preview-sheet-icon preview-sheet-back"
+                aria-label={view.kind === "profile" ? "Close preview" : "Back to editing"}
+                onClick={() => setPreviewOpen(false)}
+              >
+                <IconChevronLeft />
+              </button>
+              <button
+                type="button"
+                className="preview-sheet-icon preview-sheet-dl"
+                aria-label={downloading ? "Building PDF" : "Download PDF"}
+                aria-busy={downloading || undefined}
+                disabled={downloading}
+                onClick={() => requestPdf("download")}
+              >
+                {downloading ? <IconSpinner /> : <IconDownload />}
+              </button>
+            </div>
           </div>
           <div className="preview-sheet-body">
             <ResumeView
@@ -1075,25 +1077,12 @@ export default function Builder() {
         onStyle={(look) => setSnapshot((current) => ({ ...current, data: { ...current.data, ...look } }))}
       />
 
-      <AuthDialog
-        open={gate === "auth"}
-        ownerKey={owner.current}
-        reason={gateReason}
-        onRegister={account.register}
-        onLogin={account.login}
-        onAuthenticated={() => setGate(null)}
-        onClose={() => setGate(null)}
-      />
-
       <PlanDialog
         open={gate === "plan"}
         account={account}
         reason={gateReason}
         onClose={() => setGate(null)}
-        onSignIn={() => {
-          setGateReason("Sign in to subscribe and download.");
-          setGate("auth");
-        }}
+        onSignIn={() => goToLogin(authReturnPath)}
         onPaid={() => {
           const wanted = afterGate.current;
           afterGate.current = null;

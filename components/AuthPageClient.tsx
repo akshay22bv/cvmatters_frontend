@@ -11,6 +11,7 @@ import {
   resetPasswordWithOtp,
   verifyPasswordResetOtp,
 } from "@/lib/api";
+import { safeNextPath } from "@/lib/paths";
 import { useAccount } from "@/lib/useAccount";
 import { SITE_NAME } from "@/lib/site";
 
@@ -39,15 +40,10 @@ function GoogleMark() {
   );
 }
 
-function safeNextPath(raw: string | null): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/profile";
-  return raw;
-}
-
 export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup" }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = safeNextPath(searchParams.get("next"));
+  const nextPath = safeNextPath(searchParams.get("next"), "/profile");
   const owner = useRef("");
   const account = useAccount(() => owner.current);
 
@@ -80,12 +76,11 @@ export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup
   };
 
   const googleStart = () => {
-    const returnTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
     const params = new URLSearchParams({
       ownerKey: owner.current || "",
-      returnTo,
+      returnTo: nextPath,
     });
-    window.location.href = `/backend/api/auth/google/start?${params.toString()}`;
+    window.location.href = `/backend/api/auth/google?${params.toString()}`;
   };
 
   const onEmailSubmit = async (event: FormEvent) => {

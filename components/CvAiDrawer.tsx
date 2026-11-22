@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { runAiCommand } from "@/lib/api";
 import type { ResumeData, TemplateId } from "@/lib/types";
-import { IconAiDots, IconArrowUp, IconPalette, IconX, Spark } from "./icons";
+import { IconAiDots, IconArrowUp, IconX } from "./icons";
 
 type Snapshot = {
   templateId: TemplateId;
@@ -146,24 +146,6 @@ function followupsFor(lastUserPrompt: string) {
   ];
 }
 
-function RecIcon({ tone }: { tone: RecCard["tone"] }) {
-  if (tone === "blue") return <Spark />;
-  if (tone === "pink") return <IconPalette />;
-  if (tone === "green") {
-    return (
-      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="2.8" width="12" height="14.4" rx="2" />
-        <path d="M7.2 7h5.6M7.2 10h5.6M7.2 13h3.6" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 5.5h12M6 10h8M4 14.5h12" />
-    </svg>
-  );
-}
-
 export function CvAiDrawer({
   open,
   onClose,
@@ -291,9 +273,6 @@ export function CvAiDrawer({
         <div className="ai-drawer-scroll" ref={scrollRef}>
           {showingHome ? (
             <div className="ai-drawer-home">
-              <div className="ai-drawer-mark" aria-hidden="true">
-                <IconAiDots size={24} />
-              </div>
               <h2 className="ai-drawer-greet">
                 {firstName ? (
                   <>
@@ -316,8 +295,8 @@ export function CvAiDrawer({
                     disabled={busy}
                     onClick={() => void send(item.prompt)}
                   >
-                    <span className={`ai-rec-ico is-${item.tone}`} aria-hidden="true">
-                      <RecIcon tone={item.tone} />
+                    <span className="ai-rec-tag" aria-hidden="true">
+                      Ask AI
                     </span>
                     <span className="ai-rec-copy">
                       <strong>{item.title}</strong>
@@ -391,17 +370,6 @@ export function CvAiDrawer({
               void send();
             }}
           >
-            <button
-              type="button"
-              className={`ai-composer-menu${showingHome ? " is-on" : ""}`}
-              aria-label={showingHome ? "Show conversation" : "Show recommended prompts"}
-              title={showingHome ? "Recommended" : "Recommended prompts"}
-              onClick={() => {
-                if (messages.length > 0) setShowRecs((v) => !v);
-              }}
-            >
-              <IconAiDots size={16} />
-            </button>
             <div className="ai-composer-pill">
               <input
                 ref={inputRef}

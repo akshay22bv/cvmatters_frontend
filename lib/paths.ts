@@ -191,6 +191,22 @@ export function startPath(step: StartStep = "choose", intent: StartIntent = "bui
   return intent === "build" ? base : `${base}?intent=${intent}`;
 }
 
+/** Where to land after sign-in — blocks open redirects and auth loops. */
+export function safeNextPath(raw: string | null | undefined, fallback = "/cv/details"): string {
+  const value = String(raw || "").trim();
+  if (!value.startsWith("/") || value.startsWith("//")) return fallback;
+  const path = value.split("#")[0] || fallback;
+  if (path.startsWith("/auth/") || path.startsWith("/backend/")) return fallback;
+  return path;
+}
+
+/** Dedicated sign-in page, with optional return path after auth. */
+export function loginPath(next?: string | null, fallback = "/cv/details"): string {
+  const path = safeNextPath(next, fallback);
+  if (path === "/profile") return "/login";
+  return `/login?next=${encodeURIComponent(path)}`;
+}
+
 export function viewToPath(view: AppView) {
   if (view.kind === "start") return "/";
   if (view.kind === "begin") return startPath(view.step, view.intent);

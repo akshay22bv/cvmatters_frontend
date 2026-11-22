@@ -434,7 +434,7 @@ textarea {
 }
 
 .combo-field:focus-within {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--line);
   box-shadow: none;
 }
 
@@ -523,7 +523,7 @@ input, textarea {
 }
 
 input:focus, textarea:focus, .select-trigger:focus-visible {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--line);
   box-shadow: none;
 }
 
@@ -539,7 +539,7 @@ input:disabled { background: var(--soft); color: var(--muted); }
 }
 
 .editor-box:focus-within {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--line);
   box-shadow: none;
 }
 

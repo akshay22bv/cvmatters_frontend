@@ -8,7 +8,7 @@ import { Monogram } from "./Monogram";
 import { useConfirm } from "./ConfirmProvider";
 import { Trash } from "./icons";
 import { ApiError, createResume, deleteResume, listResumes, loadBilling, updateHosting } from "@/lib/api";
-import { publicResumePath, startPath } from "@/lib/paths";
+import { loginPath, publicResumePath, startPath } from "@/lib/paths";
 import type { AccountState } from "@/lib/useAccount";
 import type { Category, RatingSummary, ResumeData, ResumeRecord } from "@/lib/types";
 
@@ -41,11 +41,11 @@ export function ProfilePage({
   rating,
   account,
   resumeId,
+  backHref,
   slug,
   ownerKey,
   onShare,
   onPlans,
-  onSignIn,
   onSaved,
   onUse,
   onPreviewCv,
@@ -56,11 +56,12 @@ export function ProfilePage({
   rating?: RatingSummary;
   account: AccountState;
   resumeId: string | null;
+  /** When set, top back link returns to this CV step instead of the start flow. */
+  backHref?: string;
   slug: string | null;
   ownerKey: string;
   onShare: () => void;
   onPlans: () => void;
-  onSignIn: () => void;
   onSaved: (next: { slug: string | null; isPublic: boolean }) => void;
   onUse: (record: ResumeRecord) => void;
   onPreviewCv: (record: ResumeRecord) => void;
@@ -270,8 +271,8 @@ export function ProfilePage({
   return (
     <div className="prof">
       <div className="prof-top">
-        <Link href={resumeId ? "/cv/details" : startPath("choose")} className="prof-back">
-          {resumeId ? "← Back to CV" : "← Start a CV"}
+        <Link href={backHref || (resumeId ? "/cv/details" : startPath("choose"))} className="prof-back">
+          {resumeId || backHref ? "← Back to CV" : "← Start a CV"}
         </Link>
         <div className="prof-top-acts">
           {!downloadsOn ? (
@@ -323,7 +324,7 @@ export function ProfilePage({
                 Sharing settings
               </button>
             ) : (
-              <button type="button" className="prof-btn is-soft" onClick={onSignIn}>
+              <button type="button" className="prof-btn is-soft" onClick={() => router.push(loginPath("/profile"))}>
                 Sign in
               </button>
             )}
@@ -488,7 +489,7 @@ export function ProfilePage({
             {!account.user ? (
               <p className="rate-gate">
                 Sign in to publish a public page.{" "}
-                <button type="button" onClick={onSignIn}>
+                <button type="button" onClick={() => router.push(loginPath("/profile"))}>
                   Sign in
                 </button>
               </p>
@@ -545,9 +546,11 @@ export function ProfilePage({
                 </div>
               </header>
               {!downloadsOn ? (
-                <button type="button" className="prof-btn is-primary" onClick={onPlans}>
-                  See plans
-                </button>
+                <div className="prof-inline-cta">
+                  <button type="button" className="prof-btn is-primary" onClick={onPlans}>
+                    See plans
+                  </button>
+                </div>
               ) : (
                 <p className="prof-note">You&apos;re on a paid plan. New receipts show up after each purchase.</p>
               )}

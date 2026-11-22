@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AuthDialog } from "@/components/AuthDialog";
 import { confirmCashfreeWithRetry } from "@/lib/billingConfirm";
+import { loginPath } from "@/lib/paths";
 import { ApiError, type Receipt } from "@/lib/api";
 import { useAccount } from "@/lib/useAccount";
 import { markEntitlementRefresh } from "@/lib/session";
@@ -23,7 +23,6 @@ function BillingReturnInner() {
   const [message, setMessage] = useState("");
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -90,9 +89,16 @@ function BillingReturnInner() {
             </div>
             <h1 className="billing-return-title">Sign in to finish</h1>
             <p className="billing-return-lead">Payment went through. Sign in with the same account to activate your plan.</p>
-            <button type="button" className="btn-cta" onClick={() => setAuthOpen(true)}>
+            <Link
+              className="btn-cta"
+              href={
+                orderId
+                  ? loginPath(`/billing/return?orderId=${encodeURIComponent(orderId)}`)
+                  : loginPath("/billing/return")
+              }
+            >
               Sign in
-            </button>
+            </Link>
             <Link className="btn-quiet" href="/">
               Back to home
             </Link>
@@ -179,15 +185,6 @@ function BillingReturnInner() {
         ) : null}
       </div>
 
-      <AuthDialog
-        open={authOpen}
-        ownerKey={owner.current}
-        reason="Sign in to activate your plan."
-        onRegister={account.register}
-        onLogin={account.login}
-        onAuthenticated={() => setAuthOpen(false)}
-        onClose={() => setAuthOpen(false)}
-      />
     </main>
   );
 }

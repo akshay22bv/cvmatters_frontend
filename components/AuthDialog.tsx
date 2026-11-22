@@ -10,6 +10,7 @@ import {
   resetPasswordWithOtp,
   verifyPasswordResetOtp,
 } from "@/lib/api";
+import { safeNextPath } from "@/lib/paths";
 
 type AuthMode = "signup" | "login" | "forgot" | "otp" | "reset";
 
@@ -28,6 +29,7 @@ function GoogleMark() {
 export function AuthDialog({
   open,
   ownerKey,
+  returnTo,
   reason,
   onClose,
   onRegister,
@@ -36,6 +38,8 @@ export function AuthDialog({
 }: {
   open: boolean;
   ownerKey: string;
+  /** Path (+ query) to return to after Google sign-in, e.g. /profile */
+  returnTo?: string;
   reason?: string;
   onClose: () => void;
   onRegister: (input: { email: string; name: string; password: string }) => Promise<unknown>;
@@ -125,8 +129,13 @@ export function AuthDialog({
       setFailure("Google sign-in is not configured on this server yet.");
       return;
     }
-    const query = ownerKey ? `?ownerKey=${encodeURIComponent(ownerKey)}` : "";
-    window.location.assign(`/backend/api/auth/google${query}`);
+    const next = safeNextPath(
+      returnTo || (typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : null),
+    );
+    const params = new URLSearchParams();
+    if (ownerKey) params.set("ownerKey", ownerKey);
+    params.set("returnTo", next);
+    window.location.assign(`/backend/api/auth/google?${params.toString()}`);
   };
 
   const submitEmail = async (event: FormEvent) => {

@@ -162,20 +162,22 @@ export function ExamplesBrowsePage({
           aria-label={`${sharedPreview.data.personal.fullName || "Shared"} resume`}
         >
           <div className="preview-sheet-top">
-            <button type="button" className="preview-sheet-icon preview-sheet-back" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
-              <IconChevronLeft />
-            </button>
-            <button
-              type="button"
-              className="preview-sheet-icon"
-              aria-label="Edit my CV"
-              onClick={() => {
-                setPreviewOpen(false);
-                router.push("/cv/details");
-              }}
-            >
-              <Pencil />
-            </button>
+            <div className="preview-sheet-top-acts">
+              <button type="button" className="preview-sheet-icon preview-sheet-back" aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
+                <IconChevronLeft />
+              </button>
+              <button
+                type="button"
+                className="preview-sheet-icon"
+                aria-label="Edit my CV"
+                onClick={() => {
+                  setPreviewOpen(false);
+                  router.push("/cv/details");
+                }}
+              >
+                <Pencil />
+              </button>
+            </div>
           </div>
           {!sharedOwn ? (
             <div className="preview-rate">
