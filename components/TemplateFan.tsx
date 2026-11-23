@@ -140,7 +140,7 @@ export function TemplateFan({
                     templateId={template.id}
                     data={sampleThumbs ? sampleForTemplateGallery(template.id) : thumbData}
                     preview
-                    fill={!sampleThumbs}
+                    fill
                   />
               </span>
               {enhancv ? (

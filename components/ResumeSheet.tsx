@@ -844,15 +844,17 @@ function Frame({
 
 const PAGE_H = 1123;
 
-/** Main column on page 1 is shorter when the template paints a fixed header chrome block. */
+/** Main column on page 1 is shorter when a fixed header sits above the measured main flow. */
 const ATS_CHROME_RESERVE: Partial<Record<TemplateId, number>> = {
   apex: 152,
   cabinet: 168,
   manor: 148,
   canvas: 138,
-  cobalt: 132,
   vault: 140,
 };
+
+/** Split layouts where the sidebar owns identity — main column uses the full page height. */
+const ATS_MAIN_FULL_HEIGHT = new Set<TemplateId>(["cobalt"]);
 
 function sumHeights(heights: number[], indexes: number[]) {
   return indexes.reduce((total, index) => total + (heights[index] || 0), 0);
@@ -912,9 +914,13 @@ function flowBlockHeights(nodes: HTMLElement[]) {
   if (!nodes.length) return [];
   return nodes.map((node, index) => {
     const rect = node.getBoundingClientRect();
+    const boxH = Math.max(node.offsetHeight, Math.ceil(rect.height));
     if (index < nodes.length - 1) {
       const gap = nodes[index + 1].getBoundingClientRect().top - rect.top;
-      return Math.max(0, Math.round(gap * 10) / 10);
+      const stepped = Math.round(gap * 10) / 10;
+      // Collapsed measure grids can stack blocks at y≈0 — gap lies, so use box height.
+      if (stepped >= boxH * 0.45) return Math.max(1, stepped);
+      return Math.max(1, boxH);
     }
     const style = getComputedStyle(node);
     const child = node.lastElementChild as HTMLElement | null;
@@ -922,16 +928,33 @@ function flowBlockHeights(nodes: HTMLElement[]) {
       parseFloat(style.marginBottom) || 0,
       child ? parseFloat(getComputedStyle(child).marginBottom) || 0 : 0,
     );
-    return Math.max(0, Math.round((rect.height + extra) * 10) / 10);
+    return Math.max(1, Math.round((boxH + extra) * 10) / 10);
   });
 }
 
+function paginationFlowRoot(root: HTMLElement, templateId?: TemplateId) {
+  if (!templateId) return root;
+  const mainClass = ATS_MAIN[templateId];
+  if (mainClass) {
+    const main = root.querySelector(`:scope .${mainClass}`);
+    if (main instanceof HTMLElement) return main;
+  }
+  if (isSidebar(templateId) || isRightbar(templateId)) {
+    const splitMain = root.querySelector(":scope .split-main");
+    if (splitMain instanceof HTMLElement) return splitMain;
+  }
+  return root;
+}
+
 function pagesFrom(root: HTMLElement, tight = false, templateId?: TemplateId) {
-  // Blocks may sit inside apex-main / cab-main / split-main, not only as direct children of .paper
-  const nodes = [...root.querySelectorAll(":scope .flow-block")] as HTMLElement[];
+  const flowRoot = paginationFlowRoot(root, templateId);
+  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+  if (!nodes.length) {
+    nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
+  }
   if (!nodes.length) return [[]];
 
-  const style = getComputedStyle(root);
+  const style = getComputedStyle(flowRoot);
   const padTop = parseFloat(style.paddingTop) || 0;
   const padBottom = parseFloat(style.paddingBottom) || 0;
   const borderTop = parseFloat(style.borderTopWidth) || 0;
@@ -942,11 +965,14 @@ function pagesFrom(root: HTMLElement, tight = false, templateId?: TemplateId) {
   let hardLimit = inner - hardSlack;
   const softLimit = hardLimit + fillSlack;
 
-  const chrome = templateId && isAtsSplit(templateId) ? ATS_CHROME_RESERVE[templateId] || 0 : 0;
+  let chrome = 0;
+  if (templateId && isAtsSplit(templateId) && !ATS_MAIN_FULL_HEIGHT.has(templateId)) {
+    chrome = ATS_CHROME_RESERVE[templateId] || 0;
+  }
   if (chrome) hardLimit = Math.max(480, hardLimit - chrome);
 
   const heights = flowBlockHeights(nodes);
-  const contentTop = root.getBoundingClientRect().top + borderTop + padTop;
+  const contentTop = flowRoot.getBoundingClientRect().top + borderTop + padTop;
   const lead = nodes[0].getBoundingClientRect().top - contentTop;
   if (lead > 6) heights[0] += Math.min(lead, 28);
 
@@ -1024,6 +1050,7 @@ export function ResumeView({
   onPick,
   cornerAction,
   fitPagesInView = false,
+  singlePagePreview = false,
 }: {
   templateId: TemplateId;
   data: ResumeData;
@@ -1033,6 +1060,8 @@ export function ResumeView({
   cornerAction?: ReactNode;
   /** Shrink scale so multiple pages fit without excessive scroll (e.g. Change design). */
   fitPagesInView?: boolean;
+  /** Change-design modal: one sheet, all blocks — split layouts avoid bad pagination measure. */
+  singlePagePreview?: boolean;
 }) {
   const templateId = readTemplateId(rawId);
   const pieces = piecesFor(templateId, data, hideContact);
@@ -1043,6 +1072,8 @@ export function ResumeView({
   const [scale, setScale] = useState(0.62);
 
   useLayoutEffect(() => {
+    if (singlePagePreview) return;
+    const all = pieces.map((_, index) => index);
     const root = measureRef.current;
     if (!root) return;
     let cancelled = false;
@@ -1050,7 +1081,8 @@ export function ResumeView({
     const measure = () => {
       if (cancelled) return;
       const raw = pagesFrom(root, false, templateId);
-      const next = stitchExperiencePages(raw, keys);
+      let next = stitchExperiencePages(raw, keys);
+      if (!next[0]?.length) next = [all];
       setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
     };
     measure();
@@ -1060,15 +1092,23 @@ export function ResumeView({
         if (!cancelled) requestAnimationFrame(measure);
       });
     }
+    const ro = new ResizeObserver(() => requestAnimationFrame(measure));
+    ro.observe(root);
+    const flowRoot = paginationFlowRoot(root, templateId);
+    if (flowRoot !== root) ro.observe(flowRoot);
     return () => {
       cancelled = true;
+      ro.disconnect();
     };
-  }, [templateId, data, hideContact, measurePieces]);
+  }, [templateId, data, hideContact, measurePieces, singlePagePreview, pieces.length]);
+
+  const allIndexes = pieces.map((_, index) => index);
+  const resolvedPages = singlePagePreview ? [allIndexes] : pages;
 
   useLayoutEffect(() => {
     const node = stageRef.current;
     if (!node) return;
-    const pageCount = pages.length;
+    const pageCount = resolvedPages.length;
     const measure = () => {
       const width = node.clientWidth;
       const height = node.clientHeight;
@@ -1088,27 +1128,31 @@ export function ResumeView({
     const observer = new ResizeObserver(measure);
     observer.observe(node);
     return () => observer.disconnect();
-  }, [fitPagesInView, pages.length]);
+  }, [fitPagesInView, resolvedPages.length, singlePagePreview]);
+
+  const pageIndexes = (indexes: number[]) => (indexes.length ? indexes : allIndexes);
 
   const sheet = (indexes: number[], pageIndex: number) => (
-    <Frame templateId={templateId} data={data} hideContact={hideContact} pageIndex={pageIndex} total={pages.length}>
-      {indexes.map((index) => pieces[index]).filter(Boolean)}
+    <Frame templateId={templateId} data={data} hideContact={hideContact} pageIndex={pageIndex} total={resolvedPages.length}>
+      {pageIndexes(indexes).map((index) => pieces[index]).filter(Boolean)}
     </Frame>
   );
 
   return (
     <>
+      {singlePagePreview ? null : (
+        <div
+          className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+          style={paperStyle(data) as CSSProperties}
+          ref={measureRef}
+          aria-hidden="true"
+        >
+          {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
+          {wrapForMeasure(templateId, measurePieces)}
+        </div>
+      )}
       <div
-        className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
-        style={paperStyle(data) as CSSProperties}
-        ref={measureRef}
-        aria-hidden="true"
-      >
-        {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
-        {wrapForMeasure(templateId, measurePieces)}
-      </div>
-      <div
-        className={`${onPick ? "page-stack is-linked" : "page-stack"}${pages.length > 1 ? " is-multi" : ""}`}
+        className={`${onPick ? "page-stack is-linked" : "page-stack"}${resolvedPages.length > 1 ? " is-multi" : ""}`}
         ref={stageRef}
         onClick={(event) => {
           if (!onPick) return;
@@ -1119,7 +1163,7 @@ export function ResumeView({
           onPick(section as PanelId, hit.getAttribute("data-focus") || undefined);
         }}
       >
-        {pages.map((indexes, index) => (
+        {resolvedPages.map((indexes, index) => (
           <div key={`${templateId}-${index}`} className="page-slot" style={{ width: 794 * scale, height: 1123 * scale }}>
             {index === 0 && cornerAction ? <div className="page-corner">{cornerAction}</div> : null}
             <div style={{ width: 794, height: 1123, transform: `scale(${scale})`, transformOrigin: "top left" }}>{sheet(indexes, index)}</div>
@@ -1127,7 +1171,7 @@ export function ResumeView({
         ))}
       </div>
       <div className="print-root" aria-hidden="true">
-        {pages.map((indexes, index) => <div key={`print-${index}`}>{sheet(indexes, index)}</div>)}
+        {resolvedPages.map((indexes, index) => <div key={`print-${index}`}>{sheet(indexes, index)}</div>)}
       </div>
     </>
   );
@@ -1182,7 +1226,13 @@ export function ResumeSheet({
     });
   }, [preview, fill, firstPage, templateId, data, hideContact]);
 
-  const indexes = preview && !fill && firstPage ? firstPage.indexes : pieces.map((_, index) => index);
+  const allPreviewIndexes = pieces.map((_, index) => index);
+  const indexes =
+    preview && !fill && firstPage
+      ? firstPage.indexes.length
+        ? firstPage.indexes
+        : allPreviewIndexes
+      : allPreviewIndexes;
   const total = preview && !fill && firstPage ? firstPage.total : 1;
   const measure = preview && !fill && typeof document !== "undefined"
     ? createPortal(

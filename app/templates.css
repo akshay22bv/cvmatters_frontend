@@ -903,6 +903,88 @@
 }
 .measure-col.measure-quartz > .flow-block:first-of-type { padding-top: 20px; }
 
+/* Pagination measure column — pin main flow to the same grid track as the live page
+   (off-screen fixed column can collapse to 0 width on mobile, leaving Accent empty). */
+.measure-col.paper {
+  width: 794px;
+  box-sizing: border-box;
+}
+
+.measure-col.paper.cobalt {
+  display: block;
+  padding: 0;
+}
+
+.measure-col.paper.cobalt > .cobalt-main {
+  display: block;
+  width: 526px;
+  max-width: 526px;
+  margin-left: 268px;
+  box-sizing: border-box;
+  grid-column: unset;
+  grid-row: unset;
+  min-width: 0;
+}
+
+.measure-col.paper.apex {
+  padding: 0;
+}
+
+.measure-col.paper.apex > .apex-main {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.measure-col.paper.cabinet {
+  padding: 0;
+}
+
+.measure-col.paper.cabinet > .cab-main {
+  grid-column: 1;
+  grid-row: 3;
+  min-width: 0;
+}
+
+.measure-col.paper.manor {
+  padding: 0;
+}
+
+.measure-col.paper.manor > .manor-main {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.measure-col.paper.canvas {
+  padding: 0;
+}
+
+.measure-col.paper.canvas > .canvas-main {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.measure-col.paper.vault {
+  padding: 0;
+}
+
+.measure-col.paper.vault > .vault-main {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.paper.cobalt.is-continued {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.paper.cobalt.is-continued .cobalt-main,
+.paper.cobalt.is-continued .cobalt-side {
+  grid-row: 1;
+}
+
 .skill-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
