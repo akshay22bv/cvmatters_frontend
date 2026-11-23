@@ -24,7 +24,8 @@ const SIZE = {
   grid: TEMPLATE_THUMB_W,
   picker: TEMPLATE_THUMB_W,
   pickerMobile: TEMPLATE_THUMB_W_MOBILE,
-  strip: TEMPLATE_THUMB_W,
+  /** Compact row in Change design — no gallery hover chrome */
+  strip: 108,
 } as const;
 
 /**
@@ -62,7 +63,7 @@ export function TemplateFan({
     return () => media.removeEventListener("change", sync);
   }, [layout]);
 
-  const enhancv = layout === "strip" || layout === "picker";
+  const enhancv = layout === "picker";
 
   const frameW =
     layout === "picker" && narrow ? SIZE.pickerMobile : layout === "strip" ? SIZE.strip : SIZE[layout as keyof typeof SIZE];

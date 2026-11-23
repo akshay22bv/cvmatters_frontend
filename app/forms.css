@@ -2384,6 +2384,7 @@ input:focus, textarea:focus {
 .picker-panel.is-design .picker-side {
   grid-column: 2;
   grid-row: 2;
+  background: var(--white);
 }
 
 .picker-head {
@@ -2548,9 +2549,36 @@ input:focus, textarea:focus {
 }
 
 .picker-template-scroll {
-  max-height: calc(var(--template-thumb-stage) + 24px);
+  max-height: calc(108px * 1.414 + 28px);
   margin: 0 -4px;
   padding: 0 4px 4px;
+}
+
+/* Change design: compact strip — tap/click only, no hover zoom or blur */
+.picker-panel.is-design .fan.is-strip .fan-card,
+.picker-panel.is-design .fan.is-strip .fan-card:hover {
+  transform: none;
+  filter: none;
+  opacity: 1;
+}
+
+.picker-panel.is-design .fan.is-strip .fan-tilt {
+  transition: none;
+}
+
+.picker-panel.is-design .fan.is-strip .fan-frame {
+  border: 1px solid var(--template-thumb-border);
+  border-radius: var(--template-thumb-radius);
+  box-shadow: var(--template-thumb-shadow);
+}
+
+.picker-panel.is-design .fan.is-strip .fan-card:hover .fan-frame {
+  border-color: var(--template-thumb-border);
+  box-shadow: var(--template-thumb-shadow);
+}
+
+.picker-panel.is-design .fan.is-strip .fan-use-overlay {
+  display: none;
 }
 
 .design-pick-row {
@@ -2674,9 +2702,9 @@ input:focus, textarea:focus {
   max-width: 100%;
   padding: 8px 10px;
   box-sizing: border-box;
-  border-radius: 12px;
-  background: var(--gray);
-  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 6px;
+  background: var(--white);
+  border: 1px solid var(--line);
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -2718,7 +2746,7 @@ input:focus, textarea:focus {
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: var(--pill-radius);
+  border-radius: 6px;
   background: var(--white);
   color: var(--ink-soft);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
@@ -2915,6 +2943,10 @@ input:focus, textarea:focus {
   box-shadow: 0 14px 32px rgba(20, 16, 12, 0.14);
 }
 
+.picker-panel.is-design .fan.is-strip .fan-frame {
+  box-shadow: var(--template-thumb-shadow);
+}
+
 /* Enhancv-style strip / picker: large thumbs, blur siblings, hover CTA */
 .fan.is-enhancv {
   gap: 16px;
@@ -3067,6 +3099,13 @@ input:focus, textarea:focus {
 
 .fan.is-strip .fan-card.is-current .fan-frame {
   box-shadow: 0 0 0 2px var(--picker-accent), 0 12px 28px rgba(20, 16, 12, 0.16);
+}
+
+.picker-panel.is-design .fan.is-strip .fan-card.is-current .fan-frame {
+  border-width: 2px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--picker-accent) 35%, transparent),
+    var(--template-thumb-shadow);
 }
 
 .fan-check {
@@ -3244,9 +3283,9 @@ input:focus, textarea:focus {
   min-height: 0;
   padding: 8px 10px;
   box-sizing: border-box;
-  border-radius: 12px;
-  background: var(--gray);
-  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 6px;
+  background: var(--white);
+  border: 1px solid var(--line);
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -3275,17 +3314,19 @@ input:focus, textarea:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  width: 72px;
-  min-width: 72px;
-  height: 52px;
-  padding: 6px 6px 7px;
+  gap: 5px;
+  width: 76px;
+  min-width: 76px;
+  height: 58px;
+  padding: 7px 6px 8px;
   box-sizing: border-box;
-  border-radius: 12px;
-  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
   background: var(--white);
   vertical-align: top;
   font-family: var(--font-google-sans), system-ui, sans-serif;
+  box-shadow: 0 1px 2px rgba(20, 16, 12, 0.04);
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.15s var(--ease);
 }
 
 .picker-fonts .font-pick b {
@@ -3315,9 +3356,34 @@ input:focus, textarea:focus {
   font-family: inherit;
 }
 
+.picker-fonts .font-pick:hover {
+  border-color: color-mix(in srgb, var(--picker-accent) 28%, var(--line));
+}
+
 .picker-fonts .font-pick.is-active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: var(--picker-accent);
+  background: var(--picker-accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--picker-accent) 22%, transparent);
+}
+
+.picker-panel.is-design .design-pick-circ {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.picker-panel.is-design .design-pick-circ:hover {
+  transform: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--picker-accent) 35%, var(--line));
+}
+
+.picker-panel.is-design .design-pick-circ.is-on {
+  background: var(--picker-accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--picker-accent);
+  color: var(--ink);
+}
+
+.picker-panel.is-design .design-pick-divider {
+  background: var(--line);
 }
 
 .picker-look-pane {
