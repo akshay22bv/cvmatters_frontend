@@ -1,8 +1,6 @@
 "use client";
 
-import { Tilt } from "./motion";
-import { ResumeSheet } from "./ResumeSheet";
-import { sampleForTemplate } from "@/lib/content";
+import { GalleryResumeThumb } from "./GalleryResumeThumb";
 import { templateName, type TemplateId } from "@/lib/types";
 
 type CatalogItem = { id: TemplateId; blurb: string };
@@ -19,26 +17,34 @@ export function LandingTemplateGallery({
   return (
     <div className="board-gallery" role="list" aria-label="Resume templates">
       {templates.map((item, index) => (
-        <Tilt key={item.id} className="board-tile-tilt" max={4} lift={8}>
-          <button
-            type="button"
+        <div
+          key={item.id}
+          className="board-tile-tilt"
+          style={{ animationDelay: `${index * 40}ms` }}
+        >
+          <div
             role="listitem"
-            className="board-tile"
-            disabled={busy}
-            style={{ animationDelay: `${index * 40}ms` }}
-            onClick={() => onPick(item.id)}
+            className={busy ? "board-tile is-busy" : "board-tile"}
+            aria-label={templateName(item.id)}
           >
             <span className="board-tile-stage" aria-hidden="true">
-              <span className="board-tile-paper">
-                <ResumeSheet templateId={item.id} data={sampleForTemplate(item.id)} preview fill />
+              <GalleryResumeThumb templateId={item.id} />
+              <span className="board-tile-hover">
+                <span className="board-tile-hover-inner">
+                  <span className="board-tile-hover-name">{templateName(item.id)}</span>
+                  <button
+                    type="button"
+                    className="board-tile-hover-cta"
+                    disabled={busy}
+                    onClick={() => onPick(item.id)}
+                  >
+                    Use this template →
+                  </button>
+                </span>
               </span>
             </span>
-            <span className="board-tile-meta">
-              <strong>{templateName(item.id)}</strong>
-              <em>{item.blurb}</em>
-            </span>
-          </button>
-        </Tilt>
+          </div>
+        </div>
       ))}
     </div>
   );

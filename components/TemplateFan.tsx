@@ -5,20 +5,26 @@ import { ResumeSheet } from "./ResumeSheet";
 import { Tilt } from "./motion";
 import { IconCheck } from "./icons";
 import { OFFERED_IDS, catalogFor, type TemplateFilter } from "@/lib/catalog";
-import { sampleForTemplate } from "@/lib/content";
+import { sampleForTemplateGallery } from "@/lib/content";
+import {
+  TEMPLATE_PAGE_H,
+  TEMPLATE_PAGE_W,
+  TEMPLATE_THUMB_STAGE_H,
+  TEMPLATE_THUMB_W,
+  TEMPLATE_THUMB_W_MOBILE,
+  templateThumbScaleMobile,
+} from "@/lib/templateThumb";
 import { TEMPLATES, type ResumeData, type TemplateId } from "@/lib/types";
 
-const PAGE_W = 794;
-const PAGE_H = 1123;
 /** No card chrome around thumbs — size matches the scaled page only. */
 const PAD = 0;
 
 const SIZE = {
   rail: 112,
-  grid: 98,
-  picker: 168,
-  pickerMobile: 84,
-  strip: 88,
+  grid: TEMPLATE_THUMB_W,
+  picker: TEMPLATE_THUMB_W,
+  pickerMobile: TEMPLATE_THUMB_W_MOBILE,
+  strip: TEMPLATE_THUMB_W,
 } as const;
 
 /**
@@ -44,7 +50,7 @@ export function TemplateFan({
   maxItems?: number;
   sampleThumbs?: boolean;
 }) {
-  const currentRef = useRef<HTMLButtonElement>(null);
+  const currentRef = useRef<HTMLElement | null>(null);
   const [narrow, setNarrow] = useState(false);
 
   useEffect(() => {
@@ -56,11 +62,14 @@ export function TemplateFan({
     return () => media.removeEventListener("change", sync);
   }, [layout]);
 
+  const enhancv = layout === "strip" || layout === "picker";
+
   const frameW =
     layout === "picker" && narrow ? SIZE.pickerMobile : layout === "strip" ? SIZE.strip : SIZE[layout as keyof typeof SIZE];
-  const scale = frameW / PAGE_W;
-  const frameH = Math.ceil(PAGE_H * scale);
-  const shiftY = (frameH - PAGE_H * scale) / 2;
+  const scale =
+    layout === "picker" && narrow ? templateThumbScaleMobile : frameW / TEMPLATE_PAGE_W;
+  const frameH = enhancv ? TEMPLATE_THUMB_STAGE_H : Math.ceil(TEMPLATE_PAGE_H * scale);
+  const shiftY = enhancv ? 0 : (frameH - TEMPLATE_PAGE_H * scale) / 2;
 
   // keep the selected card centred in whichever container is showing
   useEffect(() => {
@@ -111,40 +120,72 @@ export function TemplateFan({
   const useTilt = layout !== "strip";
 
   return (
-    <div className={`fan is-${layout}`} role="listbox" aria-label="Resume templates">
+    <div
+      className={`fan is-${layout}${enhancv ? " is-enhancv" : ""}`}
+      role="listbox"
+      aria-label="Resume templates"
+    >
       {shown.map((template, index) => {
         const current = template.id === templateId;
-        const card = (
-            <button
-              ref={current ? currentRef : undefined}
-              type="button"
-              role="option"
-              aria-label={template.name}
-              aria-selected={current}
-              className={current ? "fan-card is-current" : "fan-card"}
-              style={{ width: frameW + PAD * 2, height: cardH, minHeight: cardH }}
-              onClick={() => onChange(template.id)}
-            >
-              <span className="fan-frame" style={{ width: frameW, height: frameH }}>
-                <span className="fan-thumb" style={{ transform: `translate(0px, ${shiftY}px) scale(${scale})` }} aria-hidden="true">
+        const frameStyle = {
+          width: frameW,
+          height: enhancv ? TEMPLATE_THUMB_STAGE_H : frameH,
+        };
+        const inner = (
+          <>
+            <span className="fan-frame" style={frameStyle}>
+              <span className="fan-thumb" style={{ transform: `translate(0px, ${shiftY}px) scale(${scale})` }} aria-hidden="true">
                   <ResumeSheet
                     templateId={template.id}
-                    data={sampleThumbs ? sampleForTemplate(template.id) : thumbData}
+                    data={sampleThumbs ? sampleForTemplateGallery(template.id) : thumbData}
                     preview
-                    fill
+                    fill={!sampleThumbs}
                   />
-                </span>
               </span>
-              {current && (layout === "strip" || layout === "picker") ? (
-                <span className="fan-check" aria-hidden="true">
-                  <IconCheck />
+              {enhancv ? (
+                <span className="fan-use-overlay">
+                  <span className="fan-use-inner">
+                    <span className="fan-use-name">{template.name}</span>
+                    <button type="button" className="fan-use-btn" onClick={() => onChange(template.id)}>
+                      Use this template →
+                    </button>
+                  </span>
                 </span>
               ) : null}
-              <span className="fan-name">{template.name}</span>
-              {layout === "picker" && template.blurb ? (
-                <span className="fan-blurb">{template.blurb}</span>
-              ) : null}
-            </button>
+            </span>
+            {current && (layout === "strip" || layout === "picker") ? (
+              <span className="fan-check" aria-hidden="true">
+                <IconCheck />
+              </span>
+            ) : null}
+            <span className="fan-name">{template.name}</span>
+            {layout === "picker" && template.blurb ? <span className="fan-blurb">{template.blurb}</span> : null}
+          </>
+        );
+        const card = enhancv ? (
+          <div
+            ref={current ? (el) => { currentRef.current = el; } : undefined}
+            role="option"
+            aria-label={template.name}
+            aria-selected={current}
+            className={current ? "fan-card is-current is-preview-only" : "fan-card is-preview-only"}
+            style={{ width: frameW + PAD * 2, height: cardH, minHeight: cardH }}
+          >
+            {inner}
+          </div>
+        ) : (
+          <button
+            ref={current ? (el) => { currentRef.current = el; } : undefined}
+            type="button"
+            role="option"
+            aria-label={template.name}
+            aria-selected={current}
+            className={current ? "fan-card is-current" : "fan-card"}
+            style={{ width: frameW + PAD * 2, height: cardH, minHeight: cardH }}
+            onClick={() => onChange(template.id)}
+          >
+            {inner}
+          </button>
         );
         if (useTilt) {
           return (

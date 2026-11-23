@@ -2548,6 +2548,7 @@ input:focus, textarea:focus {
 }
 
 .picker-template-scroll {
+  max-height: calc(var(--template-thumb-stage) + 24px);
   margin: 0 -4px;
   padding: 0 4px 4px;
 }
@@ -2909,9 +2910,159 @@ input:focus, textarea:focus {
 .fan.is-strip .fan-frame {
   margin: 0 auto;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: 0 10px 24px rgba(20, 16, 12, 0.14);
+  box-shadow: 0 14px 32px rgba(20, 16, 12, 0.14);
+}
+
+/* Enhancv-style strip / picker: large thumbs, blur siblings, hover CTA */
+.fan.is-enhancv {
+  gap: 16px;
+  padding: 4px 4px 12px;
+}
+
+.fan.is-enhancv:has(.fan-tilt:hover) .fan-tilt:not(:hover) {
+  filter: blur(3px);
+  opacity: 0.52;
+  transform: scale(var(--template-card-sibling-scale));
+  transform-origin: center center;
+}
+
+.fan.is-enhancv .fan-tilt.is-flat:hover {
+  position: relative;
+  z-index: 2;
+  filter: none;
+  opacity: 1;
+  transform: scale(var(--template-card-hover-scale));
+  transform-origin: center center;
+}
+
+.fan.is-enhancv .fan-tilt {
+  transform-origin: center center;
+  transition:
+    filter var(--template-gallery-hover-duration) var(--template-gallery-hover-ease),
+    opacity var(--template-gallery-hover-duration) var(--template-gallery-hover-ease),
+    transform var(--template-gallery-hover-duration) var(--template-gallery-hover-ease);
+}
+
+.fan.is-enhancv .fan-frame {
+  position: relative;
+  max-height: var(--template-thumb-stage);
+  background: #fff;
+  border-radius: var(--template-thumb-radius);
+  box-shadow: var(--template-thumb-shadow);
+  border: 1px solid var(--template-thumb-border);
+  transition:
+    border-color var(--template-gallery-hover-duration) var(--template-gallery-hover-ease),
+    box-shadow var(--template-gallery-hover-duration) var(--template-gallery-hover-ease);
+}
+
+.fan.is-enhancv .fan-card:hover .fan-frame {
+  border-color: var(--template-thumb-border-hover);
+  box-shadow: var(--template-thumb-shadow);
+}
+
+.fan-use-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 10px 20px;
+  opacity: 0;
+  pointer-events: none;
+  background: transparent;
+  transition: opacity var(--template-gallery-hover-duration) var(--template-gallery-hover-ease);
+}
+
+.fan-use-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--template-thumb-bar-radius);
+  background: color-mix(in srgb, var(--glass) 78%, transparent);
+  border: 1px solid var(--template-thumb-border);
+  box-shadow: var(--template-thumb-bar-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
+}
+
+.fan-use-name {
+  color: var(--black);
+  font-size: 11.5px;
+  font-weight: 680;
+  letter-spacing: -0.02em;
+}
+
+.fan.is-enhancv .fan-thumb .paper.mint {
+  padding: 30px 34px 36px;
+}
+
+.fan.is-enhancv .fan-thumb .paper.banner .banner-head {
+  padding: 22px 32px 16px;
+}
+
+.fan.is-enhancv .fan-thumb [class*="-contacts"] .ats-contact:nth-child(n+4) {
+  display: none;
+}
+
+.fan.is-enhancv .fan-thumb .paper {
+  box-shadow: none;
+}
+
+.fan.is-enhancv .fan-card:hover .fan-use-overlay {
+  opacity: 1;
+}
+
+.fan-use-label {
+  font-size: 11.5px;
+  font-weight: 680;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.fan-card.is-preview-only {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+  text-align: left;
+}
+
+.fan-use-btn {
+  margin: 0;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: var(--template-thumb-bar-radius);
+  background: var(--cta);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 680;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: var(--template-thumb-cta-shadow);
+}
+
+.fan-use-btn:hover {
+  background: var(--cta-hover, var(--lime-deep));
+}
+
+@media (hover: none) {
+  .fan.is-enhancv .fan-use-overlay {
+    opacity: 1;
+    background: transparent;
+  }
+}
+
+.fan.is-enhancv .fan-card.is-current .fan-frame {
+  box-shadow: none;
+  border-color: var(--picker-green);
 }
 
 .fan.is-strip .fan-card.is-current .fan-frame {

@@ -74,7 +74,7 @@ export function TemplateDialog({
             <div className="picker-strip-wrap picker-template-scroll">
               <TemplateFan
                 layout="strip"
-                filter="all"
+                filter="picks"
                 templateId={templateId}
                 data={data}
                 onChange={onTemplate}

@@ -89,23 +89,8 @@ export const EXTRA_KINDS: { id: string; title: string; pick?: boolean }[] = [
 
 export type TemplateId = (typeof TEMPLATES)[number]["id"];
 
-const PHOTO_TEMPLATES = new Set<TemplateId>([
-  "apex",
-  "cabinet",
-  "manor",
-  "canvas",
-  "cobalt",
-  "vault",
-  "plaza",
-  "split",
-  "sage",
-  "navy",
-  "folio",
-  "iconic",
-  "tide",
-  "crest",
-  "hex",
-]);
+/** Offered layouts that include a headshot slot (gallery + editor). */
+const PHOTO_TEMPLATES = new Set<TemplateId>(["apex", "cabinet", "manor", "canvas"]);
 
 export function isTemplateId(value: string | undefined): value is TemplateId {
   return !!value && TEMPLATES.some((item) => item.id === value);

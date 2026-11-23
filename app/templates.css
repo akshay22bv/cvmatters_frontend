@@ -1216,6 +1216,69 @@
   height: 12px;
 }
 
+.ats-contact .contact-val {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Stacked contacts: shared icon column so profile / web links line up */
+.apex-contacts,
+.banner-contacts,
+.cab-contacts,
+.canvas-contacts,
+.cobalt-contacts,
+.manor-contacts,
+.vault-contacts,
+.plaza-contacts {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.apex-contacts .ats-contact,
+.banner-contacts .ats-contact,
+.cab-contacts .ats-contact,
+.canvas-contacts .ats-contact,
+.cobalt-contacts .ats-contact,
+.manor-contacts .ats-contact,
+.vault-contacts .ats-contact,
+.plaza-contacts .ats-contact {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.plaza-contacts .ats-contact {
+  grid-template-columns: 12px minmax(0, 1fr);
+  width: 100%;
+}
+
+.plaza-contacts .ats-contact svg {
+  grid-column: 1;
+  justify-self: center;
+}
+
+.plaza-contacts .ats-contact .contact-val {
+  grid-column: 2;
+  justify-self: start;
+  text-align: left;
+}
+
+.apex-contacts .ats-contact .contact-val,
+.banner-contacts .ats-contact .contact-val,
+.cab-contacts .ats-contact .contact-val,
+.canvas-contacts .ats-contact .contact-val,
+.cobalt-contacts .ats-contact .contact-val,
+.manor-contacts .ats-contact .contact-val,
+.vault-contacts .ats-contact .contact-val {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .ats-meta {
   display: flex;
   flex-wrap: wrap;
@@ -1242,9 +1305,9 @@
 .mint-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px 24px;
+  gap: 12px 18px;
   align-items: start;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .mint-name {
@@ -1272,7 +1335,7 @@
   align-items: stretch;
   gap: 3px;
   min-width: 0;
-  max-width: 240px;
+  max-width: 156px;
   color: #333;
   text-align: right;
 }
@@ -1292,14 +1355,15 @@
   justify-self: center;
 }
 
-.mint-contacts .ats-contact span {
+.mint-contacts .ats-contact span,
+.mint-contacts .ats-contact .contact-val {
   grid-column: 2;
   justify-self: end;
   text-align: right;
-  overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
-.mint-section { margin-top: calc(16px * var(--space, 1)); }
+.mint-section { margin-top: calc(12px * var(--space, 1)); }
 
 .mint-label {
   margin: 0 0 8px;
@@ -1417,9 +1481,18 @@
 }
 
 .banner-contacts {
-  margin-top: 12px;
+  margin-top: 10px;
   color: rgba(255, 255, 255, 0.9);
-  gap: 8px 16px;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.banner-contacts .ats-contact {
+  justify-items: start;
+}
+
+.banner-contacts .contact-val {
+  max-width: 36ch;
 }
 
 .banner-section {
@@ -1501,9 +1574,12 @@
 }
 
 .formal-contact {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: #333;
   font-size: calc(12px * var(--type, 1));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .formal-section {
@@ -1577,9 +1653,9 @@
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   align-items: start;
-  padding: 34px 36px 18px;
+  padding: 28px 32px 14px;
   border-bottom: 1px solid #e6e8ee;
 }
 
@@ -1600,7 +1676,11 @@
 
 .apex-contacts {
   margin-top: 12px;
-  max-width: 420px;
+  max-width: 360px;
+  color: #3d4654;
+}
+
+.apex-contacts svg {
   color: #1d6fb8;
 }
 
@@ -1720,7 +1800,6 @@
 .extra-plain p { margin: 0 0 4px; font-size: inherit; line-height: inherit; }
 
 .paper.has-accent.apex .apex-role,
-.paper.has-accent.apex .apex-contacts,
 .paper.has-accent.apex .apex-company { color: var(--theme); }
 .paper.has-accent.apex .apex-label { border-bottom-color: var(--theme); }
 
@@ -1778,12 +1857,14 @@
 }
 
 .cab-contacts {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   gap: 6px;
   padding: 16px 18px;
   background: #f0f2f5;
+  color: #3d4654;
+}
+
+.cab-contacts svg {
   color: #4f8fd8;
 }
 
@@ -1858,7 +1939,6 @@
 .paper.has-accent.cabinet .cab-track i { background: var(--theme); }
 .paper.has-accent.cabinet .cab-name,
 .paper.has-accent.cabinet .cab-label,
-.paper.has-accent.cabinet .cab-contacts { color: var(--theme); }
 .paper.has-accent.cabinet .cab-label { border-bottom-color: var(--theme); }
 
 /* --- Manor (Lorna / Ribbon) --- */
@@ -2227,7 +2307,7 @@
 
 .cobalt-name {
   margin: 0;
-  color: #2f6fed;
+  color: #1a4fa8;
   font-size: calc(24px * var(--type, 1));
   font-weight: 750;
   letter-spacing: -0.02em;
@@ -2241,11 +2321,14 @@
 }
 
 .cobalt-contacts {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  margin-top: 2px;
   text-align: left;
-  color: #2f6fed;
+  color: #3d4654;
+}
+
+.cobalt-contacts svg {
+  color: #2a63d4;
 }
 
 .cobalt-side-label {
@@ -2350,8 +2433,10 @@
 }
 
 .paper.has-accent.cobalt .cobalt-name,
-.paper.has-accent.cobalt .cobalt-contacts,
 .paper.has-accent.cobalt .cobalt-ico { color: var(--theme); }
+.paper.has-accent.cobalt .cobalt-contacts svg { color: var(--theme); }
+.paper.has-accent.apex .apex-contacts svg { color: var(--theme); }
+.paper.has-accent.cabinet .cab-contacts svg { color: var(--theme); }
 .paper.has-accent.cobalt .cobalt-dot {
   background: var(--theme);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme) 16%, white);
@@ -2495,11 +2580,14 @@
 }
 
 .vault-contacts {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   margin-bottom: 16px;
   color: #3a444c;
+}
+
+.vault-contacts .ats-contact {
+  grid-template-columns: 14px minmax(0, 1fr);
+  justify-items: start;
 }
 
 .vault-edu {
@@ -2588,11 +2676,15 @@
 
 .plaza-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 26px 40px;
   background: #eceff1;
+}
+
+.plaza-head:has(.mono-photo, .mono) {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 
 .plaza-name {
@@ -2616,9 +2708,12 @@
 .plaza-contacts {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 4px;
   justify-self: end;
-  text-align: right;
+  width: min(168px, 100%);
+  min-width: 132px;
   color: #1c1c1c;
 }
 
@@ -2664,11 +2759,7 @@
 .flow-li.plaza-pad { padding: 0 40px; }
 
 .plaza-skills {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px 24px;
   margin: 0;
-  padding-left: 16px;
   font-size: calc(12.5px * var(--type, 1));
   line-height: 1.45;
 }

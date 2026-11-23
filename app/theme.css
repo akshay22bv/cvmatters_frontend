@@ -106,4 +106,21 @@
   --font-sans: var(--font-dm), "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-serif: var(--font-google-sans), "Google Sans", sans-serif;
   --font-display: var(--font-dm), "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Template gallery thumbnails (landing + builder fan) */
+  --template-thumb-w: 348px;
+  --template-thumb-stage: 493px;
+  --template-page-w: 794px;
+  --template-thumb-scale: 0.4383;
+  --template-card-hover-scale: 1.06;
+  --template-card-sibling-scale: 0.94;
+  --template-gallery-hover-duration: 0.65s;
+  --template-gallery-hover-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  --template-thumb-radius: 4px;
+  --template-thumb-bar-radius: 6px;
+  --template-thumb-border: color-mix(in srgb, var(--black) 7%, transparent);
+  --template-thumb-border-hover: color-mix(in srgb, var(--black) 12%, transparent);
+  --template-thumb-shadow: 0 1px 2px rgba(0, 0, 0, 0.035);
+  --template-thumb-bar-shadow: 0 1px 4px rgba(0, 0, 0, 0.055);
+  --template-thumb-cta-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
 }

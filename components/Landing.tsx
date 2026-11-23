@@ -9,7 +9,6 @@ import { IconChevronRight } from "./icons";
 import { Reveal } from "./motion";
 import { HeroResumePreview } from "./HeroResumePreview";
 import { HeroTypingSlug } from "./HeroTypingSlug";
-import { LandingProofSamples } from "./LandingProofSamples";
 import { LandingTemplateGallery } from "./LandingTemplateGallery";
 import { offeredCatalog } from "@/lib/catalog";
 import { startPath, type StartIntent } from "@/lib/paths";
@@ -32,32 +31,6 @@ const ABOUT = [
   },
 ] as const;
 
-const STORIES = [
-  {
-    quote:
-      "Uploaded my old two-column Word doc and had a clean ATS version ready in ten minutes. I keep one cvmatters.net link on my LinkedIn now.",
-    name: "Priya S.",
-    role: "Product Designer · Bengaluru",
-  },
-  {
-    quote:
-      "Pasting the job description right beside my bullets made tailoring for backend roles painless instead of rewriting from scratch every night.",
-    name: "Karthik M.",
-    role: "Senior Software Engineer · Pune",
-  },
-  {
-    quote:
-      "Recruiters kept asking for a quick link on WhatsApp and LinkedIn. Sending one clean URL that always matches my PDF saved so much back-and-forth.",
-    name: "Neha R.",
-    role: "Product Manager · Mumbai",
-  },
-  {
-    quote:
-      "No bloated wizard or surprise watermarks halfway through. What you see in the live preview is genuinely what exports to PDF.",
-    name: "Daniel K.",
-    role: "Growth Lead · Remote",
-  },
-] as const;
 
 /**
  * Home: product story, three ways in, templates, social proof, FAQ, and a footer.
@@ -208,7 +181,7 @@ export function Landing({
           </div>
         </article>
 
-        <article className="board-section is-warm board-section-templates" id="templates">
+        <article className="board-section board-section-templates" id="templates">
           <div className="board-rail">
             <Reveal className="board-intro is-row" blur={false}>
               <div>
@@ -224,33 +197,6 @@ export function Landing({
           <LandingTemplateGallery templates={templates} busy={busy} onPick={startWith} />
         </article>
 
-        <article className="board-section" aria-labelledby="proof-title">
-          <div className="board-rail">
-            <Reveal className="board-intro" blur={false}>
-              <p className="board-kicker">Real layouts · Real feedback</p>
-              <h2 id="proof-title" className="board-heading">
-                Built for job seekers who care how their resume reads
-              </h2>
-              <p className="board-lead is-narrow">
-                Anonymized example resumes built in the same editor, plus notes from people using CV Matters during their job search.
-              </p>
-            </Reveal>
-
-            <LandingProofSamples />
-
-            <div className="board-quotes">
-              {STORIES.map((item) => (
-                <figure key={item.name} className="board-quote">
-                  <blockquote>“{item.quote}”</blockquote>
-                  <figcaption>
-                    <strong>{item.name}</strong>
-                    <span>{item.role}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </article>
 
         <article className="board-section is-soft" id="faq" aria-labelledby="faq-title">
           <div className="board-rail">

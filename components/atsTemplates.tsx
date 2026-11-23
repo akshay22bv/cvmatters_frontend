@@ -784,31 +784,7 @@ export function CanvasChrome({ data, hideContact }: { data: ResumeData; hideCont
 
 /** Samira — grey sidebar, blue accents, timeline main. */
 export function cobaltMainPieces(data: ResumeData) {
-  const pieces: ReactNode[] = [
-    <Block key="edu" section="education">
-      <section className="cobalt-section">
-        <ResumeSectionLabel className="cobalt-label">
-          <span className="cobalt-ico" aria-hidden="true">
-            <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 2.2 1.5 5.4 8 8.6l6.5-3.2L8 2.2Zm-5.2 5v3.3L8 13.8l5.2-3.3V7.2L8 10.4 2.8 7.2Z" /></svg>
-          </span>
-          Education
-        </ResumeSectionLabel>
-        {data.education.map((item) => (
-          <div className="cobalt-job" key={item.id} data-focus={item.id}>
-            <div className="cobalt-dot" aria-hidden="true" />
-            <div className="cobalt-job-body">
-              <div className="cobalt-job-top">
-                <strong>{item.degree || "Degree"}</strong>
-                <span>{item.year}</span>
-              </div>
-              <div className="cobalt-sub">{item.school}</div>
-              {item.detail ? <div className="cobalt-sub"><RichLine text={item.detail} /></div> : null}
-            </div>
-          </div>
-        ))}
-      </section>
-    </Block>,
-  ];
+  const pieces: ReactNode[] = [];
   data.experience.forEach((job, index) => {
     pieces.push(
       <Block key={`${job.id}-head`} section="experience" focus={job.id}>
@@ -836,6 +812,31 @@ export function cobaltMainPieces(data: ResumeData) {
     );
     pushJobBullets(pieces, job, "cobalt-pad");
   });
+  pieces.push(
+    <Block key="edu" section="education">
+      <section className="cobalt-section">
+        <ResumeSectionLabel className="cobalt-label">
+          <span className="cobalt-ico" aria-hidden="true">
+            <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 2.2 1.5 5.4 8 8.6l6.5-3.2L8 2.2Zm-5.2 5v3.3L8 13.8l5.2-3.3V7.2L8 10.4 2.8 7.2Z" /></svg>
+          </span>
+          Education
+        </ResumeSectionLabel>
+        {data.education.map((item) => (
+          <div className="cobalt-job" key={item.id} data-focus={item.id}>
+            <div className="cobalt-dot" aria-hidden="true" />
+            <div className="cobalt-job-body">
+              <div className="cobalt-job-top">
+                <strong>{item.degree || "Degree"}</strong>
+                <span>{item.year}</span>
+              </div>
+              <div className="cobalt-sub">{item.school}</div>
+              {item.detail ? <div className="cobalt-sub"><RichLine text={item.detail} /></div> : null}
+            </div>
+          </div>
+        ))}
+      </section>
+    </Block>,
+  );
   return pieces;
 }
 
@@ -845,7 +846,9 @@ export function CobaltChrome({ data, hideContact }: { data: ResumeData; hideCont
     <aside className="cobalt-side">
       <span className="cobalt-dots is-top" aria-hidden="true" />
       <div className="cobalt-id" data-section="details">
-        <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={108} />
+        {data.personal.photoUrl ? (
+          <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={108} />
+        ) : null}
         <div className="cobalt-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
         <p className="cobalt-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         <IconContacts personal={data.personal} hideContact={hideContact} className="cobalt-contacts" />
@@ -996,9 +999,11 @@ export function VaultSide({ data, hideContact }: { data: ResumeData; hideContact
   const certs = findExtra(data, /certif/i);
   return (
     <aside className="vault-side">
-        <div className="vault-photo" data-section="details">
-          <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={120} />
-        </div>
+        {data.personal.photoUrl ? (
+          <div className="vault-photo" data-section="details">
+            <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={120} />
+          </div>
+        ) : null}
         <div data-section="details">
           <ResumeSectionLabel className="vault-side-label">Contact</ResumeSectionLabel>
           <IconContacts personal={data.personal} hideContact={hideContact} className="vault-contacts" />
@@ -1052,7 +1057,9 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
           <div className="plaza-name">{data.personal.fullName ? <RichLine text={data.personal.fullName} /> : "Your name"}</div>
           <p className="plaza-role">{data.personal.title ? <RichLine text={data.personal.title} /> : "Your title"}</p>
         </div>
-        <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={86} />
+        {data.personal.photoUrl ? (
+          <Monogram name={data.personal.fullName} photoUrl={data.personal.photoUrl} size={86} />
+        ) : null}
         <IconContacts personal={data.personal} hideContact={hideContact} className="plaza-contacts" />
       </header>
     </Block>,
@@ -1097,12 +1104,11 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
     <Block key="skills" section="skills">
       <section className="plaza-section">
         <ResumeSectionLabel className="plaza-label">Key Skills</ResumeSectionLabel>
-        <ul className="plaza-skills">
-          {skills.map((item, index) => (
-            <li key={`${item}-${index}`}><RichLine text={item} /></li>
-          ))}
-          {!skills.length ? <li className="placeholder-line">Skills</li> : null}
-        </ul>
+        {skills.length ? (
+          <p className="plaza-skills">{skills.join(" · ")}</p>
+        ) : (
+          <p className="placeholder-line">Skills</p>
+        )}
       </section>
     </Block>,
   );

@@ -98,27 +98,14 @@ export const starter: ResumeData = {
   },
 };
 
-/** Neutral person silhouette used on gallery / dashboard photo templates. */
-function dummyPortrait(bg: string, ink: string) {
-  return (
-    "data:image/svg+xml," +
-    encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
-        <rect width="240" height="240" fill="${bg}"/>
-        <circle cx="120" cy="92" r="44" fill="${ink}" opacity="0.92"/>
-        <path d="M42 222c10-52 40-78 78-78s68 26 78 78" fill="${ink}" opacity="0.92"/>
-      </svg>`,
-    )
-  );
-}
-
+/** Realistic headshots for gallery / dashboard photo templates (Unsplash, crop=faces). */
 const DUMMY_PORTRAITS = [
-  dummyPortrait("#d7dde7", "#6b7380"),
-  dummyPortrait("#dde8e2", "#5f7468"),
-  dummyPortrait("#e6e0d8", "#7a6f63"),
-  dummyPortrait("#dce4ef", "#5b6c84"),
-  dummyPortrait("#e8dfe3", "#7a6570"),
-  dummyPortrait("#dfe7e0", "#617066"),
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=320&h=320&fit=crop&crop=faces&q=80",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=320&h=320&fit=crop&crop=faces&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=320&h=320&fit=crop&crop=faces&q=80",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=320&h=320&fit=crop&crop=faces&q=80",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=320&h=320&fit=crop&crop=faces&q=80",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=320&h=320&fit=crop&crop=faces&q=80",
 ] as const;
 
 const PORTRAIT = DUMMY_PORTRAITS[0];
@@ -161,6 +148,7 @@ export const showcase: ResumeData = {
         "Designed the core surfaces of a design system used by 40 designers.",
         "Cut onboarding setup time in half, working with research and engineering.",
         "Kept visual quality consistent across web and mobile.",
+        "Presented quarterly design reviews to leadership with measurable UX outcomes.",
       ],
     },
     {
@@ -174,6 +162,7 @@ export const showcase: ResumeData = {
       bullets: [
         "Shipped a planning app for small teams, from sketches through launch.",
         "Replaced one-off screens with a component library the team could reuse.",
+        "Ran moderated usability tests monthly and folded findings into the roadmap.",
       ],
     },
     {
@@ -187,6 +176,7 @@ export const showcase: ResumeData = {
       bullets: [
         "Designed checkout and account flows for a retail client.",
         "Turned research notes into patterns the next release could reuse.",
+        "Partnered with developers on responsive specs and motion handoff.",
       ],
     },
   ],
@@ -207,10 +197,18 @@ export const showcase: ResumeData = {
     },
   ],
   skills: {
-    industry: ["Product Design", "Design Systems", "User Research"],
-    tools: ["Figma", "Prototyping", "FigJam"],
-    other: ["HTML", "CSS"],
+    industry: [
+      "Product Design",
+      "Design Systems",
+      "User Research",
+      "Interaction Design",
+      "Visual Design",
+      "Design Ops",
+    ],
+    tools: ["Figma", "Prototyping", "FigJam", "Maze", "Principle", "After Effects"],
+    other: ["HTML", "CSS", "Accessibility", "Design QA"],
   },
+  hiddenSections: [],
   extras: [
     {
       id: "extra-certs",
@@ -277,6 +275,21 @@ export function sampleForTemplate(templateId: TemplateId, role?: string): Resume
   return {
     ...base,
     personal: { ...base.personal, photoUrl: DUMMY_PORTRAITS[index] },
+  };
+}
+
+/** Gallery thumbs: fewer links so headers fit the crop without overflow. */
+export function sampleForTemplateGallery(templateId: TemplateId, role?: string): ResumeData {
+  const base = sampleForTemplate(templateId, role);
+  return {
+    ...base,
+    personal: {
+      ...base.personal,
+      github: "",
+      website: "",
+      portfolio: "",
+      linkedin: "",
+    },
   };
 }
 
