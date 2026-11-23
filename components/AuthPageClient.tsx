@@ -219,15 +219,15 @@ export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup
             : "Welcome back";
 
   const lead =
-    mode === "signup"
-      ? "Save your resumes, publish a public link, and unlock PDF exports when you need them."
+    mode === "signup" || mode === "login"
+      ? ""
       : mode === "forgot"
         ? "Enter your email and we'll send a 6-digit verification code."
         : mode === "otp"
           ? `We sent a 6-digit code to ${email}.`
           : mode === "reset"
             ? "Pick a strong password with at least 8 characters."
-            : "Sign in to access your saved resumes and public link.";
+            : "";
 
   return (
     <main className="billing-return auth-page-wrap">
@@ -240,7 +240,7 @@ export function AuthPageClient({ initialMode }: { initialMode: "login" | "signup
         </Link>
 
         <h1 className="billing-return-title">{heading}</h1>
-        <p className="billing-return-lead">{lead}</p>
+        {lead ? <p className="billing-return-lead auth-lead-plain">{lead}</p> : null}
 
         {failure ? (
           <p className="auth-page-error" role="alert">

@@ -7681,6 +7681,25 @@ button.finish-check-grip:active {
   text-align: center;
 }
 
+/* iOS may auto-link words like “link” in the subtitle — keep body copy plain. */
+.auth-lead-plain {
+  text-decoration: none;
+}
+
+.auth-lead-plain a,
+.auth-page-card .auth-lead-plain a[x-apple-data-detectors],
+.auth-page-card .auth-lead-plain a[x-apple-data-detectors-type] {
+  color: inherit !important;
+  text-decoration: none !important;
+  pointer-events: none;
+  cursor: text;
+}
+
+.auth-page-switch a:hover,
+.auth-page-foot a:hover {
+  text-decoration: none;
+}
+
 .auth-page-form {
   display: grid;
   gap: 14px;

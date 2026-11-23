@@ -1239,6 +1239,39 @@
   color: var(--accent-strong, var(--accent));
 }
 
+.board-hero-public-slug--typing {
+  display: inline-block;
+  min-width: 5.5ch;
+  vertical-align: bottom;
+}
+
+.board-hero-public-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: -0.1em;
+  background: var(--accent-strong, var(--accent));
+  animation: board-hero-caret-blink 1s step-end infinite;
+}
+
+@keyframes board-hero-caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-hero-public-caret {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
 
 .board-cta {
   display: grid;

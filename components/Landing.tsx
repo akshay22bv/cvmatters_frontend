@@ -8,6 +8,7 @@ import { HOME_FAQS } from "./HomeJsonLd";
 import { IconChevronRight } from "./icons";
 import { Reveal } from "./motion";
 import { HeroResumePreview } from "./HeroResumePreview";
+import { HeroTypingSlug } from "./HeroTypingSlug";
 import { LandingProofSamples } from "./LandingProofSamples";
 import { LandingTemplateGallery } from "./LandingTemplateGallery";
 import { offeredCatalog } from "@/lib/catalog";
@@ -132,8 +133,8 @@ export function Landing({
                 </div>
                 <div className="board-hero-public">
                   <p className="board-hero-public-title">Your resume gets its own web address</p>
-                  <p className="board-hero-public-url" aria-label="Example public resume URL">
-                    cvmatters.net/<span className="board-hero-public-slug">your-name</span>
+                  <p className="board-hero-public-url" aria-label="Example public resume URL: cvmatters.net/your-name">
+                    cvmatters.net/<HeroTypingSlug />
                   </p>
                   <p>You pick the ending after the slash. That link is what you share instead of emailing a PDF.</p>
                   <p>
