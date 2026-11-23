@@ -227,13 +227,23 @@ export const showcase: ResumeData = {
     },
     {
       id: "extra-awards",
-      title: "Awards",
-      items: ["Design system adopted across three product lines", "Onboarding setup time cut in half"],
+      title: "Key Achievements",
+      bullets: true,
+      items: [
+        "Increased activation by 38% through onboarding and empty-state redesign",
+        "Built a design system adopted by 40 designers across three product lines",
+        "Cut new-hire setup time in half with reusable templates and docs",
+      ],
     },
     {
       id: "extra-hobbies",
-      title: "Interests",
-      items: ["Letterpress", "City sketching", "Weekend football"],
+      title: "Passions",
+      items: ["Letterpress", "City sketching", "Mentoring junior designers"],
+    },
+    {
+      id: "extra-quote",
+      title: "Favorite Quote",
+      items: ['"Design is intelligence made visible." — Alina Wheeler'],
     },
     {
       id: "extra-links",
@@ -278,17 +288,24 @@ export function sampleForTemplate(templateId: TemplateId, role?: string): Resume
   };
 }
 
-/** Gallery thumbs: fewer links so headers fit the crop without overflow. */
+/** Slightly tighter type so gallery thumbs read as one full, filled page. */
+const GALLERY_SAMPLE_PAGE: Pick<ResumeData, "typeSize" | "spacing" | "leading"> = {
+  typeSize: 9.5,
+  spacing: 9,
+  leading: 0.97,
+};
+
+/** Gallery thumbs: rich sections + compact spacing so every layout looks finished. */
 export function sampleForTemplateGallery(templateId: TemplateId, role?: string): ResumeData {
   const base = sampleForTemplate(templateId, role);
   return {
     ...base,
+    ...GALLERY_SAMPLE_PAGE,
     personal: {
       ...base.personal,
       github: "",
       website: "",
       portfolio: "",
-      linkedin: "",
     },
   };
 }

@@ -59,6 +59,7 @@
   --type: 1;
   --space: 1;
   --lead: 1;
+  --resume-stack-gap: 16px;
   font-family: var(--resume-font);
   font-size: calc(13px * var(--type, 1));
   box-shadow: 0 18px 50px rgba(40, 24, 16, 0.16);
@@ -181,6 +182,47 @@
 
 .muted { color: #8a8682; }
 .placeholder-line { color: #c4beb8; font-size: calc(13px * var(--type, 1)); }
+
+/* Offered templates — even space between section blocks in the main column. */
+.mint-section,
+.banner-section,
+.formal-section,
+.studio-section,
+.plaza-section,
+.apex-section,
+.cab-section,
+.manor-section,
+.canvas-section,
+.cobalt-section,
+.vault-section {
+  margin-top: calc(var(--resume-stack-gap) * var(--space, 1));
+}
+
+/* Two-column side rails — gap only between sections (no margin stacking). */
+.apex-side,
+.cab-side,
+.manor-side,
+.canvas-side,
+.cobalt-side,
+.vault-side {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--resume-stack-gap) * var(--space, 1));
+}
+
+.apex-edu,
+.manor-edu,
+.canvas-edu,
+.vault-edu {
+  margin: 0;
+}
+
+.apex-edu + .apex-edu,
+.manor-edu + .manor-edu,
+.canvas-edu + .canvas-edu,
+.vault-edu + .vault-edu {
+  margin-top: calc(8px * var(--space, 1));
+}
 
 .skill-block { margin-top: calc(8px * var(--space, 1)); }
 .skill-block strong { display: block; font-size: calc(12px * var(--type, 1)); }
@@ -1363,8 +1405,6 @@
   max-width: 100%;
 }
 
-.mint-section { margin-top: calc(12px * var(--space, 1)); }
-
 .mint-label {
   margin: 0 0 8px;
   padding-bottom: 4px;
@@ -1496,7 +1536,6 @@
 }
 
 .banner-section {
-  margin-top: calc(16px * var(--space, 1));
   padding: 0 42px;
 }
 
@@ -1583,7 +1622,6 @@
 }
 
 .formal-section {
-  margin-top: calc(16px * var(--space, 1));
   text-align: left;
 }
 
@@ -1699,7 +1737,6 @@
   background: #f7f9fc;
 }
 
-.apex-section { margin-top: calc(14px * var(--space, 1)); }
 .apex-main > .flow-block:first-child .apex-section { margin-top: 0; }
 
 .apex-label {
@@ -1783,7 +1820,7 @@
 
 .apex-side-list,
 .apex-side-plain,
-.apex-edu { margin: 0 0 10px; padding: 0; font-size: calc(12px * var(--type, 1)); }
+.apex-edu { margin: 0; padding: 0; font-size: calc(12px * var(--type, 1)); }
 .apex-side-list .apex-side-bullet {
   position: relative;
   margin: 0 0 4px;
@@ -1882,8 +1919,7 @@
   background: #f0f2f5;
 }
 
-.cab-section { margin-top: calc(14px * var(--space, 1)); }
-.cab-main > .flow-block:first-child .cab-section { margin-top: 4px; }
+.cab-main > .flow-block:first-child .cab-section { margin-top: 0; }
 
 .cab-label {
   margin: 0 0 8px;
@@ -1963,7 +1999,7 @@
 .manor-photo {
   display: flex;
   justify-content: center;
-  margin: 8px 0 22px;
+  margin: 8px 0 0;
 }
 
 .manor-photo .mono,
@@ -2027,12 +2063,10 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 18px;
   color: #3a474c;
 }
 
 .manor-edu {
-  margin: 0 0 12px;
   font-size: calc(12px * var(--type, 1));
   line-height: 1.4;
 }
@@ -2049,7 +2083,7 @@
 
 .manor-skill-list,
 .manor-side-list {
-  margin: 0 0 16px;
+  margin: 0;
   padding-left: 16px;
   font-size: calc(12px * var(--type, 1));
   line-height: 1.45;
@@ -2069,7 +2103,6 @@
   left: 0;
 }
 
-.manor-section { margin-top: calc(14px * var(--space, 1)); }
 .manor-main > .flow-block:first-child .manor-section { margin-top: 0; }
 
 .manor-summary {
@@ -2189,11 +2222,7 @@
   text-transform: uppercase;
 }
 
-.canvas-side > div + div,
-.canvas-side > div + [data-section] { margin-top: 18px; }
-
 .canvas-edu {
-  margin: 0 0 12px;
   font-size: calc(12.5px * var(--type, 1));
   line-height: 1.4;
 }
@@ -2223,7 +2252,6 @@
   left: 0;
 }
 
-.canvas-section { margin-top: calc(14px * var(--space, 1)); }
 .canvas-main > .flow-block:first-child .canvas-section { margin-top: 0; }
 
 .canvas-section.is-marked { position: relative; }
@@ -2298,7 +2326,7 @@
 .cobalt-dots.is-top { top: -8px; left: -8px; }
 .cobalt-dots.is-bottom { right: -8px; bottom: -8px; }
 
-.cobalt-id { text-align: center; margin-bottom: 18px; }
+.cobalt-id { text-align: center; margin: 0; }
 .cobalt-id .mono,
 .cobalt-id .mono-photo {
   border-radius: 50%;
@@ -2315,7 +2343,7 @@
 }
 
 .cobalt-role {
-  margin: 4px 0 12px;
+  margin: 4px 0 0;
   color: #4a5560;
   font-size: calc(13px * var(--type, 1));
 }
@@ -2331,8 +2359,22 @@
   color: #2a63d4;
 }
 
+.cobalt-side-plain,
+.cobalt-side-plain .side-bullet {
+  margin: 0 0 6px;
+  font-size: calc(11.5px * var(--type, 1));
+  line-height: calc(1.42 * var(--lead, 1));
+}
+
+.cab-side-plain,
+.cab-side-plain .side-bullet {
+  margin: 0 0 6px;
+  font-size: calc(11.5px * var(--type, 1));
+  line-height: calc(1.42 * var(--lead, 1));
+}
+
 .cobalt-side-label {
-  margin: 16px 0 8px;
+  margin: 0 0 8px;
   padding-bottom: 4px;
   border-bottom: 1px solid #c5ccd3;
   font-size: calc(12px * var(--type, 1));
@@ -2374,7 +2416,6 @@
   pointer-events: none;
 }
 
-.cobalt-section { margin-top: calc(14px * var(--space, 1)); }
 .cobalt-main > .flow-block:first-child .cobalt-section { margin-top: 0; }
 
 .cobalt-label {
@@ -2475,8 +2516,6 @@
   font-size: calc(12px * var(--type, 1));
 }
 
-.studio-section { margin-top: calc(16px * var(--space, 1)); }
-
 .studio-label {
   margin: 0 0 10px;
   padding: 7px 10px;
@@ -2554,20 +2593,22 @@
   grid-column: 1;
   grid-row: 2;
   min-width: 0;
-  padding: 8px 32px 32px 36px;
+  padding: 8px 28px 32px 36px;
 }
 
 .vault-side {
   grid-column: 2;
   grid-row: 1 / -1;
-  padding: 28px 18px 32px;
+  min-width: 0;
+  padding: 28px 16px 32px 18px;
   background: #f2f2f2;
+  box-sizing: border-box;
 }
 
 .vault-photo {
   display: flex;
   justify-content: center;
-  margin-bottom: 18px;
+  margin: 0;
 }
 
 .vault-photo .mono,
@@ -2581,7 +2622,6 @@
 
 .vault-contacts {
   gap: 5px;
-  margin-bottom: 16px;
   color: #3a444c;
 }
 
@@ -2591,7 +2631,6 @@
 }
 
 .vault-edu {
-  margin: 0 0 12px;
   font-size: calc(12px * var(--type, 1));
   line-height: 1.4;
 }
@@ -2600,7 +2639,7 @@
 .vault-edu span { color: #5b6472; }
 
 .vault-skill-block {
-  margin: 0 0 10px;
+  margin: 0;
   font-size: calc(12px * var(--type, 1));
   line-height: 1.4;
 }
@@ -2626,10 +2665,6 @@
   left: 0;
 }
 
-.vault-side > div + div,
-.vault-side > div + [data-section] { margin-top: 14px; }
-
-.vault-section { margin-top: calc(14px * var(--space, 1)); }
 .vault-main > .flow-block:first-child .vault-section { margin-top: 0; }
 
 .vault-label {
@@ -2718,7 +2753,6 @@
 }
 
 .plaza-section {
-  margin-top: calc(16px * var(--space, 1));
   padding: 0 40px;
 }
 

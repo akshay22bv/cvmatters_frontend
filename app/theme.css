@@ -110,6 +110,8 @@
   /* Template gallery thumbnails (landing + builder fan) */
   --template-thumb-w: 348px;
   --template-thumb-stage: 493px;
+  --template-thumb-w-mobile: 296px;
+  --template-thumb-stage-mobile: 419px;
   --template-page-w: 794px;
   --template-thumb-scale: 0.4383;
   --template-card-hover-scale: 1.06;

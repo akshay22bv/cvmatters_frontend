@@ -15,3 +15,9 @@ export const TEMPLATE_THUMB_STAGE_H = TEMPLATE_THUMB_FRAME_H;
 export const TEMPLATE_THUMB_W_MOBILE = 296;
 
 export const templateThumbScaleMobile = TEMPLATE_THUMB_W_MOBILE / TEMPLATE_PAGE_W;
+
+/** When height-fit would shrink much below width-fit, keep edge-to-edge width (minor foot crop). */
+export const GALLERY_THUMB_WIDTH_BIAS = 0.992;
+
+/** Small inset so scaled pages are not clipped by the stage border. */
+export const GALLERY_THUMB_FIT_PAD = 6;

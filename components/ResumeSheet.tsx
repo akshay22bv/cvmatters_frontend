@@ -26,6 +26,9 @@ import {
   VaultChrome,
   VaultSide,
   vaultMainPieces,
+  COBALT_SIDEBAR_EXTRA_SKIP,
+  THUMB_SIDEBAR_EXTRA_SKIP,
+  VAULT_SIDEBAR_EXTRA_SKIP,
 } from "./atsTemplates";
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
@@ -656,13 +659,13 @@ function piecesFor(templateId: TemplateId, data: ResumeData, hideContact: boolea
   // Profile already parks languages + awards in the side column.
   let pieces: ReactNode[];
   if (templateId === "apex") {
-    pieces = [...base, ...extraPieces(data, "apex", /language|strength|award|accomplishment/i)];
-  } else if (templateId === "cabinet") pieces = [...base, ...extraPieces(data, "cab")];
+    pieces = [...base, ...extraPieces(data, "apex", THUMB_SIDEBAR_EXTRA_SKIP)];
+  } else if (templateId === "cabinet") pieces = [...base, ...extraPieces(data, "cab", THUMB_SIDEBAR_EXTRA_SKIP)];
   else if (templateId === "manor") pieces = [...base, ...extraPieces(data, "manor", /language/i)];
-  else if (templateId === "canvas") pieces = [...base, ...extraPieces(data, "canvas", /hobb|interest/i)];
-  else if (templateId === "cobalt") pieces = [...base, ...extraPieces(data, "cobalt")];
+  else if (templateId === "canvas") pieces = [...base, ...extraPieces(data, "canvas", /passion|hobb|interest/i)];
+  else if (templateId === "cobalt") pieces = [...base, ...extraPieces(data, "cobalt", COBALT_SIDEBAR_EXTRA_SKIP)];
   else if (templateId === "studio") pieces = [...base, ...extraPieces(data, "studio")];
-  else if (templateId === "vault") pieces = [...base, ...extraPieces(data, "vault", /language|certif/i)];
+  else if (templateId === "vault") pieces = [...base, ...extraPieces(data, "vault", VAULT_SIDEBAR_EXTRA_SKIP)];
   else if (templateId === "plaza") pieces = [...base, ...extraPieces(data, "plaza")];
   else if (templateId === "mint") pieces = [...base, ...extraPieces(data, "mint")];
   else if (templateId === "banner") pieces = [...base, ...extraPieces(data, "banner")];

@@ -160,6 +160,22 @@ export function Landing({
           </div>
         </article>
 
+        <article className="board-section board-section-templates" id="templates">
+          <div className="board-rail">
+            <Reveal className="board-intro is-row" blur={false}>
+              <div>
+                <p className="board-kicker">Templates</p>
+                <h2 className="board-heading">Tested layouts recruiters and ATS both read cleanly.</h2>
+                <p className="board-lead is-narrow">
+                  Pick a layout to start. You can switch templates later without losing your draft.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+
+          <LandingTemplateGallery templates={templates} busy={busy} onPick={startWith} />
+        </article>
+
         <article className="board-section is-soft">
           <div className="board-rail">
             <Reveal className="board-intro" blur={false}>
@@ -180,23 +196,6 @@ export function Landing({
             </div>
           </div>
         </article>
-
-        <article className="board-section board-section-templates" id="templates">
-          <div className="board-rail">
-            <Reveal className="board-intro is-row" blur={false}>
-              <div>
-                <p className="board-kicker">Templates</p>
-                <h2 className="board-heading">Tested layouts recruiters and ATS both read cleanly.</h2>
-                <p className="board-lead is-narrow">
-                  Pick a layout to start. You can switch templates later without losing your draft.
-                </p>
-              </div>
-            </Reveal>
-          </div>
-
-          <LandingTemplateGallery templates={templates} busy={busy} onPick={startWith} />
-        </article>
-
 
         <article className="board-section is-soft" id="faq" aria-labelledby="faq-title">
           <div className="board-rail">

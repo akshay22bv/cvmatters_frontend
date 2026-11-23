@@ -1912,6 +1912,35 @@
   cursor: default;
 }
 
+.board-tile-foot {
+  display: none;
+}
+
+.board-tile-foot-cta {
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: var(--template-thumb-bar-radius);
+  background: var(--cta);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  cursor: pointer;
+  box-shadow: var(--template-thumb-cta-shadow);
+}
+
+.board-tile-foot-cta:hover:not(:disabled) {
+  background: var(--cta-hover, var(--lime-deep));
+}
+
+.board-tile-foot-cta:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
 @media (hover: none) {
   .board-tile-hover {
     opacity: 1;
@@ -1938,9 +1967,6 @@
   margin-top: 10px;
 }
 
-.board-tile-paper [class*="-contacts"] .ats-contact:nth-child(n+4) {
-  display: none;
-}
 
 .board-tile-tilt .tilt-inner {
   height: auto;
@@ -2954,9 +2980,43 @@
   }
 
   .board-section-templates .board-gallery {
+    gap: 14px;
     margin-top: 28px;
     padding-inline: var(--board-gutter);
     scroll-padding-inline: var(--board-gutter);
+  }
+
+  /* Fixed-width strip — no hover zoom / sibling blur; actions sit below the preview. */
+  .board-gallery:has(.board-tile-tilt:hover) .board-tile-tilt:not(:hover),
+  .board-tile-tilt:hover {
+    filter: none;
+    opacity: 1;
+    transform: none;
+    z-index: auto;
+  }
+
+  .board-tile-tilt {
+    width: var(--template-thumb-w-mobile);
+    transition: none;
+  }
+
+  .board-tile-stage {
+    height: var(--template-thumb-stage-mobile);
+  }
+
+  .board-tile:hover .board-tile-stage {
+    border-color: var(--template-thumb-border);
+    box-shadow: var(--template-thumb-shadow);
+  }
+
+  .board-tile-hover {
+    display: none;
+  }
+
+  .board-tile-foot {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
   }
 
   .board-hero-panel .board-hero-public {
@@ -3143,11 +3203,23 @@
   .board-section { padding: 64px 0 56px; }
   .board-brand { font-size: 48px; }
   .board-heading { font-size: 28px; max-width: none; }
-  .board-tile-tilt { width: min(296px, 86vw); }
-  .board-tile-stage { height: 419px; }
-  .board-tile-paper { transform: translateX(-50%) scale(0.373); }
   .board-tile-paper .paper.formal { padding: 28px 42px 40px; }
+  .board-tile-paper .paper.mint { padding: 26px 30px 32px; }
+  .board-tile-paper .paper.banner .banner-head { padding: 20px 28px 14px; }
+  .board-tile-paper .paper.studio { padding: 36px 40px 40px; }
+  .board-tile-paper .paper.plaza { padding-bottom: 28px; }
   .board-ask-inner { padding: 24px 0 40px; }
+}
+
+/* Touch / narrow viewports: same calm gallery behavior as mobile layout. */
+@media (hover: none) and (pointer: coarse) {
+  .board-gallery:has(.board-tile-tilt:hover) .board-tile-tilt:not(:hover),
+  .board-tile-tilt:hover {
+    filter: none;
+    opacity: 1;
+    transform: none;
+    z-index: auto;
+  }
 }
 
 /* ---- social proof & anonymized resume previews ---- */

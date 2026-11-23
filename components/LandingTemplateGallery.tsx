@@ -43,6 +43,16 @@ export function LandingTemplateGallery({
                 </span>
               </span>
             </span>
+            <div className="board-tile-foot">
+              <button
+                type="button"
+                className="board-tile-foot-cta"
+                disabled={busy}
+                onClick={() => onPick(item.id)}
+              >
+                Use this template →
+              </button>
+            </div>
           </div>
         </div>
       ))}

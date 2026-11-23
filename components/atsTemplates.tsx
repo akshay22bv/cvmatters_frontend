@@ -420,8 +420,6 @@ export function ApexHead({ data, hideContact }: { data: ResumeData; hideContact?
 
 export function ApexSide({ data }: { data: ResumeData }) {
   const skills = skillList(data.skills);
-  const languages = (data.extras || []).find((extra) => /language/i.test(extra.title));
-  const strengths = (data.extras || []).find((extra) => /strength|award|accomplishment/i.test(extra.title));
   return (
     <aside className="apex-side">
       {sectionOnCv(data, "skills") ? (
@@ -434,34 +432,7 @@ export function ApexSide({ data }: { data: ResumeData }) {
           )}
         </div>
       ) : null}
-      {sectionOnCv(data, "extras") && strengths ? (
-        <div data-section="extras" data-focus={strengths.id}>
-          <ResumeSectionLabel className="apex-label"><RichLine text={strengths.title} /></ResumeSectionLabel>
-          <div className={strengths.bullets === true ? "apex-side-list" : "apex-side-plain"}>
-            {strengths.items.filter(Boolean).map((item, index) =>
-              strengths.bullets === true ? (
-                <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
-              ) : (
-                <p key={index}><RichLine text={item} /></p>
-              ),
-            )}
-          </div>
-        </div>
-      ) : null}
-      {sectionOnCv(data, "extras") && languages ? (
-        <div data-section="extras" data-focus={languages.id}>
-          <ResumeSectionLabel className="apex-label"><RichLine text={languages.title} /></ResumeSectionLabel>
-          <div className={languages.bullets === true ? "apex-side-list" : "apex-side-plain"}>
-            {languages.items.filter(Boolean).map((item, index) =>
-              languages.bullets === true ? (
-                <p key={index} className="apex-side-bullet"><RichLine text={item} /></p>
-              ) : (
-                <p key={index}><RichLine text={item} /></p>
-              ),
-            )}
-          </div>
-        </div>
-      ) : null}
+      {renderSideExtras(data, "apex-label", "apex-side-list", "apex-side-plain")}
       {sectionOnCv(data, "education") ? (
         <div data-section="education">
           <ResumeSectionLabel className="apex-label">Education</ResumeSectionLabel>
@@ -550,15 +521,19 @@ export function CabinetHead({ data, hideContact }: { data: ResumeData; hideConta
 
 export function CabinetSide({ data }: { data: ResumeData }) {
   const skills = skillList(data.skills);
-  if (!sectionOnCv(data, "skills")) return null;
   return (
-    <aside className="cab-side" data-section="skills">
-      <ResumeSectionLabel className="cab-label">Skills</ResumeSectionLabel>
-      {skills.length ? (
-        <p className="cab-skill-line">{skills.join(", ")}</p>
-      ) : (
-        <p className="placeholder-line">Your skills will show here.</p>
-      )}
+    <aside className="cab-side">
+      {sectionOnCv(data, "skills") ? (
+        <div data-section="skills">
+          <ResumeSectionLabel className="cab-label">Skills</ResumeSectionLabel>
+          {skills.length ? (
+            <p className="cab-skill-line">{skills.join(", ")}</p>
+          ) : (
+            <p className="placeholder-line">Your skills will show here.</p>
+          )}
+        </div>
+      ) : null}
+      {renderSideExtras(data, "cab-label", "cab-side-plain", "cab-side-plain")}
     </aside>
   );
 }
@@ -574,6 +549,47 @@ export function CabinetChrome({ data, hideContact }: { data: ResumeData; hideCon
 
 function findExtra(data: ResumeData, pattern: RegExp) {
   return (data.extras || []).find((extra) => pattern.test(extra.title) && extra.items.some((item) => item.trim()));
+}
+
+/** Extra blocks often parked in side columns — keep them out of the main flow when rendered there. */
+export const THUMB_SIDEBAR_EXTRA_SKIP =
+  /language|certif|achievement|award|strength|accomplishment|passion|hobb|interest|quote/i;
+
+/** Accent sidebar — keep tall blocks here; passions/quote stay in the main column. */
+export const COBALT_SIDEBAR_EXTRA_SKIP =
+  /language|certif|achievement|award|strength|accomplishment/i;
+
+/** Balance sidebar — contact, education, skills, languages, certs; rest in main. */
+export const VAULT_SIDEBAR_EXTRA_SKIP = /language|certif/i;
+
+const THUMB_SIDE_EXTRA_PATTERNS: RegExp[] = [
+  /certif/i,
+  /language/i,
+  /achievement|award|strength|accomplishment/i,
+  /passion|hobb|interest/i,
+  /quote/i,
+];
+
+function renderSideExtras(
+  data: ResumeData,
+  labelClass: string,
+  listClass: string,
+  plainClass: string,
+  patterns: RegExp[] = THUMB_SIDE_EXTRA_PATTERNS,
+) {
+  return patterns.flatMap((pattern) => {
+    const extra = findExtra(data, pattern);
+    if (!extra || !sectionOnCv(data, "extras")) return [];
+    return [
+      <SideExtra
+        key={extra.id}
+        extra={extra}
+        labelClass={labelClass}
+        listClass={listClass}
+        plainClass={plainClass}
+      />,
+    ];
+  });
 }
 
 function SideExtra({
@@ -638,7 +654,6 @@ export function manorMainPieces(data: ResumeData) {
 
 export function ManorSide({ data, hideContact }: { data: ResumeData; hideContact?: boolean }) {
   const skills = skillList(data.skills);
-  const languages = findExtra(data, /language/i);
   return (
     <aside className="manor-side">
       <div className="manor-photo" data-section="details">
@@ -672,7 +687,7 @@ export function ManorSide({ data, hideContact }: { data: ResumeData; hideContact
           </ul>
         </div>
       ) : null}
-      {sectionOnCv(data, "extras") && languages ? <SideExtra extra={languages} labelClass="manor-label" listClass="manor-side-list" plainClass="manor-side-plain" /> : null}
+      {renderSideExtras(data, "manor-label", "manor-side-list", "manor-side-plain", [/language/i])}
     </aside>
   );
 }
@@ -742,7 +757,6 @@ export function CanvasHead({ data, hideContact }: { data: ResumeData; hideContac
 
 export function CanvasSide({ data }: { data: ResumeData }) {
   const skills = skillList(data.skills);
-  const hobbies = findExtra(data, /hobb|interest/i);
   return (
     <aside className="canvas-side">
       {sectionOnCv(data, "education") ? (
@@ -768,7 +782,7 @@ export function CanvasSide({ data }: { data: ResumeData }) {
           </ul>
         </div>
       ) : null}
-      {sectionOnCv(data, "extras") && hobbies ? <SideExtra extra={hobbies} labelClass="canvas-label" listClass="canvas-side-list" plainClass="canvas-side-plain" /> : null}
+      {renderSideExtras(data, "canvas-label", "canvas-side-list", "canvas-side-plain", [/passion|hobb|interest/i])}
     </aside>
   );
 }
@@ -870,6 +884,11 @@ export function CobaltChrome({ data, hideContact }: { data: ResumeData; hideCont
           </ul>
         </div>
       ) : null}
+      {renderSideExtras(data, "cobalt-side-label", "cobalt-side-plain", "cobalt-side-plain", [
+        /certif/i,
+        /language/i,
+        /achievement|award|strength|accomplishment/i,
+      ])}
       <span className="cobalt-dots is-bottom" aria-hidden="true" />
     </aside>
   );
