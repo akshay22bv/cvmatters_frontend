@@ -12,6 +12,7 @@ import {
   TEMPLATE_THUMB_STAGE_H,
   TEMPLATE_THUMB_W,
   TEMPLATE_THUMB_W_MOBILE,
+  TEMPLATE_THUMB_STAGE_H_MOBILE,
   templateThumbScaleMobile,
 } from "@/lib/templateThumb";
 import { TEMPLATES, type ResumeData, type TemplateId } from "@/lib/types";
@@ -69,7 +70,9 @@ export function TemplateFan({
     layout === "picker" && narrow ? SIZE.pickerMobile : layout === "strip" ? SIZE.strip : SIZE[layout as keyof typeof SIZE];
   const scale =
     layout === "picker" && narrow ? templateThumbScaleMobile : frameW / TEMPLATE_PAGE_W;
-  const frameH = enhancv ? TEMPLATE_THUMB_STAGE_H : Math.ceil(TEMPLATE_PAGE_H * scale);
+  const enhancvStageH =
+    layout === "picker" && narrow ? TEMPLATE_THUMB_STAGE_H_MOBILE : TEMPLATE_THUMB_STAGE_H;
+  const frameH = enhancv ? enhancvStageH : Math.ceil(TEMPLATE_PAGE_H * scale);
   const shiftY = enhancv ? 0 : (frameH - TEMPLATE_PAGE_H * scale) / 2;
 
   // keep the selected card centred in whichever container is showing
@@ -130,7 +133,7 @@ export function TemplateFan({
         const current = template.id === templateId;
         const frameStyle = {
           width: frameW,
-          height: enhancv ? TEMPLATE_THUMB_STAGE_H : frameH,
+          height: enhancv ? enhancvStageH : frameH,
         };
         const inner = (
           <>

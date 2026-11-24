@@ -132,7 +132,7 @@ export function PlanDialog({
         : "The PDF is ready whenever you are.";
 
   return (
-    <Dialog open={open} onClose={onClose} width={step === "plans" ? 620 : 460} className="plan-modal" title={title} subtitle={subtitle}>
+    <Dialog open={open} onClose={onClose} width={step === "plans" ? 720 : 440} className="plan-modal" title={title} subtitle={subtitle}>
       {step === "plans" ? (
         <div className="modal-body">
           <div className="plan-grid">

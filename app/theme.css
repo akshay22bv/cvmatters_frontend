@@ -114,6 +114,7 @@
   --template-thumb-stage-mobile: 419px;
   --template-page-w: 794px;
   --template-thumb-scale: 0.4383;
+  --template-thumb-scale-mobile: 0.3728;
   --template-card-hover-scale: 1.06;
   --template-card-sibling-scale: 0.94;
   --template-gallery-hover-duration: 0.65s;

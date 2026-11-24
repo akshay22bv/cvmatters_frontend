@@ -1353,6 +1353,137 @@ input:focus, textarea:focus {
 .plan-card.is-picked .plan-tick { opacity: 1; transform: none; }
 .plan-card.is-picked .plan-flag { top: -10px; }
 
+.plan-modal.modal-panel {
+  padding: 22px 20px 20px;
+}
+
+.plan-modal .modal-head {
+  margin-bottom: 14px;
+}
+
+.plan-modal .modal-head h2 {
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.plan-modal .modal-head p {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.plan-modal .modal-body {
+  gap: 12px;
+}
+
+.plan-modal .plan-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.plan-modal .plan-card {
+  gap: 6px;
+  padding: 14px 12px 12px;
+  border-radius: 14px;
+}
+
+.plan-modal .plan-name {
+  font-size: 11px;
+}
+
+.plan-modal .plan-price {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.plan-modal .plan-price small {
+  font-size: 11px;
+}
+
+.plan-modal .plan-blurb {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.plan-modal .plan-save {
+  font-size: 10.5px;
+  padding: 2px 7px;
+}
+
+.plan-modal .perk-list {
+  gap: 5px;
+}
+
+.plan-modal .perk-list li {
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.plan-modal .perk-list svg {
+  width: 13px;
+  height: 13px;
+  margin-top: 1px;
+}
+
+.plan-modal .plan-flag {
+  top: -8px;
+  right: 10px;
+  height: 20px;
+  padding: 0 8px;
+  font-size: 10px;
+}
+
+.plan-modal .plan-tick {
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.plan-modal .btn-cta {
+  height: var(--pill-h-sm);
+  font-size: 14px;
+}
+
+.plan-modal .modal-fine {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .plan-modal .plan-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .plan-modal .plan-card {
+    padding: 16px 14px;
+  }
+
+  .plan-modal .plan-price {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .plan-modal.modal-panel {
+    padding: 18px 16px 16px;
+  }
+
+  .plan-modal .modal-head h2 {
+    font-size: 18px;
+  }
+
+  .plan-modal .modal-head p {
+    font-size: 12.5px;
+  }
+
+  .plan-modal .perk-list li {
+    font-size: 12px;
+  }
+}
+
 .paid-mark {
   justify-self: center;
   align-self: center;
@@ -1622,6 +1753,7 @@ input:focus, textarea:focus {
 @media (max-width: 620px) {
   .plan-grid { grid-template-columns: 1fr; }
   .modal-panel { width: 100% !important; padding: 20px; border-radius: 20px; }
+  .plan-modal.modal-panel { width: 100% !important; }
   .pair { grid-template-columns: 1fr; }
 }
 
@@ -4029,6 +4161,16 @@ input:focus, textarea:focus {
 }
 
 @media (max-width: 920px) {
+  .fan.is-enhancv .fan-frame {
+    max-height: var(--template-thumb-stage-mobile);
+  }
+
+  .fan.is-enhancv .fan-thumb .paper,
+  .fan.is-enhancv .fan-thumb .paper * {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   .picker {
     padding: 0;
     align-items: stretch;

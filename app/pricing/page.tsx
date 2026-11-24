@@ -6,7 +6,7 @@ import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
 
 const title = `Pricing · ${SITE_NAME}`;
 const description =
-  "Simple, transparent pricing for CV Matters. Unlock unlimited PDF exports and full access from ₹48/month, ₹498/year, or ₹4,999 for 10 years.";
+  "Start free with up to 2 CVs on CV Matters. Unlock unlimited PDF exports from ₹48/month, ₹498/year, or ₹4,999 for 10 years.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -28,6 +28,23 @@ export const metadata: Metadata = {
 };
 
 const TIERS = [
+  {
+    id: "free",
+    name: "Free",
+    price: "₹0",
+    cadence: "forever",
+    blurb: "Draft, preview, and share a link before you need a PDF export.",
+    perks: [
+      "Up to 2 CVs",
+      "All templates in the editor",
+      "Live preview & public share link",
+      "PDF downloads on paid plans",
+    ],
+    ctaLabel: "Start free",
+    ctaHref: "/start",
+    featured: false,
+    badge: "",
+  },
   {
     id: "monthly",
     name: "Monthly",
@@ -106,11 +123,11 @@ export default function PricingPage() {
         <div className="board-rail">
           <p className="board-kicker">Pricing</p>
           <h1 id="pricing-page-title" className="board-heading">
-            Simple plans for PDF exports and full access.
+            Start free, upgrade when you need PDFs.
           </h1>
           <p className="board-lead is-narrow">
-            Pay monthly, yearly, or once for ten years. Every paid plan includes unlimited PDF downloads, unlimited CVs, and all
-            templates.
+            The free plan includes up to 2 CVs, every template, and a public link. Paid plans add unlimited CVs and PDF exports —
+            monthly, yearly, or once for ten years.
           </p>
           <div className="board-about-acts">
             <Link href="/start" className="board-pill board-pill-primary">
@@ -127,7 +144,10 @@ export default function PricingPage() {
         <div className="board-rail">
           <div className="pricing-grid">
             {TIERS.map((tier) => (
-              <article key={tier.id} className={`pricing-card${tier.featured ? " is-featured" : ""}`}>
+              <article
+                key={tier.id}
+                className={`pricing-card${tier.featured ? " is-featured" : ""}${tier.id === "free" ? " is-free" : ""}`}
+              >
                 <div className="pricing-card-head">
                   <div className="pricing-card-top">
                     <h2>{tier.name}</h2>

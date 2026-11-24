@@ -12,6 +12,8 @@ import {
 } from "@/lib/templateThumb";
 import type { TemplateId } from "@/lib/types";
 
+const GALLERY_MOBILE_MQ = "(max-width: 960px)";
+
 /** Scales a full resume preview so every gallery thumb shows dense content, not an empty page. */
 export function GalleryResumeThumb({ templateId }: { templateId: TemplateId }) {
   const paperWrapRef = useRef<HTMLSpanElement>(null);
@@ -21,6 +23,10 @@ export function GalleryResumeThumb({ templateId }: { templateId: TemplateId }) {
     if (!wrap) return;
 
     const fit = () => {
+      if (window.matchMedia(GALLERY_MOBILE_MQ).matches) {
+        wrap.style.removeProperty("--gallery-thumb-scale");
+        return;
+      }
       const paper = wrap.querySelector<HTMLElement>(".paper");
       if (!paper) return;
       const height = Math.max(paper.scrollHeight, paper.getBoundingClientRect().height);
