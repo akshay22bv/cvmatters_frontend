@@ -288,11 +288,11 @@ export function sampleForTemplate(templateId: TemplateId, role?: string): Resume
   };
 }
 
-/** Slightly tighter type so gallery thumbs read as one full, filled page. */
+/** Gallery thumbs: one full page, readable type (home + picker). */
 const GALLERY_SAMPLE_PAGE: Pick<ResumeData, "typeSize" | "spacing" | "leading"> = {
-  typeSize: 9.5,
+  typeSize: 10,
   spacing: 9,
-  leading: 0.97,
+  leading: 1,
 };
 
 /** Gallery thumbs: rich sections + compact spacing so every layout looks finished. */

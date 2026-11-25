@@ -151,8 +151,11 @@ export function ProfilePage({
     "";
   const liveSlug = accountSlug.trim();
   const publicPath = liveSlug ? publicResumePath(liveSlug) : null;
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const publicUrl = publicPath ? `${origin}${publicPath}` : "";
+  const [origin, setOrigin] = useState("");
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+  const publicUrl = publicPath ? `${origin || ""}${publicPath}` : "";
   const savedPublic = Boolean(
     resumes.find((item) => item.id === hostCvId)?.isPublic ?? (hostCvId === resumeId ? isPublic : false),
   );

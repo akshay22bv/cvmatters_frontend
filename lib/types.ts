@@ -38,6 +38,10 @@ export const TEMPLATES = [
   { id: "crest", name: "Crest" },
   { id: "ruby", name: "Ruby" },
   { id: "linen", name: "Linen" },
+  { id: "skyline", name: "Skyline" },
+  { id: "harbor", name: "Harbor" },
+  { id: "atlas", name: "Atlas" },
+  { id: "beacon", name: "Beacon" },
 ] as const;
 
 export const CATEGORIES = ["Design", "Engineering", "Product", "Marketing"] as const;
@@ -90,7 +94,7 @@ export const EXTRA_KINDS: { id: string; title: string; pick?: boolean }[] = [
 export type TemplateId = (typeof TEMPLATES)[number]["id"];
 
 /** Offered layouts that include a headshot slot (gallery + editor). */
-const PHOTO_TEMPLATES = new Set<TemplateId>(["apex", "cabinet", "manor", "canvas"]);
+const PHOTO_TEMPLATES = new Set<TemplateId>(["apex", "cabinet", "manor", "canvas", "harbor", "atlas"]);
 
 export function isTemplateId(value: string | undefined): value is TemplateId {
   return !!value && TEMPLATES.some((item) => item.id === value);
@@ -182,6 +186,9 @@ export const FONT_SIZE: Metric = {
   legacy: { sm: 9, md: 10, lg: 11 },
 };
 
+/** Global scale applied on every layout so body copy fills the page a bit more. */
+export const TEMPLATE_TYPE_SCALE = 1.07;
+
 /** Space between sections, in points. 10pt is the template's own rhythm. */
 export const SPACING: Metric = {
   min: 4,
@@ -244,8 +251,8 @@ function inkFor(hex: string) {
 /** CSS variables the page reads for colour, type size, spacing and line height. */
 export function paperStyle(data: { accent?: string; typeSize?: number; spacing?: number; leading?: number }) {
   const style: Record<string, string> = {
-    "--type": String(metricScale(FONT_SIZE, data.typeSize)),
-    "--space": String(metricScale(SPACING, data.spacing)),
+    "--type": String(metricScale(FONT_SIZE, data.typeSize) * TEMPLATE_TYPE_SCALE),
+    "--space": String(metricScale(SPACING, data.spacing) * 0.96),
     "--lead": String(metricScale(LINE_HEIGHT, data.leading)),
   };
   if (data.accent) {

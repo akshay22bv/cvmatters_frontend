@@ -50,6 +50,10 @@ export const CATALOG: CatalogEntry[] = [
   { id: "crest", kind: "one", photo: true, blurb: "A dark header with the photo on the right." },
   { id: "ruby", kind: "one", blurb: "A coloured bar across the top." },
   { id: "linen", kind: "two", blurb: "A warm side column for skills." },
+  { id: "skyline", kind: "one", pick: true, blurb: "Centred blue name, pale blue section bars, and pipe-separated contact." },
+  { id: "harbor", kind: "one", photo: true, pick: true, blurb: "Navy banner, photo overlap, dated roles, and skill bars." },
+  { id: "atlas", kind: "two", photo: true, pick: true, blurb: "Photo header and a grey details column beside the story." },
+  { id: "beacon", kind: "one", pick: true, blurb: "Gold rule and a left label rail for each section." },
 ];
 
 /** ATS layouts the product offers in the picker and gallery. */
@@ -65,6 +69,10 @@ export const OFFERED_IDS = [
   "studio",
   "vault",
   "plaza",
+  "skyline",
+  "harbor",
+  "atlas",
+  "beacon",
 ] as const;
 
 export function offeredCatalog() {

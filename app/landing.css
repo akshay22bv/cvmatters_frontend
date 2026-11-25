@@ -1974,11 +1974,107 @@
 }
 
 .board-tile-paper.is-gallery-fit {
-  transform: translateX(-50%) scale(var(--gallery-thumb-scale, var(--template-thumb-scale)));
+  transform: translateX(-50%) scale(calc(100cqw / var(--template-page-w)));
 }
 
 .board-tile-paper.is-gallery-fit .paper {
   min-height: auto;
+}
+
+.board-tile-paper.is-gallery-fit .paper,
+.board-tile-paper.is-gallery-fit .paper * {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Lock gallery metrics — avoids a flash when hydrated inline --type overrides settle. */
+.board-tile-paper.is-thumb-stage .paper {
+  --type: 1.02 !important;
+  --space: 0.9 !important;
+  --lead: 1 !important;
+}
+
+.board-tile-paper.is-thumb-stage .atlas-main,
+.board-tile-paper.is-thumb-stage .vault-main,
+.board-tile-paper.is-thumb-stage .manor-main,
+.board-tile-paper.is-thumb-stage .canvas-main,
+.board-tile-paper.is-thumb-stage .cab-main,
+.board-tile-paper.is-thumb-stage .apex-main,
+.board-tile-paper.is-thumb-stage .cobalt-main {
+  --type: 0.96 !important;
+}
+
+.board-tile-paper [class*="-contacts"] .ats-contact:nth-child(n + 4) {
+  display: none;
+}
+
+.board-tile-paper .paper.harbor .harbor-banner {
+  padding: 18px 24px 30px;
+}
+
+.board-tile-paper .paper.harbor .harbor-id .mono,
+.board-tile-paper .paper.harbor .harbor-id .mono-photo {
+  margin-top: 8px;
+}
+
+.board-tile-paper .paper.harbor .harbor-contacts {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+}
+
+.board-tile-paper .paper.harbor .harbor-contact-row {
+  padding: 8px 24px 0;
+}
+
+.board-tile-paper .paper.harbor .harbor-section {
+  padding: 0 24px;
+}
+
+.board-tile-paper .paper.harbor > .flow-block > .flow-li,
+.board-tile-paper .paper.harbor .flow-li.harbor-pad {
+  padding: 0 24px 0 104px;
+}
+
+.board-tile-paper .paper.harbor .harbor-bars {
+  display: none;
+}
+
+.board-tile-paper .paper.atlas {
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+
+.board-tile-paper .paper.atlas .atlas-head {
+  padding: 18px 22px 14px;
+  gap: 12px;
+}
+
+.board-tile-paper .paper.atlas .atlas-side {
+  padding: 12px 12px 20px 16px;
+}
+
+.board-tile-paper .paper.atlas .atlas-main {
+  padding: 12px 18px 22px 14px;
+}
+
+.board-tile-paper .paper.skyline .skyline-head {
+  padding: 16px 28px 14px;
+}
+
+.board-tile-paper .paper.skyline .skyline-section {
+  padding: 0 28px;
+}
+
+.board-tile-paper .paper.beacon {
+  padding: 22px 28px 28px;
+}
+
+.board-tile-paper .paper.beacon .beacon-row {
+  grid-template-columns: 124px minmax(0, 1fr);
+  gap: 10px 14px;
+}
+
+.board-tile-paper .paper.beacon .flow-li.beacon-pad {
+  padding: 0 28px 0 166px;
 }
 
 .board-tile-stage .paper,
@@ -3003,14 +3099,6 @@
 
   .board-tile-stage {
     height: var(--template-thumb-stage-mobile);
-  }
-
-  /*
-   * One width-based scale for every thumb — per-template height fitting used the
-   * desktop fallback (0.4383) before measure and made body type look too large.
-   */
-  .board-tile-paper.is-gallery-fit {
-    transform: translateX(-50%) scale(calc(100cqw / var(--template-page-w)));
   }
 
   .board-tile-paper.is-gallery-fit .paper,

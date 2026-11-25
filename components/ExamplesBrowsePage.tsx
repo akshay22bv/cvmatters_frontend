@@ -17,6 +17,7 @@ import {
   type RatingSummary,
 } from "@/lib/types";
 import { SECTION_LABEL } from "@/lib/paths";
+import { useMounted } from "@/lib/useMounted";
 import type { AccountState } from "@/lib/useAccount";
 
 /**
@@ -49,6 +50,7 @@ export function ExamplesBrowsePage({
   const [viewing, setViewing] = useState<ResumeRecord | null>(SAMPLE_EXAMPLES[0] || null);
   const [rated, setRated] = useState<{ id: string; summary: RatingSummary } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const mounted = useMounted();
   const [rateBusy, setRateBusy] = useState(false);
   const [rateHint, setRateHint] = useState("");
 
@@ -176,7 +178,7 @@ export function ExamplesBrowsePage({
         </aside>
       </div>
 
-      {typeof document !== "undefined" && previewOpen && sharedPreview
+      {mounted && previewOpen && sharedPreview
         ? createPortal(
             <div
               className="preview-sheet"

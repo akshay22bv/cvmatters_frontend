@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AppNav } from "./AppNav";
 import { BioStep, DetailsStep, EducationStep, ExperienceStep, SkillsStep } from "./EditorSteps";
@@ -240,15 +240,14 @@ export default function Builder() {
     scrollRef.current?.scrollTo({ top: 0 });
   }, [panel, page]);
 
-  const steps = useSyncExternalStore(
-    (notify) => {
-      const media = window.matchMedia("(max-width: 860px)");
-      media.addEventListener("change", notify);
-      return () => media.removeEventListener("change", notify);
-    },
-    () => (window.matchMedia("(max-width: 860px)").matches ? PHONE_STEPS : DOCK_ORDER),
-    () => DOCK_ORDER,
-  );
+  const [steps, setSteps] = useState<PanelId[]>(DOCK_ORDER);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 860px)");
+    const sync = () => setSteps(media.matches ? PHONE_STEPS : DOCK_ORDER);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
   const dockIndex = panel ? steps.indexOf(panel) : -1;
 
   const onSwipeStart = (event: ReactPointerEvent<HTMLDivElement>) => {

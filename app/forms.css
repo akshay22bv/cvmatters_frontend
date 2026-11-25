@@ -3179,6 +3179,35 @@ input:focus, textarea:focus {
   box-shadow: none;
 }
 
+.fan.is-strip .fan-thumb .paper,
+.fan.is-enhancv .fan-thumb .paper {
+  --type: 1.02 !important;
+  --space: 0.9 !important;
+  --lead: 1 !important;
+}
+
+.fan.is-strip .fan-thumb .atlas-main,
+.fan.is-strip .fan-thumb .vault-main,
+.fan.is-strip .fan-thumb .manor-main,
+.fan.is-strip .fan-thumb .canvas-main,
+.fan.is-strip .fan-thumb .cab-main,
+.fan.is-strip .fan-thumb .apex-main,
+.fan.is-strip .fan-thumb .cobalt-main,
+.fan.is-enhancv .fan-thumb .atlas-main,
+.fan.is-enhancv .fan-thumb .vault-main,
+.fan.is-enhancv .fan-thumb .manor-main,
+.fan.is-enhancv .fan-thumb .canvas-main,
+.fan.is-enhancv .fan-thumb .cab-main,
+.fan.is-enhancv .fan-thumb .apex-main,
+.fan.is-enhancv .fan-thumb .cobalt-main {
+  --type: 0.96 !important;
+}
+
+.fan.is-strip .fan-thumb .harbor-bars,
+.fan.is-enhancv .fan-thumb .harbor-bars {
+  display: none;
+}
+
 .fan.is-enhancv .fan-card:hover .fan-use-overlay {
   opacity: 1;
 }

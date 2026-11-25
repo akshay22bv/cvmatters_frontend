@@ -8,7 +8,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type InputHTMLAttributes,
   type ReactNode,
 } from "react";
@@ -1215,18 +1214,16 @@ function MonthYearField({
   );
 }
 
-function subscribeMobile(onChange: () => void) {
-  const mq = window.matchMedia("(max-width: 860px)");
-  mq.addEventListener("change", onChange);
-  return () => mq.removeEventListener("change", onChange);
-}
-
 function useIsMobile() {
-  return useSyncExternalStore(
-    subscribeMobile,
-    () => window.matchMedia("(max-width: 860px)").matches,
-    () => false,
-  );
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 860px)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return mobile;
 }
 
 export function DateFields({

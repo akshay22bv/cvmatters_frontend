@@ -1,7 +1,6 @@
 "use client";
 
 import { isValidElement, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
-import { createPortal } from "react-dom";
 import {
   ApexChrome,
   ApexSide,
@@ -30,6 +29,14 @@ import {
   THUMB_SIDEBAR_EXTRA_SKIP,
   VAULT_SIDEBAR_EXTRA_SKIP,
 } from "./atsTemplates";
+import {
+  AtlasChrome,
+  AtlasSide,
+  atlasMainPieces,
+  beaconPieces,
+  harborPieces,
+  skylinePieces,
+} from "./referenceTemplates";
 import { FormattedText, RichLine } from "./Formatted";
 import { Monogram } from "./Monogram";
 import { ResumeDecorProvider, ResumeSectionLabel } from "./ResumeSectionLabel";
@@ -599,7 +606,24 @@ function isRightbar(templateId: TemplateId) {
   return templateId === "quartz";
 }
 
-type ExtraKind = "sig" | "ed" | "mint" | "banner" | "formal" | "apex" | "cab" | "manor" | "canvas" | "cobalt" | "studio" | "vault" | "plaza";
+type ExtraKind =
+  | "sig"
+  | "ed"
+  | "mint"
+  | "banner"
+  | "formal"
+  | "apex"
+  | "cab"
+  | "manor"
+  | "canvas"
+  | "cobalt"
+  | "studio"
+  | "vault"
+  | "plaza"
+  | "skyline"
+  | "harbor"
+  | "atlas"
+  | "beacon";
 
 const EXTRA_LOOK: Record<ExtraKind, { section: string; label: string }> = {
   sig: { section: "sig-section", label: "sig-label" },
@@ -615,6 +639,10 @@ const EXTRA_LOOK: Record<ExtraKind, { section: string; label: string }> = {
   studio: { section: "studio-section", label: "studio-label" },
   vault: { section: "vault-section", label: "vault-label" },
   plaza: { section: "plaza-section", label: "plaza-label" },
+  skyline: { section: "skyline-section", label: "skyline-label" },
+  harbor: { section: "harbor-section", label: "harbor-label" },
+  atlas: { section: "atlas-section", label: "atlas-label" },
+  beacon: { section: "beacon-row", label: "beacon-label" },
 };
 
 /**
@@ -667,6 +695,10 @@ function piecesFor(templateId: TemplateId, data: ResumeData, hideContact: boolea
   else if (templateId === "studio") pieces = [...base, ...extraPieces(data, "studio")];
   else if (templateId === "vault") pieces = [...base, ...extraPieces(data, "vault", VAULT_SIDEBAR_EXTRA_SKIP)];
   else if (templateId === "plaza") pieces = [...base, ...extraPieces(data, "plaza")];
+  else if (templateId === "skyline") pieces = [...base, ...extraPieces(data, "skyline")];
+  else if (templateId === "harbor") pieces = [...base, ...extraPieces(data, "harbor", /language/i)];
+  else if (templateId === "atlas") pieces = [...base, ...extraPieces(data, "atlas", VAULT_SIDEBAR_EXTRA_SKIP)];
+  else if (templateId === "beacon") pieces = [...base, ...extraPieces(data, "beacon")];
   else if (templateId === "mint") pieces = [...base, ...extraPieces(data, "mint")];
   else if (templateId === "banner") pieces = [...base, ...extraPieces(data, "banner")];
   else if (templateId === "formal") pieces = [...base, ...extraPieces(data, "formal")];
@@ -689,6 +721,10 @@ function basePieces(templateId: TemplateId, data: ResumeData, hideContact: boole
   if (templateId === "studio") return studioPieces(data, hideContact);
   if (templateId === "vault") return vaultMainPieces(data);
   if (templateId === "plaza") return plazaPieces(data, hideContact);
+  if (templateId === "atlas") return atlasMainPieces(data);
+  if (templateId === "skyline") return skylinePieces(data, hideContact);
+  if (templateId === "harbor") return harborPieces(data, hideContact);
+  if (templateId === "beacon") return beaconPieces(data, hideContact);
   if (templateId === "editorial" || templateId === "classic") return editorialPieces(data, hideContact);
   if (templateId === "prime") return primePieces(data, hideContact);
   if (templateId === "timeline") return timelinePieces(data, hideContact);
@@ -823,6 +859,14 @@ function Frame({
       </article>
     );
   }
+  if (templateId === "atlas") {
+    return (
+      <article ref={paperRef} className={classes} style={tint}>
+        {continued ? <AtlasSide data={data} hideContact={hideContact} /> : <AtlasChrome data={data} hideContact={hideContact} />}
+        <div className="atlas-main">{children}{number}</div>
+      </article>
+    );
+  }
   if (isSidebar(templateId) || isRightbar(templateId)) {
     const side = <SplitSide data={data} hideContact={hideContact} identity={!isRightbar(templateId)} plain={templateId === "slate" || templateId === "quartz" || templateId === "linen" || templateId === "quote"} />;
     const main = <div className="split-main">{children}{number}</div>;
@@ -851,6 +895,7 @@ const ATS_CHROME_RESERVE: Partial<Record<TemplateId, number>> = {
   manor: 148,
   canvas: 138,
   vault: 140,
+  atlas: 132,
 };
 
 /** Split layouts where the sidebar owns identity — main column uses the full page height. */
@@ -1027,6 +1072,7 @@ const ATS_MAIN: Partial<Record<TemplateId, string>> = {
   canvas: "canvas-main",
   cobalt: "cobalt-main",
   vault: "vault-main",
+  atlas: "atlas-main",
 };
 
 function measurePaperClass(templateId: TemplateId) {
@@ -1234,20 +1280,18 @@ export function ResumeSheet({
         : allPreviewIndexes
       : allPreviewIndexes;
   const total = preview && !fill && firstPage ? firstPage.total : 1;
-  const measure = preview && !fill && typeof document !== "undefined"
-    ? createPortal(
-        <div
-          className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
-          style={paperStyle(data) as CSSProperties}
-          ref={measureRef}
-          aria-hidden="true"
-        >
-          {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
-          {wrapForMeasure(templateId, measurePieces)}
-        </div>,
-        document.body,
-      )
-    : null;
+  const measure =
+    preview && !fill && measurePieces ? (
+      <div
+        className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+        style={paperStyle(data) as CSSProperties}
+        ref={measureRef}
+        aria-hidden="true"
+      >
+        {isRightbar(templateId) && <QuartzBanner data={data} hideContact={hideContact} />}
+        {wrapForMeasure(templateId, measurePieces)}
+      </div>
+    ) : null;
 
   const sheet = (
     <>

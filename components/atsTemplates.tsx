@@ -120,7 +120,7 @@ function skillList(skills: ResumeData["skills"]) {
  * One flow-block per bullet so a long role can break across pages instead of
  * dragging the whole job (and leaving the previous page half empty).
  */
-function pushJobBullets(
+export function pushJobBullets(
   pieces: ReactNode[],
   job: ResumeData["experience"][number],
   padClass: string,
@@ -570,7 +570,7 @@ const THUMB_SIDE_EXTRA_PATTERNS: RegExp[] = [
   /quote/i,
 ];
 
-function renderSideExtras(
+export function renderSideExtras(
   data: ResumeData,
   labelClass: string,
   listClass: string,
@@ -1135,5 +1135,13 @@ export function plazaPieces(data: ResumeData, hideContact: boolean) {
 }
 
 export function isAtsSplit(templateId: string) {
-  return templateId === "apex" || templateId === "cabinet" || templateId === "manor" || templateId === "canvas" || templateId === "cobalt" || templateId === "vault";
+  return (
+    templateId === "apex" ||
+    templateId === "cabinet" ||
+    templateId === "manor" ||
+    templateId === "canvas" ||
+    templateId === "cobalt" ||
+    templateId === "vault" ||
+    templateId === "atlas"
+  );
 }
