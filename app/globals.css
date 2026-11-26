@@ -950,6 +950,13 @@ a.blog-top-cta:hover {
 
 .fan-thumb .paper { box-shadow: none; }
 
+/* Scaled resume in horizontal scroll — iOS Safari otherwise re-adjusts type while panning. */
+.fan-thumb .paper,
+.fan-thumb .paper * {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 .fan-name {
   position: absolute;
   left: 0;

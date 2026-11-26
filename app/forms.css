@@ -4195,7 +4195,9 @@ input:focus, textarea:focus {
   }
 
   .fan.is-enhancv .fan-thumb .paper,
-  .fan.is-enhancv .fan-thumb .paper * {
+  .fan.is-enhancv .fan-thumb .paper *,
+  .fan.is-strip .fan-thumb .paper,
+  .fan.is-strip .fan-thumb .paper * {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }

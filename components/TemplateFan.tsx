@@ -138,7 +138,11 @@ export function TemplateFan({
         const inner = (
           <>
             <span className="fan-frame" style={frameStyle}>
-              <span className="fan-thumb" style={{ transform: `translate(0px, ${shiftY}px) scale(${scale})` }} aria-hidden="true">
+              <span
+                className="fan-thumb"
+                style={{ transform: `translate3d(0, ${shiftY}px, 0) scale(${scale})` }}
+                aria-hidden="true"
+              >
                   <ResumeSheet
                     templateId={template.id}
                     data={sampleThumbs ? sampleForTemplateGallery(template.id) : thumbData}
