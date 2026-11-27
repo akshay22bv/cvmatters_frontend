@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
+import { OG_IMAGE_PATH, SITE_NAME, siteUrl } from "@/lib/site";
+import { getSiteSettings } from "@/lib/siteSettings";
 
 const title = `Terms of Use · ${SITE_NAME}`;
 const description = `Terms governing use of ${SITE_NAME}, resume ownership, subscriptions, cancellation, billing in INR via Cashfree, refunds, governing law, and grievance redressal.`;
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const { operatorName, supportEmail, supportPhone } = await getSiteSettings();
   return (
     <div className="board board-static">
       <section className="board-section board-about-hero" aria-labelledby="terms-page-title">
@@ -84,7 +86,7 @@ export default function TermsPage() {
               All paid plans are billed in Indian Rupees (INR, ₹) through Cashfree Payments, supporting UPI, domestic and
               international credit/debit cards, and net banking. If you were charged in error, experienced a duplicate charge, or ran
               into a technical issue that prevented you from using a paid feature, contact{" "}
-              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> within 7 days of payment with your order ID. Approved refunds
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a> within 7 days of payment with your order ID. Approved refunds
               are issued back to the original payment method within 5–7 business days in accordance with Cashfree&apos;s settlement
               rules and applicable Indian consumer law.
             </p>
@@ -95,7 +97,7 @@ export default function TermsPage() {
             <p>
               Paid plans provide fixed-term prepaid access (30 days for Monthly, 365 days for Yearly) with no lock-in contracts or
               hidden cancellation fees. You may stop or cancel any active plan or upcoming renewal at any time from your{" "}
-              <Link href="/profile">account profile</Link> or by emailing <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+              <Link href="/profile">account profile</Link> or by emailing <a href={`mailto:${supportEmail}`}>{supportEmail}</a>.
               After cancellation, your paid features remain active until the end of the current paid period. Once a plan expires,
               your saved CVs and public link remain intact and editable within free-plan limits.
             </p>
@@ -129,7 +131,15 @@ export default function TermsPage() {
             <p>
               <strong>Grievance Officer — {SITE_NAME}</strong>
               <br />
-              Email: <a href={`mailto:${SUPPORT_EMAIL}?subject=Grievance%20Redressal`}>{SUPPORT_EMAIL}</a>
+              Name: {operatorName}
+              <br />
+              Email: <a href={`mailto:${supportEmail}?subject=Grievance%20Redressal`}>{supportEmail}</a>
+              {supportPhone ? (
+                <>
+                  <br />
+                  Phone: <a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a>
+                </>
+              ) : null}
               <br />
               Support form: <Link href="/contact">cvmatters.net/contact</Link>
               <br />

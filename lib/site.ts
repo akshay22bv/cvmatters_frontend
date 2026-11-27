@@ -3,8 +3,14 @@ export const SITE_NAME = "CV Matters";
 
 export const SITE_TAGLINE = "Build a resume, match a job post, and learn from people in your field.";
 
-/** Primary support inbox — shown on Contact and in the footer. */
+/**
+ * Static fallback when settings cannot be loaded. Prefer `getSiteSettings()` on the server
+ * or `useSiteContact()` in client components.
+ */
+export { SITE_CONTACT_FALLBACK } from "./siteSettings";
+
 export const SUPPORT_EMAIL = "developer28tester@gmail.com";
+export const SITE_OPERATOR_NAME = "Akshay Vishwanath Bilagi";
 
 /** Default Open Graph / Twitter share image route. */
 export const OG_IMAGE_PATH = "/opengraph-image";

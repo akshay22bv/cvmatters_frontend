@@ -15,6 +15,7 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import { AppShell } from "@/components/AppShell";
+import { SiteContactRoot } from "@/components/SiteContactRoot";
 import "./theme.css";
 import "./globals.css";
 import "./templates.css";
@@ -140,8 +141,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={fontVars} suppressHydrationWarning>
       <body className={dmSans.className} suppressHydrationWarning>
-        <AppShell />
-        {children}
+        <SiteContactRoot>
+          <AppShell />
+          {children}
+        </SiteContactRoot>
       </body>
     </html>
   );

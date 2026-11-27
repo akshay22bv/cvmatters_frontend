@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { IconCheck, IconLock } from "@/components/icons";
-import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
+import { OG_IMAGE_PATH, SITE_NAME, siteUrl } from "@/lib/site";
+import { getSiteSettings } from "@/lib/siteSettings";
 
 const title = `Pricing · ${SITE_NAME}`;
 const description =
@@ -110,13 +111,15 @@ const PRICING_FAQS = [
     q: "What happens if I cancel or my plan expires?",
     a: "Your paid access continues until the end of the period you paid for. After that, your account simply returns to the free tier — your saved resumes and public link stay intact.",
   },
-  {
-    q: "What is your refund policy?",
-    a: `If you were charged in error or run into a billing problem, write to ${SUPPORT_EMAIL} within 7 days of payment with your order ID and we will review and refund eligible charges back to your original payment method.`,
-  },
 ] as const;
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const { supportEmail } = await getSiteSettings();
+  const refundFaq = {
+    q: "What is your refund policy?",
+    a: `If you were charged in error or run into a billing problem, write to ${supportEmail} within 7 days of payment with your order ID and we will review and refund eligible charges back to your original payment method.`,
+  };
+  const faqs = [...PRICING_FAQS, refundFaq];
   return (
     <div className="board board-static">
       <section className="board-section board-about-hero" aria-labelledby="pricing-page-title">
@@ -198,7 +201,7 @@ export default function PricingPage() {
             </h2>
           </div>
           <div className="board-faq-list">
-            {PRICING_FAQS.map((item) => (
+            {faqs.map((item) => (
               <details key={item.q} className="board-faq-item">
                 <summary>{item.q}</summary>
                 <p>{item.a}</p>

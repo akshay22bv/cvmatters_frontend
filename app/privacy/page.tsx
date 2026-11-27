@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { OG_IMAGE_PATH, SITE_NAME, SUPPORT_EMAIL, siteUrl } from "@/lib/site";
+import { OG_IMAGE_PATH, SITE_NAME, siteUrl } from "@/lib/site";
+import { getSiteSettings } from "@/lib/siteSettings";
 
 const title = `Privacy Policy · ${SITE_NAME}`;
 const description = `How ${SITE_NAME} collects, stores, and protects your account, resume content, and payment information.`;
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { supportEmail } = await getSiteSettings();
   return (
     <div className="board board-static">
       <section className="board-section board-about-hero" aria-labelledby="privacy-page-title">
@@ -98,7 +100,7 @@ export default function PrivacyPage() {
             <h2>6. Access, export, and deletion</h2>
             <p>
               You own the content you write. You can delete individual CVs from your profile at any time, or email{" "}
-              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> (or use our <Link href="/contact">contact form</Link>) to
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a> (or use our <Link href="/contact">contact form</Link>) to
               request a copy of your data or permanent deletion of your account.
             </p>
           </article>

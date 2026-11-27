@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { SITE_NAME, SUPPORT_EMAIL } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
+import { useSiteContact } from "./SiteContactProvider";
 import { Logo } from "./icons";
 
 type FootLink =
@@ -52,6 +53,7 @@ export function SiteFooter({
   onJob?: () => void;
   onField?: () => void;
 }) {
+  const { supportEmail } = useSiteContact();
   const showActions = Boolean(onBuild && onJob && onField);
   const templatesHref = showActions ? "#templates" : "/#templates";
   const year = new Date().getFullYear();
@@ -80,7 +82,7 @@ export function SiteFooter({
     { type: "link", href: "/about", label: "About us" },
     { type: "link", href: "/contact", label: "Contact us" },
     { type: "link", href: "/about#how-it-works", label: "How it works" },
-    { type: "link", href: `mailto:${SUPPORT_EMAIL}?subject=Billing%20help`, label: "Billing help" },
+    { type: "link", href: `mailto:${supportEmail}?subject=Billing%20help`, label: "Billing help" },
     { type: "link", href: "/privacy", label: "Privacy" },
     { type: "link", href: "/terms", label: "Terms" },
   ];
@@ -95,8 +97,8 @@ export function SiteFooter({
             </Link>
             <div className="board-foot-connect">
               <p className="board-foot-connect-label">Connect with us</p>
-              <a className="board-foot-connect-link" href={`mailto:${SUPPORT_EMAIL}`}>
-                {SUPPORT_EMAIL}
+              <a className="board-foot-connect-link" href={`mailto:${supportEmail}`}>
+                {supportEmail}
               </a>
             </div>
           </div>

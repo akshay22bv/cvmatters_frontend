@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { SUPPORT_EMAIL, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 import { ContactForm } from "./ContactForm";
 import { IconMail } from "./icons";
 import { SiteFooter } from "./SiteFooter";
+import { useSiteContact } from "./SiteContactProvider";
 
-function supportMail(subject: string, body?: string) {
+function supportMail(email: string, subject: string, body?: string) {
   const params = new URLSearchParams();
   params.set("subject", subject);
   if (body) params.set("body", body);
-  return `mailto:${SUPPORT_EMAIL}?${params.toString()}`;
+  return `mailto:${email}?${params.toString()}`;
 }
 
 const CHANNELS = [
@@ -44,6 +47,8 @@ const SELF_SERVE = [
 ] as const;
 
 export function ContactPage() {
+  const { supportEmail, supportPhone } = useSiteContact();
+
   return (
     <div className="board board-static">
       <section className="board-section board-contact-hero" aria-labelledby="contact-title">
@@ -59,14 +64,20 @@ export function ContactPage() {
           <ContactForm />
 
           <div className="board-contact-direct">
-            <a className="board-contact-email" href={`mailto:${SUPPORT_EMAIL}`}>
+            <a className="board-contact-email" href={`mailto:${supportEmail}`}>
               <IconMail />
-              <span>{SUPPORT_EMAIL}</span>
+              <span>{supportEmail}</span>
             </a>
 
             <p className="board-contact-note">
               Typical reply time: <strong>1–2 business days</strong> (IST). Urgent billing issues? Select{" "}
               <strong>Billing &amp; subscriptions</strong> or put <strong>“Urgent billing”</strong> in your subject line.
+              {supportPhone ? (
+                <>
+                  {" "}
+                  Phone: <a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a>.
+                </>
+              ) : null}
             </p>
           </div>
 
@@ -87,7 +98,7 @@ export function ContactPage() {
               <article key={item.title} className="board-contact-channel">
                 <strong>{item.title}</strong>
                 <p>{item.body}</p>
-                <a href={supportMail(item.subject, `Hi ${SITE_NAME} team,\n\n`)}>Email about this →</a>
+                <a href={supportMail(supportEmail, item.subject, `Hi ${SITE_NAME} team,\n\n`)}>Email about this →</a>
               </article>
             ))}
           </div>
@@ -122,7 +133,8 @@ export function ContactPage() {
             <li>For billing: date of payment and order ID or last four digits of UPI / card (never send full card numbers)</li>
           </ul>
           <aside className="board-contact-aside">
-            We don&apos;t offer phone support yet. Using the form above or emailing {SUPPORT_EMAIL} is the fastest way to reach the team building {SITE_NAME}.
+            {supportPhone ? "Email or phone works." : "We don&apos;t list phone support yet."} Using the form above or
+            emailing {supportEmail} is the fastest way to reach the team building {SITE_NAME}.
           </aside>
         </div>
       </section>

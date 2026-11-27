@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { SUPPORT_EMAIL } from "@/lib/site";
 import { SiteFooter } from "./SiteFooter";
+import { useSiteContact } from "./SiteContactProvider";
 
 const VALUES = [
   {
@@ -18,6 +20,7 @@ const VALUES = [
 ] as const;
 
 export function AboutPage() {
+  const { supportEmail } = useSiteContact();
   return (
     <div className="board board-static">
       <section className="board-section board-about-hero" aria-labelledby="about-title">
@@ -82,7 +85,7 @@ export function AboutPage() {
             We store your account email, CV content you save, and subscription status so the product works. We do not sell your
             data. Payment details are handled by Cashfree; we never store card numbers on our servers. Read the full{" "}
             <Link href="/privacy">Privacy Policy</Link>, <Link href="/contact">contact us</Link>, or email{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> to request account deletion.
+            <a href={`mailto:${supportEmail}`}>{supportEmail}</a> to request account deletion.
           </p>
         </div>
       </section>
