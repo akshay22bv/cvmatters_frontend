@@ -1965,7 +1965,7 @@
 .board-tile-paper .formal-section,
 .board-tile-paper .mint-section,
 .board-tile-paper .banner-section {
-  margin-top: 10px;
+  margin-top: calc(var(--resume-main-section-gap, 16px) * var(--space, 0.92));
 }
 
 
@@ -1989,9 +1989,9 @@
 
 /* Lock gallery metrics — avoids a flash when hydrated inline --type overrides settle. */
 .board-tile-paper.is-thumb-stage .paper {
-  --type: 1.02 !important;
-  --space: 0.9 !important;
-  --lead: 1 !important;
+  --type: 1 !important;
+  --space: 0.92 !important;
+  --lead: 0.98 !important;
 }
 
 .board-tile-paper.is-thumb-stage .atlas-main,

@@ -186,8 +186,8 @@ export const FONT_SIZE: Metric = {
   legacy: { sm: 9, md: 10, lg: 11 },
 };
 
-/** Global scale applied on every layout so body copy fills the page a bit more. */
-export const TEMPLATE_TYPE_SCALE = 1.07;
+/** Global scale — tuned to ~11px body at default 10pt slider (job-board reference). */
+export const TEMPLATE_TYPE_SCALE = 1.02;
 
 /** Space between sections, in points. 10pt is the template's own rhythm. */
 export const SPACING: Metric = {

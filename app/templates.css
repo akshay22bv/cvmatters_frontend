@@ -56,12 +56,23 @@
   position: relative;
   border-radius: 0;
   --resume-font: var(--font-google-sans), "Google Sans", sans-serif;
-  --type: 1.07;
-  --space: 0.96;
+  --resume-pad-x: 34px;
+  --resume-pad-y: 28px;
+  --resume-body: 11px;
+  --resume-body-lg: 11.5px;
+  --resume-label: 13.5px;
+  --resume-stack-gap: 12px;
+  --resume-main-section-gap: 16px;
+  --resume-after-header-gap: 14px;
+  --resume-side-section-gap: 14px;
+  --resume-entry-gap: 6px;
+  --resume-label-gap: 6px;
+  --type: 1;
+  --space: 0.94;
   --lead: 1;
-  --resume-stack-gap: 14px;
   font-family: var(--resume-font);
-  font-size: calc(13.5px * var(--type, 1));
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.36 * var(--lead, 1));
   box-shadow: 0 18px 50px rgba(40, 24, 16, 0.16);
   overflow: hidden;
   overflow: clip;
@@ -105,20 +116,20 @@
 .paper s { text-decoration: line-through; }
 
 .paper p { margin: 0; }
-.paper ul { margin: calc(4px * var(--space, 1)) 0 0; padding-left: 16px; }
-.paper li { margin: calc(2px * var(--space, 1)) 0; }
+.paper ul { margin: calc(3px * var(--space, 1)) 0 0; padding-left: 16px; }
+.paper li { margin: calc(1px * var(--space, 1)) 0; }
 
 /* One bullet per flow-block so long roles can break across pages. */
 .flow-li ul {
   margin: 0;
-  padding-left: 16px;
-  font-size: calc(12.5px * var(--type, 1));
-  line-height: calc(1.45 * var(--lead, 1));
+  padding-left: 15px;
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.35 * var(--lead, 1));
 }
 
 .flow-li li { margin: 0; }
 
-.flow-li.is-last { margin-bottom: calc(10px * var(--space, 1)); }
+.flow-li.is-last { margin-bottom: calc(6px * var(--space, 1)); }
 
 .mint-job.is-split,
 .studio-job.is-split,
@@ -216,7 +227,7 @@
 .skyline-section,
 .harbor-section,
 .atlas-section {
-  margin-top: calc(var(--resume-stack-gap) * var(--space, 1));
+  margin-top: calc(var(--resume-main-section-gap) * var(--space, 1));
 }
 
 /* Two-column side rails — gap only between sections (no margin stacking). */
@@ -229,7 +240,7 @@
 .atlas-side {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--resume-stack-gap) * var(--space, 1));
+  gap: calc(var(--resume-side-section-gap) * var(--space, 1));
 }
 
 .apex-edu,
@@ -247,13 +258,13 @@
 }
 
 .skill-block { margin-top: calc(8px * var(--space, 1)); }
-.skill-block strong { display: block; font-size: calc(12px * var(--type, 1)); }
-.skill-block p { font-size: calc(12px * var(--type, 1)); line-height: calc(1.4 * var(--lead, 1)); color: #333; }
+.skill-block strong { display: block; font-size: calc(var(--resume-body-lg) * var(--type, 1)); }
+.skill-block p { font-size: calc(var(--resume-body) * var(--type, 1)); line-height: calc(1.4 * var(--lead, 1)); color: #333; }
 
 .edu-item + .edu-item { margin-top: calc(8px * var(--space, 1)); }
-.edu-item strong { display: block; font-size: calc(13px * var(--type, 1)); }
-.edu-item .school { font-size: calc(12.5px * var(--type, 1)); }
-.edu-item .fine { font-size: calc(12px * var(--type, 1)); color: #555; }
+.edu-item strong { display: block; font-size: calc(var(--resume-body-lg) * var(--type, 1)); }
+.edu-item .school { font-size: calc(var(--resume-body) * var(--type, 1)); }
+.edu-item .fine { font-size: calc(var(--resume-body) * var(--type, 1)); color: #555; }
 
 /* Editorial — Resume.io Stockholm / Simple ATS */
 
@@ -309,16 +320,16 @@
   color: #333;
 }
 
-.ed-section { margin-top: calc(18px * var(--space, 1)); }
+.ed-section { margin-top: calc(var(--resume-main-section-gap) * var(--space, 1)); }
 
 .ed-label {
-  margin: 0 0 calc(8px * var(--space, 1));
+  margin: 0 0 calc(var(--resume-label-gap) * var(--space, 1));
   padding-bottom: 4px;
   border-bottom: 1px solid #d8d4cf;
-  font-size: calc(11px * var(--type, 1));
-  letter-spacing: 0.14em;
+  font-size: calc(var(--resume-label) * var(--type, 1));
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 750;
   color: #111;
 }
 
@@ -382,29 +393,29 @@
   color: #333;
 }
 
-.sig-section { margin-top: calc(16px * var(--space, 1)); }
-.flow-block > .sig-label { margin-top: calc(16px * var(--space, 1)); }
+.sig-section { margin-top: calc(var(--resume-main-section-gap) * var(--space, 1)); }
+.flow-block > .sig-label { margin-top: calc(var(--resume-main-section-gap) * var(--space, 1)); }
 .flow-block:first-child > .sig-label:first-child { margin-top: 0; }
 
 .sig-label {
-  margin: 0 0 calc(6px * var(--space, 1));
+  margin: 0 0 calc(var(--resume-label-gap) * var(--space, 1));
   padding-bottom: 0;
   border-bottom: 0;
   color: #111;
-  font-size: calc(11px * var(--type, 1));
+  font-size: calc(var(--resume-label) * var(--type, 1));
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.sig-summary { font-size: calc(13px * var(--type, 1)); line-height: calc(1.45 * var(--lead, 1)); }
+.sig-summary { font-size: calc(var(--resume-body) * var(--type, 1)); line-height: calc(1.42 * var(--lead, 1)); }
 
-.sig-job { margin-bottom: calc(12px * var(--space, 1)); }
-.sig-job-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.sig-job { margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1)); }
+.sig-job-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .sig-job-top > :first-child { flex: 1; min-width: 0; }
 .sig-job-top .ed-date { flex: none; }
-.sig-job strong { font-size: calc(13.5px * var(--type, 1)); }
-.sig-job .company { color: #333; font-size: calc(12.5px * var(--type, 1)); }
-.sig-job li { font-size: calc(12.5px * var(--type, 1)); }
+.sig-job strong { font-size: calc(var(--resume-body-lg) * var(--type, 1)); }
+.sig-job .company { color: #333; font-size: calc(var(--resume-body) * var(--type, 1)); }
+.sig-job li { font-size: calc(var(--resume-body) * var(--type, 1)); }
 
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .pills span {
@@ -422,6 +433,9 @@
 .paper.split { display: flex; padding: 0; }
 
 .split-side {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--resume-side-section-gap) * var(--space, 1));
   width: 262px;
   flex: none;
   background: var(--header);
@@ -450,7 +464,11 @@
   color: rgba(255, 255, 255, 0.78);
 }
 
-.split-side .sig-label { color: rgba(255, 255, 255, 0.45); margin-top: calc(22px * var(--space, 1)); border-bottom-color: rgba(255, 255, 255, 0.16); }
+.split-side .sig-label {
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0;
+  border-bottom-color: rgba(255, 255, 255, 0.16);
+}
 .split-side .skill-block strong { color: white; }
 .split-side .skill-block p, .split-side .side-edu { color: rgba(255, 255, 255, 0.82); font-size: calc(12.5px * var(--type, 1)); line-height: calc(1.4 * var(--lead, 1)); }
 .split-side .side-edu { margin-bottom: calc(10px * var(--space, 1)); }
@@ -1463,7 +1481,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px 18px;
   align-items: start;
-  margin-bottom: 2px;
+  margin-bottom: calc(4px * var(--space, 1));
 }
 
 .mint-name {
@@ -1535,12 +1553,12 @@
   line-height: calc(1.5 * var(--lead, 1));
 }
 
-.mint-job { margin-bottom: calc(10px * var(--space, 1)); }
+.mint-job { margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1)); }
 
 /* Continuation roles sit in their own flow-block; skip nested section spacing. */
 .paper.mint > .flow-block > .mint-job.mint-job-continue {
   margin-top: calc(6px * var(--space, 1));
-  margin-bottom: calc(10px * var(--space, 1));
+  margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1));
 }
 
 .paper.mint > .flow-block > .flow-li.mint-pad ul {
@@ -1717,6 +1735,7 @@
 
 .formal-head {
   text-align: center;
+  margin-bottom: calc(4px * var(--space, 1));
 }
 
 .formal-name {
@@ -1740,7 +1759,7 @@
 }
 
 .formal-label {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   padding-bottom: 3px;
   border-bottom: 1px solid #111;
   font-size: calc(12.5px * var(--type, 1));
@@ -1754,12 +1773,12 @@
   line-height: calc(1.45 * var(--lead, 1));
 }
 
-.formal-job { margin-bottom: calc(10px * var(--space, 1)); }
+.formal-job { margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1)); }
 
 /* Continuation roles sit in their own flow-block (pagination); skip a nested section. */
 .paper.formal > .flow-block > .formal-job.formal-job-continue {
   margin-top: calc(6px * var(--space, 1));
-  margin-bottom: calc(10px * var(--space, 1));
+  margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1));
 }
 
 .formal-row {
@@ -2032,7 +2051,7 @@
   grid-column: 1;
   grid-row: 3;
   min-width: 0;
-  padding: 8px 28px 32px;
+  padding: 14px 28px 32px;
 }
 
 .cab-side {
@@ -2323,7 +2342,7 @@
 .canvas-side {
   grid-column: 1;
   grid-row: 2;
-  padding: 22px 28px 32px 34px;
+  padding: calc(14px + var(--resume-after-header-gap) * var(--space, 1)) 28px 32px 34px;
   border-right: 1px solid #1c1c1c;
 }
 
@@ -2332,12 +2351,12 @@
   grid-row: 2;
   position: relative;
   min-width: 0;
-  padding: 22px 34px 32px 28px;
+  padding: calc(14px + var(--resume-after-header-gap) * var(--space, 1)) 34px 32px 28px;
 }
 
 .canvas-label {
-  margin: 0 0 10px;
-  padding-bottom: 6px;
+  margin: 0 0 calc((var(--resume-label-gap) + 4px) * var(--space, 1));
+  padding-bottom: 5px;
   border-bottom: 1px solid #1c1c1c;
   font-size: calc(12px * var(--type, 1));
   font-weight: 750;
@@ -2377,11 +2396,15 @@
 
 .canvas-main > .flow-block:first-child .canvas-section { margin-top: 0; }
 
+.paper.canvas .canvas-label {
+  margin-bottom: calc((var(--resume-label-gap) + 4px) * var(--space, 1)) !important;
+}
+
 .canvas-section.is-marked { position: relative; }
 .canvas-section.is-marked::before {
   content: "";
   position: absolute;
-  top: 4px;
+  top: 0.42em;
   left: -35px;
   width: 11px;
   height: 11px;
@@ -2395,7 +2418,7 @@
   line-height: calc(1.45 * var(--lead, 1));
 }
 
-.canvas-job { margin-bottom: calc(12px * var(--space, 1)); }
+.canvas-job { margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1)); }
 
 .canvas-job-top {
   display: flex;
@@ -2406,12 +2429,13 @@
 
 .canvas-job-top strong { font-size: calc(13.5px * var(--type, 1)); }
 .canvas-job-top span { color: #5b6472; font-size: calc(12px * var(--type, 1)); white-space: nowrap; }
-.canvas-sub { margin-top: 2px; color: #5b6472; font-size: calc(12.5px * var(--type, 1)); }
+.canvas-sub { margin-top: 1px; color: #5b6472; font-size: calc(12.5px * var(--type, 1)); }
 .canvas-job ul,
 .flow-li.canvas-pad ul {
-  margin: 5px 0 0;
+  margin: 3px 0 0;
   padding-left: 16px;
   font-size: calc(12.5px * var(--type, 1));
+  line-height: calc(1.34 * var(--lead, 1));
 }
 
 .paper.has-accent.canvas .canvas-label { border-bottom-color: var(--theme); color: var(--theme); }
@@ -2485,38 +2509,39 @@
 .cobalt-side-plain,
 .cobalt-side-plain .side-bullet {
   margin: 0 0 6px;
-  font-size: calc(11.5px * var(--type, 1));
-  line-height: calc(1.42 * var(--lead, 1));
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.36 * var(--lead, 1));
 }
 
 .cab-side-plain,
 .cab-side-plain .side-bullet {
   margin: 0 0 6px;
   font-size: calc(11.5px * var(--type, 1));
-  line-height: calc(1.42 * var(--lead, 1));
+  line-height: calc(1.36 * var(--lead, 1));
 }
 
 .cobalt-side-label {
-  margin: 0 0 8px;
+  margin: 0 0 calc(var(--resume-label-gap) * var(--space, 1));
   padding-bottom: 4px;
   border-bottom: 1px solid #c5ccd3;
-  font-size: calc(12px * var(--type, 1));
+  font-size: calc(var(--resume-label) * var(--type, 1));
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: #1c1c1c;
 }
 
 .cobalt-about {
-  font-size: calc(12px * var(--type, 1));
-  line-height: calc(1.45 * var(--lead, 1));
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.36 * var(--lead, 1));
   color: #3a444c;
 }
 
 .cobalt-skill-list {
   margin: 0;
   padding-left: 16px;
-  font-size: calc(12.5px * var(--type, 1));
-  line-height: 1.45;
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.4 * var(--lead, 1));
 }
 
 .cobalt-main {
@@ -2545,12 +2570,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 12px;
+  margin: 0 0 calc(var(--resume-label-gap) * var(--space, 1));
   padding-bottom: 4px;
   border-bottom: 1px solid #d7dde5;
   color: #1c1c1c;
-  font-size: calc(13px * var(--type, 1));
+  font-size: calc(var(--resume-label) * var(--type, 1));
   font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .cobalt-ico {
@@ -2586,14 +2613,14 @@
   align-items: baseline;
 }
 
-.cobalt-job-top strong { font-size: calc(13.5px * var(--type, 1)); }
-.cobalt-job-top span { color: #5b6472; font-size: calc(12px * var(--type, 1)); white-space: nowrap; }
-.cobalt-sub { margin-top: 2px; color: #5b6472; font-size: calc(12.5px * var(--type, 1)); }
+.cobalt-job-top strong { font-size: calc(var(--resume-body-lg) * var(--type, 1)); }
+.cobalt-job-top span { color: #5b6472; font-size: calc(var(--resume-body) * var(--type, 1)); white-space: nowrap; }
+.cobalt-sub { margin-top: 2px; color: #5b6472; font-size: calc(var(--resume-body) * var(--type, 1)); }
 .cobalt-job ul,
 .flow-li.cobalt-pad ul {
   margin: 4px 0 0;
   padding-left: 16px;
-  font-size: calc(12.5px * var(--type, 1));
+  font-size: calc(var(--resume-body) * var(--type, 1));
 }
 
 .paper.has-accent.cobalt .cobalt-name,
@@ -2614,7 +2641,7 @@
   color: #111;
 }
 
-.studio-head { margin-bottom: 4px; }
+.studio-head { margin-bottom: calc(4px * var(--space, 1)); }
 
 .studio-name {
   margin: 0;
@@ -2716,7 +2743,7 @@
   grid-column: 1;
   grid-row: 2;
   min-width: 0;
-  padding: 8px 28px 32px 36px;
+  padding: 14px 28px 32px 36px;
 }
 
 .vault-side {
@@ -2738,9 +2765,7 @@
 .vault-photo .mono-photo { border-radius: 50%; }
 
 .vault-side-label {
-  margin: 0 0 8px;
-  font-size: calc(12.5px * var(--type, 1));
-  font-weight: 750;
+  margin: 0 0 calc(var(--resume-label-gap) * var(--space, 1));
 }
 
 .vault-contacts {
@@ -2754,8 +2779,13 @@
 }
 
 .vault-edu {
-  font-size: calc(12px * var(--type, 1));
-  line-height: 1.4;
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.36 * var(--lead, 1));
+  margin-bottom: calc(8px * var(--space, 1));
+}
+
+.vault-edu:last-child {
+  margin-bottom: 0;
 }
 
 .vault-edu strong { display: block; }
@@ -2967,7 +2997,7 @@
 }
 
 .skyline-section {
-  margin-top: calc(14px * var(--space, 1));
+  margin-top: calc(var(--resume-main-section-gap) * var(--space, 1));
   padding: 0 38px;
 }
 
@@ -3429,9 +3459,35 @@
 .paper.is-align-center .studio-head,
 .paper.is-align-center .plaza-head,
 .paper.is-align-center .skyline-head,
-.paper.is-align-center .beacon-head {
+.paper.is-align-center .beacon-head,
+.paper.is-align-center .sig-top,
+.paper.is-align-center .folio-head,
+.paper.is-align-center .dens-bar,
+.paper.is-align-center .harbor-banner,
+.paper.is-align-center .quartz-banner,
+.paper.is-align-center .split-side [data-section="details"] {
   text-align: center;
   justify-items: center;
+}
+
+.paper.is-align-center .sig-top,
+.paper.is-align-center .folio-head,
+.paper.is-align-center .dens-bar {
+  align-items: center;
+}
+
+.paper.is-align-center .sig-contact,
+.paper.is-align-center .folio-contact,
+.paper.is-align-center .ed-contact,
+.paper.is-align-center .dens-bar .sig-contact,
+.paper.is-align-center .quartz-contact {
+  justify-content: center;
+  text-align: center;
+}
+
+.paper.is-align-center .ed-name,
+.paper.is-align-center .ed-role {
+  text-align: center;
 }
 
 .paper.is-align-center .mint-head {
@@ -3442,6 +3498,13 @@
 }
 
 .paper.is-align-center .mint-contact {
+  text-align: center;
+  align-items: center;
+  max-width: none;
+}
+
+.paper.is-align-center .mint-contacts .ats-contact {
+  justify-items: center;
   text-align: center;
 }
 
@@ -3463,9 +3526,20 @@
 
 .paper.is-align-left header,
 .paper.is-align-left .formal-head,
-.paper.is-align-left .plaza-head {
+.paper.is-align-left .plaza-head,
+.paper.is-align-left .sig-top,
+.paper.is-align-left .folio-head,
+.paper.is-align-left .mint-head {
   text-align: left;
   justify-items: start;
+  align-items: stretch;
+}
+
+.paper.is-align-left .sig-contact,
+.paper.is-align-left .folio-contact,
+.paper.is-align-left .ed-contact {
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .paper.is-body-justify p,
@@ -3477,4 +3551,217 @@
 .paper.is-body-left p,
 .paper.is-body-left li {
   text-align: left;
+}
+
+/* Reference rhythm — section headings (Skills, Experience, Education, …) */
+
+.paper :is(h2, p)[class*="-label"],
+.paper .sig-label,
+.paper .ed-label {
+  font-size: calc(var(--resume-label) * var(--type, 1)) !important;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: calc(var(--resume-label-gap) * var(--space, 1)) !important;
+}
+
+/* Single-column / band headers — always leave air before the first section (Summary, etc.). */
+.paper > .flow-block:has(
+    :is(
+        .mint-head,
+        .banner-head,
+        .formal-head,
+        .plaza-head,
+        .studio-head,
+        .skyline-head,
+        .beacon-head,
+        .harbor-banner,
+        .folio-head,
+        .dens-bar,
+        .sig-top
+      )
+  )
+  + .flow-block
+  > :is([class$="-section"], .sig-section, .ed-section) {
+  margin-top: calc(var(--resume-after-header-gap) * var(--space, 1)) !important;
+}
+
+.paper.formal > .flow-block:first-child .formal-head,
+.paper.mint > .flow-block:first-child .mint-head {
+  margin-bottom: 0;
+}
+
+.mint-summary,
+.studio-summary,
+.formal-summary,
+.banner-summary,
+.plaza-summary,
+.skyline-summary,
+.manor-summary,
+.sig-summary,
+.ed-summary {
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.36 * var(--lead, 1));
+}
+
+.mint-job,
+.studio-job,
+.formal-job,
+.banner-job,
+.plaza-job,
+.skyline-job,
+.manor-job,
+.sig-job,
+.ed-job {
+  margin-bottom: calc(var(--resume-entry-gap) * var(--space, 1));
+}
+
+.mint-job strong,
+.studio-job strong,
+.formal-job strong,
+.banner-job strong,
+.plaza-job strong,
+.skyline-job strong,
+.manor-job strong {
+  font-size: calc(var(--resume-body-lg) * var(--type, 1));
+}
+
+.mint-job ul,
+.studio-job ul,
+.formal-job ul,
+.banner-job ul,
+.plaza-job ul,
+.skyline-job ul,
+.manor-job ul,
+.mint-skills,
+.studio-skills,
+.plaza-skills {
+  font-size: calc(var(--resume-body) * var(--type, 1));
+  line-height: calc(1.4 * var(--lead, 1));
+}
+
+.paper.is-page-one .split-main,
+.paper.is-page-one .apex-main,
+.paper.is-page-one .cab-main,
+.paper.is-page-one .manor-main,
+.paper.is-page-one .canvas-main {
+  padding: calc(14px + var(--resume-after-header-gap) * var(--space, 1)) var(--resume-pad-x) var(--resume-pad-y) !important;
+}
+
+.paper.is-page-one .canvas-side {
+  padding-top: calc(14px + var(--resume-after-header-gap) * var(--space, 1)) !important;
+}
+
+.paper.is-page-one .cobalt-main,
+.paper.is-page-one .vault-main,
+.paper.is-page-one .atlas-main {
+  padding: 22px var(--resume-pad-x) var(--resume-pad-y) !important;
+}
+
+.paper.is-page-one.mint,
+.paper.is-page-one.studio,
+.paper.is-page-one.formal,
+.paper.is-page-one.editorial,
+.paper.is-page-one.classic,
+.paper.is-page-one.compact,
+.paper.is-page-one.signal,
+.paper.is-page-one.ledger,
+.paper.is-page-one.crisp,
+.paper.is-page-one.grid,
+.paper.is-page-one.prime,
+.paper.is-page-one.timeline,
+.paper.is-page-one.band,
+.paper.is-page-one.folio,
+.paper.is-page-one.hex,
+.paper.is-page-one.hello,
+.paper.is-page-one.beacon {
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+  padding-bottom: var(--resume-pad-y) !important;
+  padding-top: var(--resume-pad-y) !important;
+}
+
+.paper.is-page-one.ruby,
+.paper.is-page-one.iconic,
+.paper.is-page-one.crest,
+.paper.is-page-one.dens,
+.paper.is-page-one.taupe,
+.paper.is-page-one.skyline {
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+  padding-bottom: var(--resume-pad-y) !important;
+}
+
+.paper.is-page-one.ruby,
+.paper.is-page-one.iconic,
+.paper.is-page-one.crest,
+.paper.is-page-one.dens,
+.paper.is-page-one.taupe {
+  padding-top: 0 !important;
+}
+
+.paper.is-page-one.skyline {
+  padding-top: var(--resume-pad-y) !important;
+}
+
+/* Edge-to-edge header bands: inset text lines up with the main column gutter */
+.paper.is-page-one.banner,
+.paper.is-page-one.horizon,
+.paper.is-page-one.plaza,
+.paper.is-page-one.harbor {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: var(--resume-pad-y) !important;
+}
+
+.paper.is-page-one.banner .banner-head,
+.paper.is-page-one.horizon .sig-top,
+.paper.is-page-one.plaza .plaza-head,
+.paper.is-page-one.harbor .harbor-banner {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+}
+
+.paper.is-page-one.banner .banner-section,
+.paper.is-page-one.banner > .flow-block > .flow-li,
+.paper.is-page-one.horizon .sig-section,
+.paper.is-page-one.horizon .continued,
+.paper.is-page-one.horizon > .flow-block > .flow-li,
+.paper.is-page-one.plaza .plaza-section,
+.paper.is-page-one.plaza > .flow-block > .flow-li,
+.paper.is-page-one.harbor .harbor-section {
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+}
+
+.paper.is-page-one.harbor > .flow-block > .flow-li {
+  padding-right: var(--resume-pad-x) !important;
+}
+
+.paper.is-page-one.ruby .folio-head,
+.paper.is-page-one.iconic .folio-head,
+.paper.is-page-one.crest .folio-head,
+.paper.is-page-one.dens .dens-bar,
+.paper.is-page-one.ruby .dens-bar,
+.paper.is-page-one.taupe .sig-top {
+  margin-left: calc(-1 * var(--resume-pad-x)) !important;
+  margin-right: calc(-1 * var(--resume-pad-x)) !important;
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+}
+
+.paper.is-page-one.band .sig-role {
+  margin-left: calc(-1 * var(--resume-pad-x)) !important;
+  margin-right: calc(-1 * var(--resume-pad-x)) !important;
+}
+
+.paper.split.navy.is-page-one .split-side {
+  padding: 18px 14px var(--resume-pad-y) !important;
+}
+
+.paper.split.navy.is-page-one .split-main {
+  padding: 20px var(--resume-pad-x) var(--resume-pad-y) 26px !important;
 }

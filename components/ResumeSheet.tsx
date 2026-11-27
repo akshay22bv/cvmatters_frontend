@@ -807,7 +807,9 @@ function Frame({
         : templateId
   } ${fontClass(data.fontId)}${data.accent ? " has-accent" : ""}${
     data.align ? ` is-align-${data.align}` : ""
-  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}${continued && isAtsSplit(templateId) ? " is-continued" : ""}`;
+  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}${pageIndex === 0 ? " is-page-one" : ""}${
+    continued && isAtsSplit(templateId) ? " is-continued" : ""
+  }`;
   // accent, type size, spacing and line height, read by the template rules
   const tint = paperStyle(data) as CSSProperties;
   if (templateId === "apex") {
@@ -1006,7 +1008,7 @@ function pagesFrom(root: HTMLElement, tight = false, templateId?: TemplateId) {
   const borderBottom = parseFloat(style.borderBottomWidth) || 0;
   const inner = PAGE_H - padTop - padBottom - borderTop - borderBottom;
   const hardSlack = tight ? 10 : 6;
-  const fillSlack = tight ? 52 : 92;
+  const fillSlack = tight ? 64 : 110;
   let hardLimit = inner - hardSlack;
   const softLimit = hardLimit + fillSlack;
 
@@ -1188,7 +1190,7 @@ export function ResumeView({
     <>
       {singlePagePreview ? null : (
         <div
-          className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+          className={`measure-col paper is-page-one ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
           style={paperStyle(data) as CSSProperties}
           ref={measureRef}
           aria-hidden="true"
@@ -1263,6 +1265,9 @@ export function ResumeSheet({
 
   useLayoutEffect(() => {
     if (!preview || fill || !firstPage) return;
+    // Sidebar / ATS chrome lives outside `children`; trimming by full-page scroll
+    // height can empty the main column (e.g. Accent / cobalt gallery thumbs).
+    if (isAtsSplit(templateId) || isSidebar(templateId) || isRightbar(templateId)) return;
     const paper = paperRef.current;
     if (!paper || firstPage.indexes.length <= 1) return;
     if (paper.scrollHeight <= paper.clientHeight + 2) return;
@@ -1283,7 +1288,7 @@ export function ResumeSheet({
   const measure =
     preview && !fill && measurePieces ? (
       <div
-        className={`measure-col paper ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
+        className={`measure-col paper is-page-one ${measurePaperClass(templateId)}${isRightbar(templateId) ? " measure-quartz" : ""} ${fontClass(data.fontId)}${data.align ? ` is-align-${data.align}` : ""}${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}`}
         style={paperStyle(data) as CSSProperties}
         ref={measureRef}
         aria-hidden="true"

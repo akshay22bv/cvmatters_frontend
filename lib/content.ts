@@ -291,8 +291,8 @@ export function sampleForTemplate(templateId: TemplateId, role?: string): Resume
 /** Gallery thumbs: one full page, readable type (home + picker). */
 const GALLERY_SAMPLE_PAGE: Pick<ResumeData, "typeSize" | "spacing" | "leading"> = {
   typeSize: 10,
-  spacing: 9,
-  leading: 1,
+  spacing: 8,
+  leading: 0.98,
 };
 
 /** Gallery thumbs: rich sections + compact spacing so every layout looks finished. */
