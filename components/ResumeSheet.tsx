@@ -1232,29 +1232,48 @@ export function ResumeView({
 
   useLayoutEffect(() => {
     if (singlePagePreview) return;
-    const stage = stageRef.current;
-    const root = measureRef.current;
-    const paper = stage?.querySelector(".page-slot:first-child .paper");
-    if (!(paper instanceof HTMLElement) || !root || !resolvedPages[0]?.length) return;
-    if (!paperContentOverflows(paper, templateId)) return;
+    let cancelled = false;
+    let passes = 0;
 
-    const keys = measurePieces.map((node) => pieceKey(node));
-    const all = pieces.map((_, index) => index);
-    const tight = pagesFrom(root, true, templateId);
-    let next = stitchExperiencePages(tight, keys);
-    if (!next[0]?.length) next = [all];
+    const step = () => {
+      if (cancelled || passes >= 20) return;
+      const stage = stageRef.current;
+      const root = measureRef.current;
+      const paper = stage?.querySelector(".page-slot:first-child .paper");
+      if (!(paper instanceof HTMLElement) || !root) return;
 
-    if (JSON.stringify(next) === JSON.stringify(resolvedPages)) {
-      const split = splitOnPaperOverflow(paper, resolvedPages[0], templateId);
-      if (!split) return;
-      const [head, tail] = split;
-      if (head.length >= resolvedPages[0].length) return;
-      const merged = [head, [...tail, ...(resolvedPages[1] || []), ...resolvedPages.slice(2).flat()]];
-      next = stitchExperiencePages(merged, keys);
-    }
+      setPages((current) => {
+        if (!current[0]?.length) return current;
+        if (!paperContentOverflows(paper, templateId)) return current;
 
-    setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
-  }, [resolvedPages, singlePagePreview, templateId, measurePieces, pieces, data, hideContact]);
+        const keys = measurePieces.map((node) => pieceKey(node));
+        const all = pieces.map((_, index) => index);
+        let next = stitchExperiencePages(pagesFrom(root, true, templateId), keys);
+        if (!next[0]?.length) next = [all];
+
+        if (JSON.stringify(next) === JSON.stringify(current)) {
+          const split = splitOnPaperOverflow(paper, current[0], templateId);
+          if (!split) return current;
+          const [head, tail] = split;
+          if (head.length >= current[0].length) return current;
+          next = stitchExperiencePages(
+            [head, [...tail, ...(current[1] || []), ...current.slice(2).flat()]],
+            keys,
+          );
+        }
+
+        if (JSON.stringify(next) === JSON.stringify(current)) return current;
+        passes += 1;
+        requestAnimationFrame(step);
+        return next;
+      });
+    };
+
+    requestAnimationFrame(step);
+    return () => {
+      cancelled = true;
+    };
+  }, [singlePagePreview, templateId, measurePieces, pieces, data, hideContact, resolvedPages.length]);
 
   const pageIndexes = (indexes: number[]) => (indexes.length ? indexes : allIndexes);
 

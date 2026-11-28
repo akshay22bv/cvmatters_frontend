@@ -3296,6 +3296,17 @@ body.is-examples-preview .cv-editor-shell .layout {
     width: 100%;
   }
 
+  html.is-public-cv-view,
+  html.is-public-cv-view body {
+    height: auto;
+    min-height: 100%;
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
+    overscroll-behavior-y: auto;
+  }
+
   .app-frame {
     position: fixed;
     top: var(--vv-top, 0px);
@@ -3304,6 +3315,20 @@ body.is-examples-preview .cv-editor-shell .layout {
     height: var(--app-height, 100svh);
     min-height: 0;
     overflow: hidden;
+  }
+
+  /* Shared public CV URLs: never trap scroll in the editor shell. */
+  .app-frame.is-public {
+    position: relative;
+    top: 0;
+    left: auto;
+    right: auto;
+    width: 100%;
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
+    overflow: visible;
+    touch-action: pan-y;
   }
 
   .cv-editor-shell {
