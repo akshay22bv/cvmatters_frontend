@@ -30,6 +30,7 @@ import { checkpoints, completeness } from "@/lib/progress";
 import { isBodySectionId, moveSectionOrder, resolveSectionOrder, sectionOnCv, toggleHiddenSection, type BodySectionId } from "@/lib/sectionOrder";
 import { stepErrors } from "@/lib/validate";
 import { useAccount } from "@/lib/useAccount";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import { downloadResumePdf, printResume } from "@/lib/pdf";
 import { newId } from "@/lib/id";
 import { isFontId, readTemplateId, type Category, type PanelId, type RatingSummary, type ResumeData, type ResumeRecord, type TemplateId } from "@/lib/types";
@@ -112,6 +113,7 @@ export default function Builder() {
   const [showErrors, setShowErrors] = useState(false);
   const [gate, setGate] = useState<null | "plan">(null);
   const [gateReason, setGateReason] = useState("");
+  const mobileNarrow = useMediaQuery("(max-width: 860px)");
   const [snapshot, setSnapshot] = useState<Snapshot>({
     id: null,
     templateId: "mint",
@@ -1038,7 +1040,7 @@ export default function Builder() {
               templateId={snapshot.templateId}
               data={snapshot.data}
               hideContact={false}
-              fitPagesInView
+              fitPagesInView={!mobileNarrow}
               onPick={
                 view.kind === "cv"
                   ? (section, focusId) => {

@@ -4130,9 +4130,15 @@ input:focus, textarea:focus {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .picker-stage .page-stack {
+  position: static;
+  inset: auto;
+  width: 100%;
+  overflow: visible;
   padding: 28px 20px 24px;
   gap: 18px;
 }
@@ -4259,7 +4265,7 @@ input:focus, textarea:focus {
   /* Cap preview height so colour / text-size blocks are not clipped by overflow:hidden */
   .picker-panel.is-design {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(120px, min(40dvh, 340px)) minmax(0, 1fr);
+    grid-template-rows: auto minmax(160px, min(46dvh, 380px)) minmax(0, 1fr);
   }
 
   .picker-panel.is-design .picker-view {

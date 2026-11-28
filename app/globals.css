@@ -480,7 +480,17 @@ textarea {
   flex: 1;
   min-height: 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
   padding: 12px;
+}
+
+.preview-sheet-body .page-stack {
+  position: static;
+  inset: auto;
+  width: 100%;
+  overflow: visible;
 }
 
 .photo-upload {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import { TypographyStripPicker } from "./DesignPickers";
 import { FontPicks } from "./FontPicks";
 import { ResumeView } from "./ResumeSheet";
@@ -35,6 +36,8 @@ export function TemplateDialog({
   onAccent: (hex: string | undefined) => void;
   onStyle: (look: Pick<ResumeData, "typeSize" | "spacing" | "leading">) => void;
 }) {
+  const mobile = useMediaQuery("(max-width: 920px)");
+
   useEffect(() => {
     if (!open) return;
     const key = (event: KeyboardEvent) => {
@@ -65,7 +68,7 @@ export function TemplateDialog({
 
         <section className="picker-view" aria-label="Preview">
           <div className="picker-stage">
-            <ResumeView templateId={templateId} data={data} fitPagesInView singlePagePreview />
+            <ResumeView templateId={templateId} data={data} fitPagesInView={!mobile} />
           </div>
         </section>
 
