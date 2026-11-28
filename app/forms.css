@@ -6938,6 +6938,23 @@ button.finish-check-grip:active {
   background: #050505;
 }
 
+@media (max-width: 860px) {
+  .app-frame.is-public {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .app-frame.is-public .public-stage {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+}
+
 .app-frame.is-public .public-stage.is-loading {
   min-height: 100%;
 }

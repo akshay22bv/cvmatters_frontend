@@ -1026,6 +1026,32 @@ function pagesFrom(root: HTMLElement, tight = false, templateId?: TemplateId) {
   return pack(heights, Math.max(500, hardLimit), Math.max(500, softLimit));
 }
 
+/** When off-screen measure understates chrome/height, the visible sheet can clip — split on real layout. */
+function splitOnPaperOverflow(paper: HTMLElement, pageIndexes: number[], templateId: TemplateId): number[][] | null {
+  const flowRoot = paginationFlowRoot(paper, templateId);
+  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+  if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
+  if (nodes.length < 2 || pageIndexes.length < 2) return null;
+
+  const style = getComputedStyle(paper);
+  const padBottom = parseFloat(style.paddingBottom) || 0;
+  const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+  const limit = paper.clientHeight - padBottom - borderBottom;
+  const paperTop = paper.getBoundingClientRect().top;
+
+  const splitCount = Math.min(nodes.length, pageIndexes.length);
+  let splitAt = -1;
+  for (let i = 0; i < splitCount; i++) {
+    const bottom = nodes[i]!.getBoundingClientRect().bottom - paperTop;
+    if (bottom > limit + 2) {
+      splitAt = i;
+      break;
+    }
+  }
+  if (splitAt <= 0) return null;
+  return [pageIndexes.slice(0, splitAt), pageIndexes.slice(splitAt)];
+}
+
 function pieceKey(node: ReactNode): string {
   if (!isValidElement(node)) return "";
   return String(node.key ?? "");
@@ -1177,6 +1203,19 @@ export function ResumeView({
     observer.observe(node);
     return () => observer.disconnect();
   }, [fitPagesInView, resolvedPages.length, singlePagePreview]);
+
+  useLayoutEffect(() => {
+    if (singlePagePreview) return;
+    if (resolvedPages.length !== 1 || !resolvedPages[0]?.length) return;
+    const stage = stageRef.current;
+    const paper = stage?.querySelector(".page-slot .paper");
+    if (!(paper instanceof HTMLElement)) return;
+    const split = splitOnPaperOverflow(paper, resolvedPages[0], templateId);
+    if (!split) return;
+    const keys = measurePieces.map((node) => pieceKey(node));
+    const next = stitchExperiencePages(split, keys);
+    setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+  }, [resolvedPages, singlePagePreview, templateId, measurePieces]);
 
   const pageIndexes = (indexes: number[]) => (indexes.length ? indexes : allIndexes);
 
