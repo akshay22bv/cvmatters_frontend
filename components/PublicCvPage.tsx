@@ -9,6 +9,7 @@ import { IconDownload } from "./icons";
 import { ApiError, loadPublicResume, loadRatings, rateResume } from "@/lib/api";
 import { hasPublicResumeContent } from "@/lib/publicResume";
 import type { RatingSummary, ResumeRecord } from "@/lib/types";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 /**
  * Public resume at `/:username` — black stage, CV first, optional rating below.
@@ -38,6 +39,7 @@ export function PublicCvPage({
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState("");
   const [pendingStars, setPendingStars] = useState<number | null>(null);
+  const mobileNarrow = useMediaQuery("(max-width: 860px)");
 
   useEffect(() => {
     let cancelled = false;
@@ -180,7 +182,12 @@ export function PublicCvPage({
       </Link>
 
       <div className="public-sheet resume-stage-host">
-        <ResumeView templateId={record.templateId} data={record.data} hideContact={false} />
+        <ResumeView
+          templateId={record.templateId}
+          data={record.data}
+          hideContact={false}
+          fitPagesInView={mobileNarrow}
+        />
       </div>
 
       <div className="public-rate-bar">

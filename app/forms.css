@@ -6945,6 +6945,12 @@ button.finish-check-grip:active {
 }
 
 @media (max-width: 860px) {
+  .app-frame.is-public {
+    height: auto !important;
+    min-height: 100svh;
+    max-height: none;
+  }
+
   .app-frame.is-public .public-stage {
     flex: none;
     min-height: auto;
@@ -7130,6 +7136,10 @@ button.finish-check-grip:active {
   overflow: visible;
   padding: 0;
   scrollbar-gutter: auto;
+}
+
+.public-sheet .page-slot {
+  overflow: hidden;
 }
 
 .public-sheet .paper {

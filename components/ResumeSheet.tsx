@@ -1229,26 +1229,13 @@ export function ResumeView({
     if (!root) return;
     let cancelled = false;
     const keys = measurePieces.map((node) => pieceKey(node));
-    const measure = (fromResize = false) => {
+    const measure = () => {
       if (cancelled) return;
       const raw = pagesFrom(root, false, templateId);
       let next = stitchExperiencePages(raw, keys);
       if (!next[0]?.length) next = [all];
       next = refillPagesFromMeasure(root, templateId, next, keys);
-      setPages((current) => {
-        if (JSON.stringify(current) === JSON.stringify(next)) return current;
-        if (fromResize) {
-          const stage = stageRef.current;
-          const paper = stage?.querySelector(".page-slot:first-child .paper");
-          if (paper instanceof HTMLElement && current[0]?.length) {
-            const visuallyBalanced =
-              !paperContentOverflows(paper, templateId) &&
-              !paperHasTrailingGap(paper, templateId, 52);
-            if (visuallyBalanced) return current;
-          }
-        }
-        return next;
-      });
+      setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
     };
     measure();
     const fonts = document.fonts;
@@ -1257,13 +1244,8 @@ export function ResumeView({
         if (!cancelled) requestAnimationFrame(() => measure());
       });
     }
-    const ro = new ResizeObserver(() => requestAnimationFrame(() => measure(true)));
-    ro.observe(root);
-    const flowRoot = paginationFlowRoot(root, templateId);
-    if (flowRoot !== root) ro.observe(flowRoot);
     return () => {
       cancelled = true;
-      ro.disconnect();
     };
   }, [templateId, data, hideContact, measurePieces, singlePagePreview, pieces.length]);
 
@@ -1276,10 +1258,14 @@ export function ResumeView({
     const pageCount = resolvedPages.length;
     const measure = () => {
       const width = node.clientWidth;
-      const height = node.clientHeight;
+      let height = node.clientHeight;
       if (!width) return;
       const padX = width < 520 ? 20 : 36;
       let next = Math.min(1, (width - padX) / 794);
+      if (fitPagesInView && pageCount > 1) {
+        const viewH = window.visualViewport?.height ?? window.innerHeight;
+        height = Math.max(height, viewH - 240);
+      }
       if (fitPagesInView && pageCount > 1 && height > 80) {
         const gap = 10;
         const padY = 32;

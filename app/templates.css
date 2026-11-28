@@ -948,6 +948,10 @@
 .measure-col.paper {
   width: 794px;
   box-sizing: border-box;
+  /* Match live sheets: auto-height measure column stuffed every block onto page 1. */
+  height: 1123px !important;
+  min-height: 1123px !important;
+  overflow: hidden !important;
 }
 
 .measure-col.paper.cobalt {

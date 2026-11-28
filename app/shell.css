@@ -3298,13 +3298,15 @@ body.is-examples-preview .cv-editor-shell .layout {
 
   html.is-public-cv-view,
   html.is-public-cv-view body {
-    height: auto;
+    height: auto !important;
     min-height: 100%;
     min-height: 100svh;
+    max-height: none !important;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: auto !important;
     touch-action: pan-y;
     overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .app-frame {
