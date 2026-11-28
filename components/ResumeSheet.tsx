@@ -1063,19 +1063,70 @@ function splitOnPaperOverflow(paper: HTMLElement, pageIndexes: number[], templat
   return [pageIndexes.slice(0, splitAt), pageIndexes.slice(splitAt)];
 }
 
-function paperContentOverflows(paper: HTMLElement, templateId: TemplateId): boolean {
+function paperContentLimit(paper: HTMLElement, templateId: TemplateId) {
   const flowRoot = paginationFlowRoot(paper, templateId);
-  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
-  if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
-  if (!nodes.length) return false;
-
   const style = getComputedStyle(paper);
   const padBottom = parseFloat(style.paddingBottom) || 0;
   const borderBottom = parseFloat(style.borderBottomWidth) || 0;
   const limit = paper.clientHeight - padBottom - borderBottom;
   const paperTop = paper.getBoundingClientRect().top;
-  const last = nodes[nodes.length - 1]!;
-  return last.getBoundingClientRect().bottom - paperTop > limit + 2;
+  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+  if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
+  const last = nodes.length ? nodes[nodes.length - 1]! : null;
+  const lastBottom = last ? last.getBoundingClientRect().bottom - paperTop : 0;
+  return { limit, lastBottom };
+}
+
+function paperContentOverflows(paper: HTMLElement, templateId: TemplateId): boolean {
+  const { limit, lastBottom } = paperContentLimit(paper, templateId);
+  if (!lastBottom) return false;
+  return lastBottom > limit + 2;
+}
+
+/** Measure pagination can break early; the painted sheet may still have usable space. */
+function paperHasTrailingGap(paper: HTMLElement, templateId: TemplateId, minGap = 64): boolean {
+  const { limit, lastBottom } = paperContentLimit(paper, templateId);
+  if (!lastBottom) return false;
+  return limit - lastBottom > minGap;
+}
+
+function refillPagesFromMeasure(
+  root: HTMLElement,
+  templateId: TemplateId,
+  pages: number[][],
+  keys: string[],
+): number[][] {
+  const flowRoot = paginationFlowRoot(root, templateId);
+  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+  if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
+  if (!nodes.length) return pages;
+
+  const style = getComputedStyle(flowRoot);
+  const padTop = parseFloat(style.paddingTop) || 0;
+  const padBottom = parseFloat(style.paddingBottom) || 0;
+  const borderTop = parseFloat(style.borderTopWidth) || 0;
+  const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+  const inner = PAGE_H - padTop - padBottom - borderTop - borderBottom;
+  let hardLimit = inner - 6;
+  let chrome = 0;
+  if (isAtsSplit(templateId) && !ATS_MAIN_FULL_HEIGHT.has(templateId)) {
+    chrome = ATS_CHROME_RESERVE[templateId] || 0;
+  }
+  if (chrome) hardLimit = Math.max(480, hardLimit - chrome);
+  const softLimit = hardLimit + 140;
+
+  const heights = flowBlockHeights(nodes);
+  const contentTop = flowRoot.getBoundingClientRect().top + borderTop + padTop;
+  const lead = nodes[0]!.getBoundingClientRect().top - contentTop;
+  if (lead > 6) heights[0] += Math.min(lead, 28);
+
+  let out = pages.map((page) => [...page]);
+  for (let round = 0; round < 24; round++) {
+    const before = JSON.stringify(out);
+    out = fillPages(heights, out, softLimit);
+    if (JSON.stringify(out) === before) break;
+  }
+  return stitchExperiencePages(out, keys);
 }
 
 function pieceKey(node: ReactNode): string {
@@ -1183,6 +1234,7 @@ export function ResumeView({
       const raw = pagesFrom(root, false, templateId);
       let next = stitchExperiencePages(raw, keys);
       if (!next[0]?.length) next = [all];
+      next = refillPagesFromMeasure(root, templateId, next, keys);
       setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
     };
     measure();
@@ -1236,7 +1288,7 @@ export function ResumeView({
     let passes = 0;
 
     const step = () => {
-      if (cancelled || passes >= 20) return;
+      if (cancelled || passes >= 40) return;
       const stage = stageRef.current;
       const root = measureRef.current;
       const paper = stage?.querySelector(".page-slot:first-child .paper");
@@ -1244,20 +1296,34 @@ export function ResumeView({
 
       setPages((current) => {
         if (!current[0]?.length) return current;
-        if (!paperContentOverflows(paper, templateId)) return current;
-
         const keys = measurePieces.map((node) => pieceKey(node));
         const all = pieces.map((_, index) => index);
-        let next = stitchExperiencePages(pagesFrom(root, true, templateId), keys);
-        if (!next[0]?.length) next = [all];
+        let next = current;
 
-        if (JSON.stringify(next) === JSON.stringify(current)) {
-          const split = splitOnPaperOverflow(paper, current[0], templateId);
-          if (!split) return current;
-          const [head, tail] = split;
-          if (head.length >= current[0].length) return current;
+        if (paperContentOverflows(paper, templateId)) {
+          next = stitchExperiencePages(pagesFrom(root, true, templateId), keys);
+          if (!next[0]?.length) next = [all];
+
+          if (JSON.stringify(next) === JSON.stringify(current)) {
+            const split = splitOnPaperOverflow(paper, current[0], templateId);
+            if (!split) return current;
+            const [head, tail] = split;
+            if (head.length >= current[0].length) return current;
+            next = stitchExperiencePages(
+              [head, [...tail, ...(current[1] || []), ...current.slice(2).flat()]],
+              keys,
+            );
+          }
+        } else if (
+          paperHasTrailingGap(paper, templateId) &&
+          current.length >= 2 &&
+          current[1]?.length
+        ) {
           next = stitchExperiencePages(
-            [head, [...tail, ...(current[1] || []), ...current.slice(2).flat()]],
+            [
+              [...current[0], current[1][0]!],
+              [...current[1].slice(1), ...current.slice(2).flat()],
+            ].filter((page) => page.length),
             keys,
           );
         }
