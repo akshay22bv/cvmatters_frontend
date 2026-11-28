@@ -1229,22 +1229,35 @@ export function ResumeView({
     if (!root) return;
     let cancelled = false;
     const keys = measurePieces.map((node) => pieceKey(node));
-    const measure = () => {
+    const measure = (fromResize = false) => {
       if (cancelled) return;
       const raw = pagesFrom(root, false, templateId);
       let next = stitchExperiencePages(raw, keys);
       if (!next[0]?.length) next = [all];
       next = refillPagesFromMeasure(root, templateId, next, keys);
-      setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+      setPages((current) => {
+        if (JSON.stringify(current) === JSON.stringify(next)) return current;
+        if (fromResize) {
+          const stage = stageRef.current;
+          const paper = stage?.querySelector(".page-slot:first-child .paper");
+          if (paper instanceof HTMLElement && current[0]?.length) {
+            const visuallyBalanced =
+              !paperContentOverflows(paper, templateId) &&
+              !paperHasTrailingGap(paper, templateId, 52);
+            if (visuallyBalanced) return current;
+          }
+        }
+        return next;
+      });
     };
     measure();
     const fonts = document.fonts;
     if (fonts?.ready) {
       fonts.ready.then(() => {
-        if (!cancelled) requestAnimationFrame(measure);
+        if (!cancelled) requestAnimationFrame(() => measure());
       });
     }
-    const ro = new ResizeObserver(() => requestAnimationFrame(measure));
+    const ro = new ResizeObserver(() => requestAnimationFrame(() => measure(true)));
     ro.observe(root);
     const flowRoot = paginationFlowRoot(root, templateId);
     if (flowRoot !== root) ro.observe(flowRoot);

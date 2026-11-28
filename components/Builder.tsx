@@ -1035,7 +1035,7 @@ export default function Builder() {
               </button>
             </div>
           </div>
-          <div className="preview-sheet-body">
+          <div className="preview-sheet-body resume-stage-host">
             <ResumeView
               templateId={snapshot.templateId}
               data={snapshot.data}

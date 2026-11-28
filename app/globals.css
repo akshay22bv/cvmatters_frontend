@@ -486,11 +486,16 @@ textarea {
   padding: 12px;
 }
 
-.preview-sheet-body .page-stack {
+.preview-sheet-body .page-stack,
+.resume-stage-host .page-stack {
   position: static;
   inset: auto;
   width: 100%;
   overflow: visible;
+}
+
+.resume-stage-host {
+  width: min(860px, 100%);
 }
 
 .photo-upload {

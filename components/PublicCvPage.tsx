@@ -179,7 +179,7 @@ export function PublicCvPage({
         ×
       </Link>
 
-      <div className="public-sheet">
+      <div className="public-sheet resume-stage-host">
         <ResumeView templateId={record.templateId} data={record.data} hideContact={false} />
       </div>
 
