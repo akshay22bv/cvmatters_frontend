@@ -918,7 +918,7 @@ function sumHeights(heights: number[], indexes: number[]) {
   return indexes.reduce((total, index) => total + (heights[index] || 0), 0);
 }
 
-function fillPages(heights: number[], pages: number[][], softLimit: number) {
+function fillPages(heights: number[], pages: number[][], softLimit: number, hardLimit: number) {
   for (let page = 0; page < pages.length - 1; ) {
     const current = pages[page];
     const next = pages[page + 1];
@@ -927,7 +927,9 @@ function fillPages(heights: number[], pages: number[][], softLimit: number) {
       continue;
     }
     const trial = [...current, next[0]];
-    if (sumHeights(heights, trial) <= softLimit) {
+    const trialSum = sumHeights(heights, trial);
+    const cap = page === 0 ? hardLimit : Math.max(600, hardLimit - 24);
+    if (trialSum <= softLimit && trialSum <= cap) {
       current.push(next.shift()!);
       if (!next.length) pages.splice(page + 1, 1);
       continue;
@@ -954,7 +956,7 @@ function pack(heights: number[], hardLimit: number, softLimit: number) {
   });
   if (current.length || !pages.length) pages.push(current);
 
-  fillPages(heights, pages, softLimit);
+  fillPages(heights, pages, softLimit, hardLimit);
 
   // A lone certification / short block on the last page looks broken. Pull a
   // few blocks from the previous page so the final sheet has real content.
@@ -1123,7 +1125,7 @@ function refillPagesFromMeasure(
   let out = pages.map((page) => [...page]);
   for (let round = 0; round < 24; round++) {
     const before = JSON.stringify(out);
-    out = fillPages(heights, out, softLimit);
+    out = fillPages(heights, out, softLimit, hardLimit);
     if (JSON.stringify(out) === before) break;
   }
   return stitchExperiencePages(out, keys);
