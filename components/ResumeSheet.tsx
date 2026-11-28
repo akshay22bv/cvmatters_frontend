@@ -3,14 +3,11 @@
 import { isValidElement, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
 import {
   ApexChrome,
-  ApexSide,
   apexMainPieces,
   bannerPieces,
   CabinetChrome,
-  CabinetSide,
   cabinetMainPieces,
   CanvasChrome,
-  CanvasSide,
   canvasMainPieces,
   CobaltChrome,
   cobaltMainPieces,
@@ -23,7 +20,6 @@ import {
   plazaPieces,
   studioPieces,
   VaultChrome,
-  VaultSide,
   vaultMainPieces,
   COBALT_SIDEBAR_EXTRA_SKIP,
   THUMB_SIDEBAR_EXTRA_SKIP,
@@ -31,7 +27,6 @@ import {
 } from "./atsTemplates";
 import {
   AtlasChrome,
-  AtlasSide,
   atlasMainPieces,
   beaconPieces,
   harborPieces,
@@ -748,6 +743,11 @@ function QuartzBanner({ data, hideContact }: { data: ResumeData; hideContact?: b
   );
 }
 
+/** Keeps split/ATS column width on page 2+ without re-printing sidebar blocks. */
+function continuedAside(className: string) {
+  return <aside className={className} aria-hidden="true" />;
+}
+
 function SplitSide({ data, hideContact, plain = false, identity = true }: { data: ResumeData; hideContact?: boolean; plain?: boolean; identity?: boolean }) {
   return (
     <aside className="split-side">
@@ -799,6 +799,8 @@ function Frame({
 }) {
   const number = total > 1 ? <span className="page-no">{pageIndex + 1} / {total}</span> : null;
   const continued = pageIndex > 0;
+  const continuedLayout =
+    continued && (isAtsSplit(templateId) || isSidebar(templateId) || isRightbar(templateId));
   const classes = `paper ${
     isAtsSplit(templateId)
       ? templateId
@@ -807,15 +809,15 @@ function Frame({
         : templateId
   } ${fontClass(data.fontId)}${data.accent ? " has-accent" : ""}${
     data.align ? ` is-align-${data.align}` : ""
-  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}${pageIndex === 0 ? " is-page-one" : ""}${
-    continued && isAtsSplit(templateId) ? " is-continued" : ""
+  }${data.bodyAlign ? ` is-body-${data.bodyAlign}` : ""}${pageIndex === 0 ? " is-page-one" : " is-page-continued"}${
+    continuedLayout ? " is-continued" : ""
   }`;
   // accent, type size, spacing and line height, read by the template rules
   const tint = paperStyle(data) as CSSProperties;
   if (templateId === "apex") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {continued ? <ApexSide data={data} /> : <ApexChrome data={data} hideContact={hideContact} />}
+        {continued ? continuedAside("apex-side") : <ApexChrome data={data} hideContact={hideContact} />}
         <div className="apex-main">{children}{number}</div>
       </article>
     );
@@ -823,7 +825,7 @@ function Frame({
   if (templateId === "cabinet") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {continued ? <CabinetSide data={data} /> : <CabinetChrome data={data} hideContact={hideContact} />}
+        {continued ? continuedAside("cab-side") : <CabinetChrome data={data} hideContact={hideContact} />}
         <div className="cab-main">{children}{number}</div>
       </article>
     );
@@ -831,7 +833,7 @@ function Frame({
   if (templateId === "manor") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        <ManorSide data={data} hideContact={hideContact} />
+        {continued ? continuedAside("manor-side") : <ManorSide data={data} hideContact={hideContact} />}
         {continued ? null : <ManorHead data={data} />}
         <div className="manor-main">{children}{number}</div>
       </article>
@@ -840,7 +842,7 @@ function Frame({
   if (templateId === "canvas") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {continued ? <CanvasSide data={data} /> : <CanvasChrome data={data} hideContact={hideContact} />}
+        {continued ? continuedAside("canvas-side") : <CanvasChrome data={data} hideContact={hideContact} />}
         <div className="canvas-main">{children}{number}</div>
       </article>
     );
@@ -848,7 +850,7 @@ function Frame({
   if (templateId === "cobalt") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        <CobaltChrome data={data} hideContact={hideContact} />
+        {continued ? continuedAside("cobalt-side") : <CobaltChrome data={data} hideContact={hideContact} />}
         <div className="cobalt-main">{children}{number}</div>
       </article>
     );
@@ -856,7 +858,7 @@ function Frame({
   if (templateId === "vault") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {continued ? <VaultSide data={data} hideContact={hideContact} /> : <VaultChrome data={data} hideContact={hideContact} />}
+        {continued ? continuedAside("vault-side") : <VaultChrome data={data} hideContact={hideContact} />}
         <div className="vault-main">{children}{number}</div>
       </article>
     );
@@ -864,13 +866,22 @@ function Frame({
   if (templateId === "atlas") {
     return (
       <article ref={paperRef} className={classes} style={tint}>
-        {continued ? <AtlasSide data={data} hideContact={hideContact} /> : <AtlasChrome data={data} hideContact={hideContact} />}
+        {continued ? continuedAside("atlas-side") : <AtlasChrome data={data} hideContact={hideContact} />}
         <div className="atlas-main">{children}{number}</div>
       </article>
     );
   }
   if (isSidebar(templateId) || isRightbar(templateId)) {
-    const side = <SplitSide data={data} hideContact={hideContact} identity={!isRightbar(templateId)} plain={templateId === "slate" || templateId === "quartz" || templateId === "linen" || templateId === "quote"} />;
+    const side = continued ? (
+      continuedAside("split-side")
+    ) : (
+      <SplitSide
+        data={data}
+        hideContact={hideContact}
+        identity={!isRightbar(templateId)}
+        plain={templateId === "slate" || templateId === "quartz" || templateId === "linen" || templateId === "quote"}
+      />
+    );
     const main = <div className="split-main">{children}{number}</div>;
     return (
       <article ref={paperRef} className={classes} style={tint}>

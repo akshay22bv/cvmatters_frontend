@@ -3765,3 +3765,67 @@
 .paper.split.navy.is-page-one .split-main {
   padding: 20px var(--resume-pad-x) var(--resume-pad-y) 26px !important;
 }
+
+/* Page 2+: main-column gutters match page one; no repeated header chrome. */
+.paper.is-page-continued .split-main,
+.paper.is-page-continued .apex-main,
+.paper.is-page-continued .cab-main,
+.paper.is-page-continued .manor-main,
+.paper.is-page-continued .canvas-main,
+.paper.is-page-continued .cobalt-main,
+.paper.is-page-continued .vault-main,
+.paper.is-page-continued .atlas-main {
+  padding: var(--resume-pad-y) var(--resume-pad-x) var(--resume-pad-y) !important;
+}
+
+.paper.is-page-continued.mint,
+.paper.is-page-continued.studio,
+.paper.is-page-continued.formal,
+.paper.is-page-continued.editorial,
+.paper.is-page-continued.classic,
+.paper.is-page-continued.compact,
+.paper.is-page-continued.signal,
+.paper.is-page-continued.ledger,
+.paper.is-page-continued.crisp,
+.paper.is-page-continued.grid,
+.paper.is-page-continued.prime,
+.paper.is-page-continued.timeline,
+.paper.is-page-continued.band,
+.paper.is-page-continued.folio,
+.paper.is-page-continued.hex,
+.paper.is-page-continued.hello,
+.paper.is-page-continued.beacon,
+.paper.is-page-continued.ruby,
+.paper.is-page-continued.iconic,
+.paper.is-page-continued.crest,
+.paper.is-page-continued.dens,
+.paper.is-page-continued.taupe,
+.paper.is-page-continued.skyline {
+  padding: var(--resume-pad-y) var(--resume-pad-x) var(--resume-pad-y) !important;
+}
+
+.paper.is-page-continued.banner,
+.paper.is-page-continued.horizon,
+.paper.is-page-continued.plaza,
+.paper.is-page-continued.harbor {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: var(--resume-pad-y) !important;
+  padding-bottom: var(--resume-pad-y) !important;
+}
+
+.paper.is-page-continued.banner .banner-section,
+.paper.is-page-continued.banner > .flow-block > .flow-li,
+.paper.is-page-continued.horizon .sig-section,
+.paper.is-page-continued.horizon > .flow-block > .flow-li,
+.paper.is-page-continued.plaza .plaza-section,
+.paper.is-page-continued.plaza > .flow-block > .flow-li,
+.paper.is-page-continued.harbor .harbor-section,
+.paper.is-page-continued.harbor > .flow-block > .flow-li {
+  padding-left: var(--resume-pad-x) !important;
+  padding-right: var(--resume-pad-x) !important;
+}
+
+.paper.split.navy.is-page-continued .split-main {
+  padding: var(--resume-pad-y) var(--resume-pad-x) var(--resume-pad-y) 26px !important;
+}
