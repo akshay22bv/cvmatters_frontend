@@ -6945,19 +6945,25 @@ button.finish-check-grip:active {
 }
 
 @media (max-width: 860px) {
+  html.is-public-cv-view body {
+    touch-action: pan-y;
+  }
+
   .app-frame.is-public {
     display: flex;
     flex-direction: column;
     min-height: 0;
-  }
-
-  .app-frame.is-public .public-stage {
-    flex: 1;
-    min-height: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     touch-action: pan-y;
+  }
+
+  .app-frame.is-public .public-stage {
+    flex: none;
+    min-height: auto;
+    overflow: visible;
   }
 }
 

@@ -1042,7 +1042,7 @@ function splitOnPaperOverflow(paper: HTMLElement, pageIndexes: number[], templat
   const flowRoot = paginationFlowRoot(paper, templateId);
   let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
   if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
-  if (nodes.length < 2 || pageIndexes.length < 2) return null;
+  if (nodes.length < 2 || pageIndexes.length < 2) return null; // need a block to move to the next page
 
   const style = getComputedStyle(paper);
   const padBottom = parseFloat(style.paddingBottom) || 0;
@@ -1061,6 +1061,21 @@ function splitOnPaperOverflow(paper: HTMLElement, pageIndexes: number[], templat
   }
   if (splitAt <= 0) return null;
   return [pageIndexes.slice(0, splitAt), pageIndexes.slice(splitAt)];
+}
+
+function paperContentOverflows(paper: HTMLElement, templateId: TemplateId): boolean {
+  const flowRoot = paginationFlowRoot(paper, templateId);
+  let nodes = [...flowRoot.querySelectorAll(":scope > .flow-block")] as HTMLElement[];
+  if (!nodes.length) nodes = [...flowRoot.querySelectorAll(".flow-block")] as HTMLElement[];
+  if (!nodes.length) return false;
+
+  const style = getComputedStyle(paper);
+  const padBottom = parseFloat(style.paddingBottom) || 0;
+  const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+  const limit = paper.clientHeight - padBottom - borderBottom;
+  const paperTop = paper.getBoundingClientRect().top;
+  const last = nodes[nodes.length - 1]!;
+  return last.getBoundingClientRect().bottom - paperTop > limit + 2;
 }
 
 function pieceKey(node: ReactNode): string {
@@ -1217,16 +1232,29 @@ export function ResumeView({
 
   useLayoutEffect(() => {
     if (singlePagePreview) return;
-    if (resolvedPages.length !== 1 || !resolvedPages[0]?.length) return;
     const stage = stageRef.current;
-    const paper = stage?.querySelector(".page-slot .paper");
-    if (!(paper instanceof HTMLElement)) return;
-    const split = splitOnPaperOverflow(paper, resolvedPages[0], templateId);
-    if (!split) return;
+    const root = measureRef.current;
+    const paper = stage?.querySelector(".page-slot:first-child .paper");
+    if (!(paper instanceof HTMLElement) || !root || !resolvedPages[0]?.length) return;
+    if (!paperContentOverflows(paper, templateId)) return;
+
     const keys = measurePieces.map((node) => pieceKey(node));
-    const next = stitchExperiencePages(split, keys);
+    const all = pieces.map((_, index) => index);
+    const tight = pagesFrom(root, true, templateId);
+    let next = stitchExperiencePages(tight, keys);
+    if (!next[0]?.length) next = [all];
+
+    if (JSON.stringify(next) === JSON.stringify(resolvedPages)) {
+      const split = splitOnPaperOverflow(paper, resolvedPages[0], templateId);
+      if (!split) return;
+      const [head, tail] = split;
+      if (head.length >= resolvedPages[0].length) return;
+      const merged = [head, [...tail, ...(resolvedPages[1] || []), ...resolvedPages.slice(2).flat()]];
+      next = stitchExperiencePages(merged, keys);
+    }
+
     setPages((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
-  }, [resolvedPages, singlePagePreview, templateId, measurePieces]);
+  }, [resolvedPages, singlePagePreview, templateId, measurePieces, pieces, data, hideContact]);
 
   const pageIndexes = (indexes: number[]) => (indexes.length ? indexes : allIndexes);
 

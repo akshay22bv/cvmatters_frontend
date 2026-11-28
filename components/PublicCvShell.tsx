@@ -40,6 +40,11 @@ export function PublicCvShell({
     owner.current = readOwnerKey();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.classList.add("is-public-cv-view");
+    return () => document.documentElement.classList.remove("is-public-cv-view");
+  }, []);
+
   const returnPath = `/${id}`;
 
   const requestDownload = (name: string) => {
